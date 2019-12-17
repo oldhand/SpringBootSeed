@@ -76,12 +76,11 @@ public class AuthenticationController {
         // 保存在线信息
         onlineUserService.save(jwtAuthentication, token, request);
         // 返回 token
-        return ResponseEntity.ok(new AuthInfo(token, jwtAuthentication));
+        return ResponseEntity.ok(new AuthInfo(token));
     }
 
 
     @ApiOperation("获取验证码")
-    @AnonymousAccess
     @GetMapping(value = "/code")
     public ImgResult getCode(){
         // 算术类型 https://gitee.com/whvse/EasyCaptcha
@@ -96,7 +95,6 @@ public class AuthenticationController {
     }
 
     @ApiOperation("注销")
-    @AnonymousAccess
     @DeleteMapping(value = "/logout")
     public ResponseEntity logout(HttpServletRequest request){
         onlineUserService.logout(jwtTokenUtil.getToken(request));

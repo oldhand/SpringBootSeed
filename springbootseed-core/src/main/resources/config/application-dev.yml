@@ -43,7 +43,7 @@ spring:
 
 #jwt
 jwt:
-  header: Authorization
+  header: token
   secret: mySecret
   # token 过期时间/毫秒，6小时  1小时 = 3600000 毫秒
   expiration: 21600000

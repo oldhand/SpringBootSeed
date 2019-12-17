@@ -68,7 +68,7 @@ springbootseed基于Spring Boot 2.1.0、Jpa、Spring Security、redis等的种�
  
  
 ## 项目图片
-  
+  ![图片说明](https://github.com/oldhand/images/raw/master/springbootseed/springbootseed.jpg)
 
 
  

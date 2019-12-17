@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 
 
 
@@ -27,6 +27,7 @@ import java.util.TimeZone;
 */
 @EnableAsync
 @SpringBootApplication
+@EnableEncryptableProperties
 @EnableTransactionManagement
 public class AppRun {
     private static Logger logger = LoggerFactory.getLogger(AppRun.class);

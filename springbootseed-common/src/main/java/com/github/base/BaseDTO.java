@@ -13,9 +13,9 @@ import java.sql.Timestamp;
 @Setter
 public class BaseDTO  implements Serializable {
 
-    private Boolean isDelete;
+    private Boolean deleted;
 
-    private Timestamp createTime;
+    private Timestamp published;
 
-    private Timestamp updateTime;
+    private Timestamp updated;
 }

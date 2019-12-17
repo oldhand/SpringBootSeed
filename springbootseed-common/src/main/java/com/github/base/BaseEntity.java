@@ -20,16 +20,16 @@ import java.lang.reflect.Field;
 public class BaseEntity implements Serializable {
 
     // 删除标识
-    @Column(name = "is_delete", columnDefinition = "bit default 0")
-    private Boolean isDelete = false;
+    @Column(name = "deleted", columnDefinition = "bit default 0")
+    private Boolean deleted = false;
 
-    @Column(name = "create_time")
+    @Column(name = "published")
     @CreationTimestamp
-    private Timestamp createTime;
+    private Timestamp published;
 
-    @Column(name = "update_time")
+    @Column(name = "updated")
     @UpdateTimestamp
-    private Timestamp updateTime;
+    private Timestamp updated;
 
     public @interface Update {}
 

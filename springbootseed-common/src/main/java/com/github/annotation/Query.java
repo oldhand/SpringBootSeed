@@ -13,9 +13,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Query {
 
-    // Dong ZhaoYang 2017/8/7 基本对象的属性名
+    //  2017/8/7 基本对象的属性名
     String propName() default "";
-    // Dong ZhaoYang 2017/8/7 查询方式
+    //  2017/8/7 查询方式
     Type type() default Type.EQUAL;
 
     /**
@@ -36,17 +36,17 @@ public @interface Query {
     enum Type {
         // jie 2019/6/4 相等
         EQUAL
-        // Dong ZhaoYang 2017/8/7 大于等于
+        //  2017/8/7 大于等于
         , GREATER_THAN
-        // Dong ZhaoYang 2017/8/7 小于等于
+        //  2017/8/7 小于等于
         , LESS_THAN
-        // Dong ZhaoYang 2017/8/7 中模糊查询
+        //  2017/8/7 中模糊查询
         , INNER_LIKE
-        // Dong ZhaoYang 2017/8/7 左模糊查询
+        //  2017/8/7 左模糊查询
         , LEFT_LIKE
-        // Dong ZhaoYang 2017/8/7 右模糊查询
+        //  2017/8/7 右模糊查询
         , RIGHT_LIKE
-        // Dong ZhaoYang 2017/8/7 小于
+        //  2017/8/7 小于
         , LESS_THAN_NQ
         // jie 2019/6/4 包含
         , IN

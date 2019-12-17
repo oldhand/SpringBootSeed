@@ -24,7 +24,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 import static springfox.documentation.schema.AlternateTypeRules.newRule;
@@ -59,6 +61,8 @@ public class SwaggerConfig {
         pars.add(ticketPar.build());
         return new Docket(DocumentationType.SWAGGER_2)
                 .enable(enabled)
+                .directModelSubstitute(Timestamp.class, String.class)
+                .directModelSubstitute(Date.class, String.class)
                 .apiInfo(apiInfo())
                 .select()
                 .paths(Predicates.and(Predicates.not(PathSelectors.regex("/error.*")),Predicates.not(PathSelectors.regex("/auth/login"))))
@@ -71,6 +75,8 @@ public class SwaggerConfig {
     public Docket publicApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .enable(enabled)
+                .directModelSubstitute(Timestamp.class, String.class)
+                .directModelSubstitute(Date.class, String.class)
                 .apiInfo(apiInfo())
                 .select()
                 .paths(PathSelectors.regex("/auth/login"))

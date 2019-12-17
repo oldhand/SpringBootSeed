@@ -32,24 +32,21 @@ public class RedisController {
     @Log("查询Redis缓存")
     @GetMapping
     @ApiOperation("查询Redis缓存")
-    @PreAuthorize("@el.check('redis:list')")
-    public ResponseEntity getRedis(String key, Pageable pageable){
+        public ResponseEntity getRedis(String key, Pageable pageable){
         return new ResponseEntity<>(redisService.findByKey(key,pageable), HttpStatus.OK);
     }
 
     @Log("导出数据")
     @ApiOperation("导出数据")
     @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('redis:list')")
-    public void download(HttpServletResponse response, String key) throws IOException {
+        public void download(HttpServletResponse response, String key) throws IOException {
         redisService.download(redisService.findByKey(key), response);
     }
 
     @Log("删除Redis缓存")
     @DeleteMapping
     @ApiOperation("删除Redis缓存")
-    @PreAuthorize("@el.check('redis:del')")
-    public ResponseEntity delete(@RequestBody RedisVo resources){
+        public ResponseEntity delete(@RequestBody RedisVo resources){
         redisService.delete(resources.getKey());
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -57,8 +54,7 @@ public class RedisController {
     @Log("清空Redis缓存")
     @DeleteMapping(value = "/all")
     @ApiOperation("清空Redis缓存")
-    @PreAuthorize("@el.check('redis:del')")
-    public ResponseEntity deleteAll(){
+        public ResponseEntity deleteAll(){
         redisService.deleteAll();
         return new ResponseEntity(HttpStatus.OK);
     }

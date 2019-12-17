@@ -32,32 +32,28 @@ public class ${className}Controller {
     @Log("导出数据")
     @ApiOperation("导出数据")
     @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('${changeClassName}:list')")
-    public void download(HttpServletResponse response, ${className}QueryCriteria criteria) throws IOException {
+        public void download(HttpServletResponse response, ${className}QueryCriteria criteria) throws IOException {
         ${changeClassName}Service.download(${changeClassName}Service.queryAll(criteria), response);
     }
 
     @GetMapping
     @Log("查询${className}")
     @ApiOperation("查询${className}")
-    @PreAuthorize("@el.check('${changeClassName}:list')")
-    public ResponseEntity get${className}s(${className}QueryCriteria criteria, Pageable pageable){
+        public ResponseEntity get${className}s(${className}QueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(${changeClassName}Service.queryAll(criteria,pageable),HttpStatus.OK);
     }
 
     @PostMapping
     @Log("新增${className}")
     @ApiOperation("新增${className}")
-    @PreAuthorize("@el.check('${changeClassName}:add')")
-    public ResponseEntity create(@Validated @RequestBody ${className} resources){
+        public ResponseEntity create(@Validated @RequestBody ${className} resources){
         return new ResponseEntity<>(${changeClassName}Service.create(resources),HttpStatus.CREATED);
     }
 
     @PutMapping
     @Log("修改${className}")
     @ApiOperation("修改${className}")
-    @PreAuthorize("@el.check('${changeClassName}:edit')")
-    public ResponseEntity update(@Validated @RequestBody ${className} resources){
+        public ResponseEntity update(@Validated @RequestBody ${className} resources){
         ${changeClassName}Service.update(resources);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -65,8 +61,7 @@ public class ${className}Controller {
     @DeleteMapping(value = "/{${pkChangeColName}}")
     @Log("删除${className}")
     @ApiOperation("删除${className}")
-    @PreAuthorize("@el.check('${changeClassName}:del')")
-    public ResponseEntity delete(@PathVariable ${pkColumnType} ${pkChangeColName}){
+        public ResponseEntity delete(@PathVariable ${pkColumnType} ${pkChangeColName}){
         ${changeClassName}Service.delete(${pkChangeColName});
         return new ResponseEntity(HttpStatus.OK);
     }

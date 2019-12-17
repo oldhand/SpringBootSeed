@@ -33,38 +33,33 @@ public class LocalStorageController {
 
     @ApiOperation("查询文件")
     @GetMapping
-    @PreAuthorize("@el.check('storage:list')")
-    public ResponseEntity getLocalStorages(LocalStorageQueryCriteria criteria, Pageable pageable){
+        public ResponseEntity getLocalStorages(LocalStorageQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(localStorageService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 
     @Log("导出数据")
     @ApiOperation("导出数据")
     @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('storage:list')")
-    public void download(HttpServletResponse response, LocalStorageQueryCriteria criteria) throws IOException {
+        public void download(HttpServletResponse response, LocalStorageQueryCriteria criteria) throws IOException {
         localStorageService.download(localStorageService.queryAll(criteria), response);
     }
 
     @ApiOperation("上传文件")
     @PostMapping
-    @PreAuthorize("@el.check('storage:add')")
-    public ResponseEntity create(@RequestParam String name, @RequestParam("file") MultipartFile file){
+        public ResponseEntity create(@RequestParam String name, @RequestParam("file") MultipartFile file){
         return new ResponseEntity<>(localStorageService.create(name, file),HttpStatus.CREATED);
     }
 
     @ApiOperation("修改文件")
     @PutMapping
-    @PreAuthorize("@el.check('storage:edit')")
-    public ResponseEntity update(@Validated @RequestBody LocalStorage resources){
+        public ResponseEntity update(@Validated @RequestBody LocalStorage resources){
         localStorageService.update(resources);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @ApiOperation("删除文件")
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("@el.check('storage:del')")
-    public ResponseEntity delete(@PathVariable Long id){
+        public ResponseEntity delete(@PathVariable Long id){
         localStorageService.delete(id);
         return new ResponseEntity(HttpStatus.OK);
     }

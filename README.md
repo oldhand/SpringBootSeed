@@ -37,8 +37,7 @@ springbootseed基于Spring Boot 2.1.0、Jpa、Spring Security、redis等的种�
 | jasypt | 2.1.0   | 配置文件加密
  
 
-## 功能说明
-- 项目目前拥有  
+#### 功能说明
 - **文档自动化**：Swagger2文档分组，需要认证与无需认证的分组展示
 - **系统授权管理**：appid+secret 组合授权
 - **代码生成**：根据表结构自动生成代码
@@ -67,7 +66,7 @@ springbootseed基于Spring Boot 2.1.0、Jpa、Spring Security、redis等的种�
  
  
  
-## 项目图片
+#### 项目图片
   ![图片说明](https://github.com/oldhand/images/raw/master/springbootseed/springbootseed.jpg)
 
 

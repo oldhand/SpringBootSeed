@@ -1,11 +1,4 @@
 # SpringBootSeed
-<h1 align="center">
-  <br>
-  <a href="https://github.com/oldhand/tezancloud"><img src="https://github.com/oldhand/images/raw/master/logo/tezan.jpg" width="200"></a>
-  <br>
-  SpringBootSeed
-  <br>
-</h1>
 
 <h4 align="center">
   SpringBoot的种子框架项目，一个拿来即用的快速框架。<br> 

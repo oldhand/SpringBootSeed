@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.github.domain.LocalStorage;
 import com.github.exception.BadRequestException;
 import com.github.utils.*;
+import com.github.utils.MD5;
 import com.github.repository.LocalStorageRepository;
 import com.github.service.LocalStorageService;
 import com.github.service.dto.LocalStorageDTO;
@@ -18,10 +19,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -74,6 +73,7 @@ public class LocalStorageServiceImpl implements LocalStorageService {
         return localStorageMapper.toDto(localStorage);
     }
 
+
     @Override
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
@@ -83,20 +83,67 @@ public class LocalStorageServiceImpl implements LocalStorageService {
         // 可自行选择方式
 //        String type = FileUtil.getFileTypeByMimeType(suffix);
         String type = FileUtil.getFileType(suffix);
-        File file = FileUtil.upload(multipartFile, path + type +  File.separator);
+        String basePath = System.getProperty("user.dir");
+        if (path.startsWith("./")) {
+            path = path.substring(2);
+        }
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        if (path.endsWith("/")) {
+            path = path.substring(0,path.length()-1);
+        }
+
+        Date date = new Date();
+        SimpleDateFormat year = new SimpleDateFormat("yyyy");
+        SimpleDateFormat month = new SimpleDateFormat("MMM", Locale.ENGLISH);
+        String fullpath = File.separator + path + File.separator + year.format(date) + File.separator + month.format(date);
+
+        File pathfile = new File(basePath + File.separator + fullpath);
+        if (!pathfile.exists()) {
+            pathfile.mkdirs();
+        }
+
+        fullpath = fullpath + File.separator + type +  File.separator;
+        String md5;
+        try {
+            md5 = MD5.calcMD5(multipartFile.getInputStream());
+        }catch (IOException e) {
+            e.printStackTrace();
+            throw new BadRequestException("上传失败");
+        }
+        try {
+            LocalStorage localStorage = localStorageRepository.findByMd5(md5);
+            if (localStorage != null) {
+                return localStorageMapper.toDto(localStorage);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new BadRequestException("上传失败");
+        }
+        File file = FileUtil.upload(multipartFile, basePath + fullpath, md5);
         if(ObjectUtil.isNull(file)){
             throw new BadRequestException("上传失败");
         }
         try {
+            String sourceName = multipartFile.getOriginalFilename();
             name = StringUtils.isBlank(name) ? FileUtil.getFileNameNoEx(multipartFile.getOriginalFilename()) : name;
+            String username;
+            try {
+                username = SecurityUtils.getUsername();
+            } catch (Exception e) {
+                username = "anonymous";
+            }
             LocalStorage localStorage = new LocalStorage(
                     file.getName(),
                     name,
+                    sourceName,
                     suffix,
-                    file.getPath(),
+                    fullpath + file.getName(),
                     type,
+                    md5,
                     FileUtil.getSize(multipartFile.getSize()),
-                    SecurityUtils.getUsername()
+                    username
             );
             return localStorageMapper.toDto(localStorageRepository.save(localStorage));
         }catch (Exception e){
@@ -141,11 +188,14 @@ public class LocalStorageServiceImpl implements LocalStorageService {
         for (LocalStorageDTO localStorageDTO : queryAll) {
             Map<String,Object> map = new LinkedHashMap<>();
             map.put("文件名", localStorageDTO.getRealName());
-            map.put("备注名", localStorageDTO.getName());
+            map.put("原文件名", localStorageDTO.getSourceName());
+            map.put("存储相对路径", localStorageDTO.getPath());
             map.put("文件类型", localStorageDTO.getType());
+            map.put("MD5", localStorageDTO.getMd5());
             map.put("文件大小", localStorageDTO.getSize());
             map.put("操作人", localStorageDTO.getOperate());
-            map.put("创建日期", localStorageDTO.getCreateTime());
+            map.put("备注名", localStorageDTO.getName());
+            map.put("创建日期", localStorageDTO.getPublished());
             list.add(map);
         }
         FileUtil.downloadExcel(list, response);

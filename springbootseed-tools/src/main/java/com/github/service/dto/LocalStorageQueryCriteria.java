@@ -12,12 +12,12 @@ import com.github.annotation.Query;
 public class LocalStorageQueryCriteria{
 
     // 模糊
-    @Query(blurry = "name,suffix,type,operate,size")
+    @Query(blurry = "name,sourceName,suffix,type,operate,size,md5")
     private String blurry;
 
-    @Query(type = Query.Type.GREATER_THAN,propName = "createTime")
+    @Query(type = Query.Type.GREATER_THAN,propName = "published")
     private Timestamp startTime;
 
-    @Query(type = Query.Type.LESS_THAN,propName = "createTime")
+    @Query(type = Query.Type.LESS_THAN,propName = "published")
     private Timestamp endTime;
 }

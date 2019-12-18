@@ -77,8 +77,8 @@ swagger:
 
 # 文件存储路径
 file:
-  path: /raid5/gits/github/springbootseed/file/
-  avatar: /raid5/gits/github/springbootseed/avatar/
+  path: storage/file/
+  avatar: storage/avatar/
   # 文件大小 /M
   maxSize: 100
   avatarMaxSize: 5

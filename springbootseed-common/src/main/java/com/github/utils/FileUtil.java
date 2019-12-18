@@ -96,15 +96,15 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
         String resultSize;
         if (size / GB >= 1) {
             //如果当前Byte的值大于等于1GB
-            resultSize = DF.format(size / (float) GB) + "GB   ";
+            resultSize = DF.format(size / (float) GB) + "GB";
         } else if (size / MB >= 1) {
             //如果当前Byte的值大于等于1MB
-            resultSize = DF.format(size / (float) MB) + "MB   ";
+            resultSize = DF.format(size / (float) MB) + "MB";
         } else if (size / KB >= 1) {
             //如果当前Byte的值大于等于1KB
-            resultSize = DF.format(size / (float) KB) + "KB   ";
+            resultSize = DF.format(size / (float) KB) + "KB";
         } else {
-            resultSize = size + "B   ";
+            resultSize = size + "B";
         }
         return resultSize;
     }
@@ -131,14 +131,10 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
     /**
      * 将文件名解析成文件的上传路径
      */
-    public static File upload(MultipartFile file, String filePath) {
-        Date date = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmssS");
-        String name = getFileNameNoEx(file.getOriginalFilename());
+    public static File upload(MultipartFile file, String filePath, String md5) {
         String suffix = getExtensionName(file.getOriginalFilename());
-        String nowStr = "-" + format.format(date);
         try {
-            String fileName = name + nowStr + "." + suffix;
+            String fileName = md5 + "." + suffix;
             String path = filePath + fileName;
             // getCanonicalFile 可解析正确各种路径
             File dest = new File(path).getCanonicalFile();
@@ -192,15 +188,15 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
         String video = "avi mpg mpe mpeg asf wmv mov qt rm mp4 flv m4v webm ogv ogg";
         String image = "bmp dib pcp dif wmf gif jpg tif eps psd cdr iff tga pcd mpt png jpeg";
         if(image.contains(type)){
-            return "图片";
+            return "image";
         } else if(documents.contains(type)){
-            return "文档";
+            return "document";
         } else if(music.contains(type)){
-            return "音乐";
+            return "music";
         } else if(video.contains(type)){
-            return "视频";
+            return "video";
         } else {
-            return "其他";
+            return "other";
         }
     }
 

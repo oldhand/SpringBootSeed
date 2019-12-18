@@ -54,14 +54,14 @@ public class LocalStorageController {
     @PutMapping
         public ResponseEntity update(@Validated @RequestBody LocalStorage resources){
         localStorageService.update(resources);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity("ok", HttpStatus.NO_CONTENT);
     }
 
     @ApiOperation("删除文件")
     @DeleteMapping(value = "/{id}")
         public ResponseEntity delete(@PathVariable Long id){
         localStorageService.delete(id);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity("ok", HttpStatus.OK);
     }
 
     @Log("多选删除")
@@ -69,6 +69,6 @@ public class LocalStorageController {
     @ApiOperation("多选删除")
     public ResponseEntity deleteAll(@RequestBody Long[] ids) {
         localStorageService.deleteAll(ids);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity("ok", HttpStatus.OK);
     }
 }

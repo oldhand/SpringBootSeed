@@ -26,13 +26,17 @@ public class LocalStorage  implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    // 真实文件名
+    // 真实文件名,相对路径
     @Column(name = "real_name")
     private String realName;
 
     // 文件名
     @Column(name = "name")
     private String name;
+
+    // 原上传文件名
+    @Column(name = "source_name")
+    private String sourceName;
 
     // 后缀
     @Column(name = "suffix")
@@ -46,6 +50,9 @@ public class LocalStorage  implements Serializable {
     @Column(name = "type")
     private String type;
 
+    @Column(name = "md5",unique = true)
+    private String md5;
+
     // 大小
     @Column(name = "size")
     private String size;
@@ -54,16 +61,18 @@ public class LocalStorage  implements Serializable {
     @Column(name = "operate")
     private String operate;
 
-    @Column(name = "create_time")
+    @Column(name = "published")
     @CreationTimestamp
-    private Timestamp createTime;
+    private Timestamp published;
 
-    public LocalStorage(String realName,String name, String suffix, String path, String type, String size, String operate) {
+    public LocalStorage(String realName,String name, String sourceName, String suffix, String path, String type,String md5, String size, String operate) {
         this.realName = realName;
         this.name = name;
+        this.sourceName = sourceName;
         this.suffix = suffix;
         this.path = path;
         this.type = type;
+        this.md5 = md5;
         this.size = size;
         this.operate = operate;
     }

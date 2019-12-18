@@ -19,8 +19,12 @@ public class LocalStorageDTO  implements Serializable {
 
     private String realName;
 
+    private String sourceName;
+
     // 文件名
     private String name;
+
+    private String path;
 
     // 后缀
     private String suffix;
@@ -28,11 +32,13 @@ public class LocalStorageDTO  implements Serializable {
     // 类型
     private String type;
 
+    private String md5;
+
     // 大小
     private String size;
 
     // 操作人
     private String operate;
 
-    private Timestamp createTime;
+    private Timestamp published;
 }

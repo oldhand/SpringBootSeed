@@ -9,4 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 * @date 2019-12-16
 */
 public interface LocalStorageRepository extends JpaRepository<LocalStorage, Long>, JpaSpecificationExecutor<LocalStorage> {
+
+    LocalStorage findByMd5(String md5);
+
 }

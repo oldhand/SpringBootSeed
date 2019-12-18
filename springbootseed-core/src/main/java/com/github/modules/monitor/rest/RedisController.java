@@ -36,8 +36,8 @@ public class RedisController {
         return new ResponseEntity<>(redisService.findByKey(key,pageable), HttpStatus.OK);
     }
 
-    @Log("导出数据")
-    @ApiOperation("导出数据")
+    @Log("导出缓存")
+    @ApiOperation("导出缓存")
     @GetMapping(value = "/download")
         public void download(HttpServletResponse response, String key) throws IOException {
         redisService.download(redisService.findByKey(key), response);
@@ -48,7 +48,7 @@ public class RedisController {
     @ApiOperation("删除Redis缓存")
         public ResponseEntity delete(@RequestBody RedisVo resources){
         redisService.delete(resources.getKey());
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity("ok", HttpStatus.OK);
     }
 
     @Log("清空Redis缓存")
@@ -56,6 +56,6 @@ public class RedisController {
     @ApiOperation("清空Redis缓存")
         public ResponseEntity deleteAll(){
         redisService.deleteAll();
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity("ok", HttpStatus.OK);
     }
 }

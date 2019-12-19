@@ -50,25 +50,13 @@ public class GenUtil {
     }
 
     /**
-     * 获取前端代码模板名称
-     * @return List
-     */
-    private static List<String> getFrontTemplateNames() {
-        List<String> templateNames = new ArrayList<>();
-        templateNames.add("api");
-        templateNames.add("index");
-        templateNames.add("eForm");
-        return templateNames;
-    }
-
-    /**
      * 生成代码
      * @param columnInfos 表元数据
      * @param genConfig 生成代码的参数配置，如包路径，作者
      */
     public static void generatorCode(List<ColumnInfo> columnInfos, GenConfig genConfig, String tableName) throws IOException {
         Map<String,Object> map = new HashMap<>();
-        map.put("package",genConfig.getPack());
+        map.put("package",genConfig.getPackageName());
         map.put("moduleName",genConfig.getModuleName());
         map.put("author",genConfig.getAuthor());
         map.put("date", LocalDate.now().toString());
@@ -143,25 +131,8 @@ public class GenUtil {
         // 生成后端代码
         List<String> templates = getAdminTemplateNames();
         for (String templateName : templates) {
-            Template template = engine.getTemplate("generator/admin/"+templateName+".ftl");
+            Template template = engine.getTemplate("generator/"+templateName+".ftl");
             String filePath = getAdminFilePath(templateName,genConfig,className);
-
-            assert filePath != null;
-            File file = new File(filePath);
-
-            // 如果非覆盖生成
-            if(!genConfig.getCover() && FileUtil.exist(file)){
-                continue;
-            }
-            // 生成代码
-            genFile(file, template, map);
-        }
-
-        // 生成前端代码
-        templates = getFrontTemplateNames();
-        for (String templateName : templates) {
-            Template template = engine.getTemplate("generator/front/"+templateName+".ftl");
-            String filePath = getFrontFilePath(templateName,genConfig,map.get("changeClassName").toString());
 
             assert filePath != null;
             File file = new File(filePath);
@@ -181,8 +152,8 @@ public class GenUtil {
     private static String getAdminFilePath(String templateName, GenConfig genConfig, String className) {
         String projectPath = System.getProperty("user.dir") + File.separator + genConfig.getModuleName();
         String packagePath = projectPath + File.separator + "src" +File.separator+ "main" + File.separator + "java" + File.separator;
-        if (!ObjectUtils.isEmpty(genConfig.getPack())) {
-            packagePath += genConfig.getPack().replace(".", File.separator) + File.separator;
+        if (!ObjectUtils.isEmpty(genConfig.getPackageName())) {
+            packagePath += genConfig.getPackageName().replace(".", File.separator) + File.separator;
         }
 
         if ("Entity".equals(templateName)) {
@@ -220,25 +191,6 @@ public class GenUtil {
         return null;
     }
 
-    /**
-     * 定义前端文件路径以及名称
-     */
-    private static String getFrontFilePath(String templateName, GenConfig genConfig, String apiName) {
-        String path = genConfig.getPath();
-
-        if ("api".equals(templateName)) {
-            return genConfig.getApiPath() + File.separator + apiName + ".js";
-        }
-
-        if ("index".equals(templateName)) {
-            return path  + File.separator + "index.vue";
-        }
-
-        if ("eForm".equals(templateName)) {
-            return path  + File.separator + File.separator + "form.vue";
-        }
-        return null;
-    }
 
     private static void genFile(File file, Template template, Map<String, Object> map) throws IOException {
         // 生成目标文件

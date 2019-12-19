@@ -14,7 +14,6 @@ import javax.validation.constraints.NotBlank;
 */
 @Getter
 @Setter
-@ToString
 @ApiModel
 public class AuthApplication {
 

@@ -10,6 +10,7 @@ import com.github.exception.EntityExistException;
         </#if>
     </#list>
 </#if>
+import com.github.exception.EntityExistException;
 import com.github.utils.ValidationUtil;
 import com.github.utils.FileUtil;
 import ${package}.repository.${className}Repository;
@@ -113,10 +114,10 @@ public class ${className}ServiceImpl implements ${className}Service {
     <#list columns as column>
         <#if column.columnKey = 'UNI'>
         <#if column_index = 1>
-        ${className} ${changeClassName}1 = null;
+        ${className} ${changeClassName} = null;
         </#if>
-        ${changeClassName}1 = ${changeClassName}Repository.findBy${column.capitalColumnName}(resources.get${column.capitalColumnName}());
-        if(${changeClassName}1 != null && !${changeClassName}1.get${pkCapitalColName}().equals(${changeClassName}.get${pkCapitalColName}())){
+        ${changeClassName} = ${changeClassName}Repository.findBy${column.capitalColumnName}(resources.get${column.capitalColumnName}());
+        if(${changeClassName} != null && !${changeClassName}.get${pkCapitalColName}().equals(${changeClassName}.get${pkCapitalColName}())){
             throw new EntityExistException(${className}.class,"${column.columnName}",resources.get${column.capitalColumnName}());
         }
         </#if>
@@ -144,7 +145,7 @@ public class ${className}ServiceImpl implements ${className}Service {
             <#if column.columnComment != ''>
             map.put("${column.columnComment}", ${changeClassName}.get${column.capitalColumnName}());
             <#else>
-            map.put(" ${column.changeColumnName}",  ${changeClassName}.get${column.capitalColumnName}());
+            map.put("${column.changeColumnName}",  ${changeClassName}.get${column.capitalColumnName}());
             </#if>
             </#if>
         </#list>

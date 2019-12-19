@@ -35,6 +35,12 @@
             <version>0.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github</groupId>
+            <artifactId>samples</artifactId>
+            <version>0.1</version>
+        </dependency>
+
         <!--jwt-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

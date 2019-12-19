@@ -3,6 +3,9 @@ package ${package}.domain;
 import lombok.Data;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
 <#if hasTimestamp>
 import java.sql.Timestamp;
@@ -33,7 +36,10 @@ public class ${className} implements Serializable {
     </#if>
     </#if>
     @Column(name = "${column.columnName}"<#if column.columnKey = 'UNI'>,unique = true</#if><#if column.isNullable = 'NO' && column.columnKey != 'PRI'>,nullable = false</#if>)
-    private ${column.columnType} ${column.changeColumnName};
+    <#if column.columnComment != ''>
+	@ApiModelProperty("${column.columnComment}")
+    </#if>
+	private ${column.columnType} ${column.changeColumnName};
     </#list>
 </#if>
 

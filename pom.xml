@@ -11,6 +11,7 @@
     <version>0.1</version>
 
     <modules>
+        <module>samples</module>
         <module>springbootseed-common</module>
         <module>springbootseed-logging</module>
         <module>springbootseed-tools</module>

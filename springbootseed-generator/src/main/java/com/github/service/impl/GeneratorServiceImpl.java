@@ -61,7 +61,18 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<ColumnInfo> columnInfos = new ArrayList<>();
         for (Object obj : result) {
             Object[] arr = (Object[]) obj;
-            columnInfos.add(new ColumnInfo(arr[0],arr[1],arr[2],arr[3],arr[4],arr[5],null,"true"));
+			if (arr[0].toString().equals("id")) {
+				columnInfos.add(new ColumnInfo(arr[0],arr[1],arr[2],arr[3],arr[4],arr[5],"2","true"));
+			}
+            else if (arr[4].toString().equals("UNI")) {
+                columnInfos.add(new ColumnInfo(arr[0],arr[1],arr[2],arr[3],arr[4],arr[5],"2","true"));
+            }
+            else if (arr[2].toString().equals("varchar") && arr[0].toString().indexOf("password") == -1) {
+                columnInfos.add(new ColumnInfo(arr[0],arr[1],arr[2],arr[3],arr[4],arr[5],"1","true"));
+            }
+			else {
+				columnInfos.add(new ColumnInfo(arr[0],arr[1],arr[2],arr[3],arr[4],arr[5],null,"true"));
+			} 
         }
         return PageUtil.toPage(columnInfos,columnInfos.size());
     }

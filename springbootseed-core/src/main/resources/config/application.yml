@@ -20,7 +20,8 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
         #dialect: org.hibernate.dialect.PostgreSQLDialect
         temp:
-          use_jdbc_metadata_defaults: false
+#  PostgreSQL 需要打开
+#          use_jdbc_metadata_defaults: false
     open-in-view: true
 
   redis:

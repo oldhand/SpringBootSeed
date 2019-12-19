@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 * @author ${author}
 * @date ${date}
 */
-@Api(tags = "${className}管理")
+@Api(tags = "实例：${className}管理")
 @RestController
 @RequestMapping("/api/${changeClassName}")
 public class ${className}Controller {

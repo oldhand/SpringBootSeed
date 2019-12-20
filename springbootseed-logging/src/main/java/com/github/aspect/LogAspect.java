@@ -9,13 +9,13 @@ import com.github.utils.StringUtils;
 import com.github.utils.ThrowableUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 
 /**
  * @author oldhand
@@ -50,11 +50,39 @@ public class LogAspect {
     @Around("logPointcut()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         Object result;
+
         currentTime = System.currentTimeMillis();
         result = joinPoint.proceed();
-        Log log = new Log("INFO",System.currentTimeMillis() - currentTime);
+        long costtime = System.currentTimeMillis() - currentTime;
+        Log plog = new Log("INFO",costtime);
         HttpServletRequest request = RequestHolder.getHttpServletRequest();
-        logService.save(getUsername(), StringUtils.getBrowser(request), StringUtils.getIp(request),joinPoint, log);
+        String ip = StringUtils.getIp(request);
+        String browser = StringUtils.getBrowser(request);
+        logService.save(getUsername(), browser, ip,joinPoint, plog);
+
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        // 方法路径
+        String methodName = joinPoint.getTarget().getClass().getName()+"."+signature.getName()+"()";
+
+        StringBuilder params = new StringBuilder("{");
+        //参数值
+        Object[] argValues = joinPoint.getArgs();
+        //参数名称
+        String[] argNames = ((MethodSignature)joinPoint.getSignature()).getParameterNames();
+        if(argValues != null){
+            for (int i = 0; i < argValues.length; i++) {
+                params.append(argNames[i]).append(": ").append(argValues[i]);
+            }
+        }
+        String address = StringUtils.getCityInfo(ip);
+        if (result.getClass().toString().indexOf("ResponseEntity") >= 0) {
+            ResponseEntity response = (ResponseEntity)result;
+            log.info("[{}][{}][{}ms][statcode:{}]:{}{}",address,browser,costtime,response.getStatusCodeValue(),methodName,params.toString() + "}");
+        }
+        else {
+            log.info("[{}][{}][{}ms]:{}{}",address,browser,costtime,methodName,params.toString() + "}");
+        }
+
         return result;
     }
 

@@ -109,7 +109,7 @@ public class LogServiceImpl implements LogService {
         log.setAddress(StringUtils.getCityInfo(log.getRequestIp()));
         log.setMethod(methodName);
         log.setUsername(appid);
-        log.setParams(params.toString() + " }");
+        log.setParams(params.toString() + "}");
         log.setBrowser(browser);
         logRepository.save(log);
     }

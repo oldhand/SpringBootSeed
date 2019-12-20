@@ -58,10 +58,6 @@ public class RedisServiceImpl implements RedisService {
         }
         Set<String> keys = redisTemplate.keys(key);
         for (String s : keys) {
-            // 过滤掉权限的缓存
-            if (s.contains("role::loadPermissionByUser") || s.contains("user::loadUserByUsername") || s.contains(onlineKey) || s.contains(codeKey)) {
-                continue;
-            }
             RedisVo redisVo = new RedisVo(s, Objects.requireNonNull(redisTemplate.opsForValue().get(s)).toString());
             redisVos.add(redisVo);
         }

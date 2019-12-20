@@ -16,11 +16,11 @@
     </root>
 
     <!--监控sql日志输出 -->
-    <logger name="jdbc.sqlonly" level="INFO" additivity="false">
+    <logger name="jdbc.sqlonly" level="OFF" additivity="false">
         <appender-ref ref="console" />
     </logger>
 
-    <logger name="jdbc.resultset" level="ERROR" additivity="false">
+    <logger name="jdbc.resultset" level="OFF" additivity="false">
         <appender-ref ref="console" />
     </logger>
 

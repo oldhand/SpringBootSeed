@@ -94,9 +94,6 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void update(QuartzJob resources) {
-        if(resources.getId().equals(1L)){
-            throw new BadRequestException("该任务不可操作");
-        }
         if (!CronExpression.isValidExpression(resources.getCronExpression())){
             throw new BadRequestException("cron表达式格式错误");
         }
@@ -107,9 +104,6 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     @Override
     @CacheEvict(allEntries = true)
     public void updateIsPause(QuartzJob quartzJob) {
-        if(quartzJob.getId().equals(1L)){
-            throw new BadRequestException("该任务不可操作");
-        }
         if (quartzJob.getIsPause()) {
             quartzManage.resumeJob(quartzJob);
             quartzJob.setIsPause(false);
@@ -122,9 +116,6 @@ public class QuartzJobServiceImpl implements QuartzJobService {
 
     @Override
     public void execution(QuartzJob quartzJob) {
-        if(quartzJob.getId().equals(1L)){
-            throw new BadRequestException("该任务不可操作");
-        }
         quartzManage.runAJobNow(quartzJob);
     }
 
@@ -132,9 +123,6 @@ public class QuartzJobServiceImpl implements QuartzJobService {
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void delete(QuartzJob quartzJob) {
-        if(quartzJob.getId().equals(1L)){
-            throw new BadRequestException("该任务不可操作");
-        }
         quartzManage.deleteJob(quartzJob);
         quartzJobRepository.delete(quartzJob);
     }

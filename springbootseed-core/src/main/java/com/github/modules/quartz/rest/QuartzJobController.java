@@ -78,7 +78,7 @@ public class QuartzJobController {
     @PutMapping
         public ResponseEntity update(@Validated(QuartzJob.Update.class) @RequestBody QuartzJob resources){
         quartzJobService.update(resources);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity("ok",HttpStatus.NO_CONTENT);
     }
 
     @Log("更改定时任务状态")
@@ -86,7 +86,7 @@ public class QuartzJobController {
     @PutMapping(value = "/{id}")
         public ResponseEntity updateIsPause(@PathVariable Long id){
         quartzJobService.updateIsPause(quartzJobService.findById(id));
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity("ok",HttpStatus.NO_CONTENT);
     }
 
     @Log("执行定时任务")
@@ -94,7 +94,7 @@ public class QuartzJobController {
     @PutMapping(value = "/exec/{id}")
         public ResponseEntity execution(@PathVariable Long id){
         quartzJobService.execution(quartzJobService.findById(id));
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity("ok",HttpStatus.NO_CONTENT);
     }
 
     @Log("删除定时任务")
@@ -102,6 +102,6 @@ public class QuartzJobController {
     @DeleteMapping(value = "/{id}")
         public ResponseEntity delete(@PathVariable Long id){
         quartzJobService.delete(quartzJobService.findById(id));
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity("ok",HttpStatus.OK);
     }
 }

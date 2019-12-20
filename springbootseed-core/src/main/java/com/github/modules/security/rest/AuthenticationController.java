@@ -79,7 +79,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(new AuthInfo(token));
     }
 
-
+    @Log("获取验证码")
     @ApiOperation("获取验证码")
     @GetMapping(value = "/code")
     public ImgResult getCode(){
@@ -94,6 +94,7 @@ public class AuthenticationController {
         return new ImgResult(captcha.toBase64(),uuid);
     }
 
+    @Log("注销")
     @ApiOperation("注销")
     @DeleteMapping(value = "/logout")
     public ResponseEntity logout(HttpServletRequest request){

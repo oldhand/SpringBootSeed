@@ -22,6 +22,7 @@ import springfox.documentation.schema.AlternateTypeRule;
 import springfox.documentation.schema.AlternateTypeRuleConvention;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.service.Parameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -103,7 +104,7 @@ public class SwaggerConfig {
                 .title("SpringBootSeed 接口文档 by 网数科技")
                 .version("1.0")
                 .description("SpringBoot的种子框架项目，一个拿来即用的快速框架。")
-                .contact("网数科技 (手机: 15111122026)")
+                .contact(new Contact("网数科技 (手机: 15111122026)", "", ""))
                 .build();
     }
 }

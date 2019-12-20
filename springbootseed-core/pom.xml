@@ -41,6 +41,12 @@
             <version>0.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github</groupId>
+            <artifactId>springbootseed-common</artifactId>
+            <version>0.1</version>
+        </dependency>
+
         <!--jwt-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

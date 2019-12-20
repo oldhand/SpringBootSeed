@@ -23,6 +23,18 @@
             <version>0.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github</groupId>
+            <artifactId>springbootseed-logging</artifactId>
+            <version>0.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github</groupId>
+                    <artifactId>springbootseed-common</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!--模板引擎-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

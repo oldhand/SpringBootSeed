@@ -31,6 +31,7 @@ public class LocalStorageController {
         this.localStorageService = localStorageService;
     }
 
+    @Log("查询文件")
     @ApiOperation("查询文件")
     @GetMapping
         public ResponseEntity getLocalStorages(LocalStorageQueryCriteria criteria, Pageable pageable){
@@ -44,12 +45,14 @@ public class LocalStorageController {
         localStorageService.download(localStorageService.queryAll(criteria), response);
     }
 
+    @Log("上传文件")
     @ApiOperation("上传文件")
     @PostMapping
         public ResponseEntity create(@RequestParam String name, @RequestParam("file") MultipartFile file){
         return new ResponseEntity<>(localStorageService.create(name, file),HttpStatus.CREATED);
     }
 
+    @Log("修改文件")
     @ApiOperation("修改文件")
     @PutMapping
         public ResponseEntity update(@Validated @RequestBody LocalStorage resources){
@@ -57,6 +60,7 @@ public class LocalStorageController {
         return new ResponseEntity("ok", HttpStatus.NO_CONTENT);
     }
 
+    @Log("删除文件")
     @ApiOperation("删除文件")
     @DeleteMapping(value = "/{id}")
         public ResponseEntity delete(@PathVariable Long id){

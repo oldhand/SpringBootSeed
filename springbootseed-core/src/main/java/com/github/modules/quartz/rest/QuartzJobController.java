@@ -57,6 +57,7 @@ public class QuartzJobController {
         quartzJobService.downloadLog(quartzJobService.queryAllLog(criteria), response);
     }
 
+    @Log("查询任务执行日志")
     @ApiOperation("查询任务执行日志")
     @GetMapping(value = "/logs")
         public ResponseEntity getJobLogs(JobQueryCriteria criteria, Pageable pageable){

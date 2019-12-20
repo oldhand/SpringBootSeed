@@ -40,6 +40,7 @@ public class LogController {
         logService.download(logService.queryAll(criteria), response);
     }
 
+    @Log("日志查询")
     @GetMapping
     @ApiOperation("日志查询")
     public ResponseEntity getLogs(LogQueryCriteria criteria, Pageable pageable){
@@ -47,6 +48,7 @@ public class LogController {
         return new ResponseEntity<>(logService.queryAll(criteria,pageable), HttpStatus.OK);
     }
 
+    @Log("用户日志查询")
     @GetMapping(value = "/user")
     @ApiOperation("用户日志查询")
     public ResponseEntity getUserLogs(LogQueryCriteria criteria, Pageable pageable){
@@ -60,6 +62,7 @@ public class LogController {
         return new ResponseEntity<>(logService.queryAllByUser(criteria,pageable), HttpStatus.OK);
     }
 
+    @Log("错误日志查询")
     @GetMapping(value = "/error")
     @ApiOperation("错误日志查询")
     public ResponseEntity getErrorLogs(LogQueryCriteria criteria, Pageable pageable){
@@ -67,6 +70,7 @@ public class LogController {
         return new ResponseEntity<>(logService.queryAll(criteria,pageable), HttpStatus.OK);
     }
 
+    @Log("日志异常详情查询")
     @GetMapping(value = "/error/{id}")
     @ApiOperation("日志异常详情查询")
     public ResponseEntity getErrorLogs(@PathVariable Long id){

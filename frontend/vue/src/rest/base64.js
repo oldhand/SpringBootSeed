@@ -1,6 +1,19 @@
 export default class Base64 {
     static _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
+
+    static isbase64(str) {
+        const notBase64 = /[^A-Z0-9+\/=]/i;
+        const len = str.length;
+        if (!len || len % 4 !== 0 || notBase64.test(str)) {
+            return false;
+        }
+        const firstPaddingChar = str.indexOf('=');
+        return firstPaddingChar === -1 ||
+            firstPaddingChar === len - 1 ||
+            (firstPaddingChar === len - 2 && str[len - 1] === '=');
+    }
+
     static encode(input) {
         let output = "";
         let chr1, chr2, chr3, enc1, enc2, enc3, enc4;

@@ -25,7 +25,7 @@ var Credential = {
 				var credential_info;
 				var access_token;
 				let access_token_info = Credential.gettokeninfo();
-				console.log("______getRestCredential_____" + JSON.stringify(access_token_info) + "______");
+				//console.log("______getRestCredential_____" + JSON.stringify(access_token_info) + "______");
 				access_token = access_token_info.access_token;
                 var access_timestamp = access_token_info.access_timestamp;
                 if (access_token !== '' && access_timestamp !== '') {

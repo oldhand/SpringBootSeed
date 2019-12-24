@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import {getverifycode} from '@/apis/api';
+import {getverifycode, generator} from '@/apis/api';
 
 export default {
   name: 'HelloWorld',
@@ -24,6 +24,7 @@ export default {
       try {
          console.log('_____Test___starting___');
          await getverifycode();
+         await generator();
          console.log('_____Test___finished___');
       } catch (errormsg) {
         console.log('_________Test__errormsg_________' + errormsg + "____________");

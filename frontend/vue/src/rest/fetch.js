@@ -1,7 +1,8 @@
 import axios from 'axios';
 import store from '../store'
-import {baseUrl,publickey} from './env'
+import {baseUrl, publickey} from './env'
 import credential from './credential';
+import base64 from './base64'
 import {getRestToken, RestDecrypt, RestEncrypt} from './sdk'
 
 axios.defaults.retry = 3;
@@ -24,7 +25,7 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
             const result = await axios.get(url, {headers: headers});
             if (result.status === 200) {
                 const cipher = result.data;
-                if (cipher && cipher !== '') {
+                if (cipher && cipher !== '' && base64.isbase64(cipher)) {
                     if (access_token === '') {
                         const decryptbody = RestDecrypt(cipher, '')
                         return decryptbody;
@@ -33,6 +34,8 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
                         const decryptbody = RestDecrypt(cipher, public_key)
                         return decryptbody;
                     }
+                } else if (cipher && cipher !== '') {
+                    return cipher;
                 } else {
                     throw 'reponse body is empty';
                 }
@@ -49,7 +52,7 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
             const result = await axios.post(url, encryptdata, {headers: headers});
             if (result.status === 200) {
                 const cipher = result.data;
-                if (cipher && cipher !== '') {
+                if (cipher && cipher !== '' && base64.isbase64(cipher)) {
                     if (access_token === '') {
                         const decryptbody = RestDecrypt(cipher, '')
                         return decryptbody;
@@ -58,6 +61,8 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
                         const decryptbody = RestDecrypt(cipher, public_key)
                         return decryptbody;
                     }
+                } else if (cipher && cipher !== '') {
+                    return cipher;
                 } else {
                     throw 'reponse body is empty';
                 }
@@ -69,7 +74,7 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
             const result = await axios.put(url, encryptdata, {headers: headers});
             if (result.status === 200) {
                 const cipher = result.data;
-                if (cipher && cipher !== '') {
+                if (cipher && cipher !== '' && base64.isbase64(cipher)) {
                     if (access_token === '') {
                         const decryptbody = RestDecrypt(cipher, '')
                         return decryptbody;
@@ -78,6 +83,8 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
                         const decryptbody = RestDecrypt(cipher, public_key)
                         return decryptbody;
                     }
+                } else if (cipher && cipher !== '') {
+                    return cipher;
                 } else {
                     throw 'reponse body is empty';
                 }
@@ -86,7 +93,7 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
             const result = await axios.delete(url, {headers: headers});
             if (result.status === 200) {
                 const cipher = result.data;
-                if (cipher && cipher !== '') {
+                if (cipher && cipher !== '' && base64.isbase64(cipher)) {
                     if (access_token === '') {
                         const decryptbody = RestDecrypt(cipher, '')
                         return decryptbody;
@@ -95,6 +102,8 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
                         const decryptbody = RestDecrypt(cipher, public_key)
                         return decryptbody;
                     }
+                } else if (cipher && cipher !== '') {
+                    return cipher;
                 } else {
                     throw 'reponse body is empty';
                 }

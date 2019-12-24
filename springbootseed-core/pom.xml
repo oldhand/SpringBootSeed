@@ -54,11 +54,7 @@
             <version>${jjwt.version}</version>
         </dependency>
 
-        <!-- quartz -->
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-        </dependency>
+
 
         <dependency>
             <groupId>org.bouncycastle</groupId>

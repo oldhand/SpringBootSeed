@@ -23,5 +23,11 @@
             <artifactId>springbootseed-logging</artifactId>
             <version>0.1</version>
         </dependency>
+
+        <!-- quartz -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
     </dependencies>
 </project>

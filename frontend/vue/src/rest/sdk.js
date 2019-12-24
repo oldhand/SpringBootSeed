@@ -36,27 +36,22 @@ export const getRestToken = (url) => {
 // 加密
 function encrypt_3des(plaintext, key) {
   try {
-    //console.log("______encrypt_3des____" + plaintext + "_____" + key + "______");
     const DesKey = CryptoJS.enc.Utf8.parse(key);
     const decrypt = CryptoJS.TripleDES.encrypt(plaintext, DesKey, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.ZeroPadding });
     //解析数据后转为Base64
     return decrypt.toString();
   } catch (errmsg) {
-    console.log("______encrypt_3des____" + JSON.stringify(errmsg) + "_________");
     throw errmsg;
   }
 }
 // 解密
 function decrypt_3des(ciphertext, key) {
   try {
-    //console.log("______encrypt_3des____" + ciphertext + "_____" + key + "______");
     const DesKey = CryptoJS.enc.Utf8.parse(key);
     const decrypt = CryptoJS.TripleDES.decrypt(ciphertext, DesKey, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.ZeroPadding });
     //解析数据后转为UTF-8
-    //console.log("______decrypt_3des____" + decrypt.toString(CryptoJS.enc.Utf8) + "_________");
     return JSON.parse(decrypt.toString(CryptoJS.enc.Utf8));
   } catch (errmsg) {
-    console.log("______decrypt_3des____" + JSON.stringify(errmsg) + "_________");
     throw errmsg;
   }
 }

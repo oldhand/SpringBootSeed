@@ -1,6 +1,6 @@
 import store from '../store'
-import {request} from './fetch'
-import {getRestCredential} from './sdk'
+import {execute} from './fetch'
+import {getRestCredential, gettimestamp} from './sdk'
 
 //Credential类 获得访问票据
 var Credential = {
@@ -13,19 +13,19 @@ var Credential = {
 		},
         flush: async() => {
 			try {
-				Credential.settokeninfo({'access_token': '', 'public_key': '', 'access_timestamp': ''});
+				Credential.settokeninfo({'access_token': '', 'public_key': '', 'access_timestamp': 0});
 				return await Credential.get();
 			} catch (e) {
 				return '';
 			}
         },
 		get: async() => {
-				Credential.settokeninfo({'access_token': '', 'public_key': '', 'access_timestamp': ''});
+				//Credential.settokeninfo({'access_token': '', 'public_key': '', 'access_timestamp': 0});
 				var timestamp = "";
 				var credential_info;
 				var access_token;
 				let access_token_info = Credential.gettokeninfo();
-				//console.log("______getRestCredential_____" + JSON.stringify(access_token_info) + "______");
+				console.log("______getRestCredential_____" + JSON.stringify(access_token_info) + "______");
 				access_token = access_token_info.access_token;
                 var access_timestamp = access_token_info.access_timestamp;
                 if (access_token !== '' && access_timestamp !== '') {
@@ -35,20 +35,18 @@ var Credential = {
                         if (timestamp - Number(access_timestamp) < 3000) {
                             return access_token;
                         }
-				} else if (access_token === 'closed') {
-                    return "closed";
-                }
+				}
                 credential_info = getRestCredential();
                 //console.log("______getRestCredential_____" + JSON.stringify(credential_info) + "______");
                 var url = '/auth/credential';
                 var headers = {};
 				try {
-					var json = await request(url, "", headers, credential_info, "POST");
+					var json = await execute(url, "", headers, credential_info, "POST");
 					if (json.token && json.token !== "" && json.publickey && json.publickey !== "") {
 						access_token = json.token;
 						let public_key = json.publickey;
 						console.log("_____get_access_token____" + access_token + "______");
-						Credential.settokeninfo({'access_token': access_token, 'public_key': public_key, 'access_timestamp': timestamp});
+						Credential.settokeninfo({'access_token': access_token, 'public_key': public_key, 'access_timestamp': gettimestamp()});
 						return access_token;
 					} else {
 						console.error('error: Credential.get failure');

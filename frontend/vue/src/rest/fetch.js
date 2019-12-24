@@ -1,19 +1,19 @@
 import axios from 'axios';
 import store from '../store'
-import {baseUrl} from './env'
-import base64 from './base64'
+import {baseUrl,publickey} from './env'
+import credential from './credential';
 import {getRestToken, RestDecrypt, RestEncrypt} from './sdk'
 
 axios.defaults.retry = 3;
 axios.defaults.retryDelay = 1000;
 axios.defaults.timeout = 30000;
 
-export const request = async(url, access_token = '', headers = {}, data = {}, type = 'GET') => {
-
+export const execute = async(url, access_token = '', headers = {}, data = {}, type = 'GET') => {
     type = type.toUpperCase();
     console.log("url : " + baseUrl + url);
     const info = getRestToken(url);
     headers.token = info.token;
+
     headers.timestamp = info.timestamp;
     if (access_token !== '') {
         headers.accesstoken = access_token;
@@ -22,20 +22,15 @@ export const request = async(url, access_token = '', headers = {}, data = {}, ty
     try {
         if (type === "GET") {
             const result = await axios.get(url, {headers: headers});
-            //console.log("______result____" + JSON.stringify(result) + "_________");
             if (result.status === 200) {
                 const cipher = result.data;
                 if (cipher && cipher !== '') {
-                     //console.log('access_token: ' + access_token);
-                     //console.log('cipher: ' + cipher);
                     if (access_token === '') {
                         const decryptbody = RestDecrypt(cipher, '')
-                        //console.log('resData: ' + JSON.stringify(decryptbody));
                         return decryptbody;
                     } else {
                         const public_key = store.state.rest.access_token_info.public_key;
                         const decryptbody = RestDecrypt(cipher, public_key)
-                        //console.log('resData: ' + JSON.stringify(decryptbody));
                         return decryptbody;
                     }
                 } else {
@@ -43,24 +38,24 @@ export const request = async(url, access_token = '', headers = {}, data = {}, ty
                 }
             }
         } else if (type === "POST") {
-            const public_key = store.state.rest.access_token_info.public_key;
-            const encryptdata = RestEncrypt(JSON.stringify(data), public_key);
+            let encryptdata
+            if (access_token === '') {
+                encryptdata = RestEncrypt(JSON.stringify(data), publickey);
+            } else {
+                const public_key = store.state.rest.access_token_info.public_key;
+                encryptdata = RestEncrypt(JSON.stringify(data), public_key);
+            }
             headers["Content-Type"] = "application/json; charset=UTF-8";
             const result = await axios.post(url, encryptdata, {headers: headers});
-            //console.log("______result____" + JSON.stringify(result) + "_________");
             if (result.status === 200) {
                 const cipher = result.data;
                 if (cipher && cipher !== '') {
-                    //console.log('access_token: ' + access_token);
-                    //console.log('cipher: ' + cipher);
                     if (access_token === '') {
                         const decryptbody = RestDecrypt(cipher, '')
-                        //console.log('resData: ' + JSON.stringify(decryptbody));
                         return decryptbody;
                     } else {
                         const public_key = store.state.rest.access_token_info.public_key;
                         const decryptbody = RestDecrypt(cipher, public_key)
-                        //console.log('resData: ' + JSON.stringify(decryptbody));
                         return decryptbody;
                     }
                 } else {
@@ -72,20 +67,15 @@ export const request = async(url, access_token = '', headers = {}, data = {}, ty
             const encryptdata = RestEncrypt(JSON.stringify(data), public_key);
             headers["Content-Type"] = "application/json; charset=UTF-8";
             const result = await axios.put(url, encryptdata, {headers: headers});
-            // console.log("______result____" + JSON.stringify(result) + "_________");
             if (result.status === 200) {
                 const cipher = result.data;
                 if (cipher && cipher !== '') {
-                    // console.log('access_token: ' + access_token);
-                    // console.log('cipher: ' + cipher);
                     if (access_token === '') {
                         const decryptbody = RestDecrypt(cipher, '')
-                        //console.log('resData: ' + JSON.stringify(decryptbody));
                         return decryptbody;
                     } else {
                         const public_key = store.state.rest.access_token_info.public_key;
                         const decryptbody = RestDecrypt(cipher, public_key)
-                        //console.log('resData: ' + JSON.stringify(decryptbody));
                         return decryptbody;
                     }
                 } else {
@@ -97,16 +87,12 @@ export const request = async(url, access_token = '', headers = {}, data = {}, ty
             if (result.status === 200) {
                 const cipher = result.data;
                 if (cipher && cipher !== '') {
-                    // console.log('access_token: ' + access_token);
-                    // console.log('cipher: ' + cipher);
                     if (access_token === '') {
                         const decryptbody = RestDecrypt(cipher, '')
-                        //console.log('resData: ' + JSON.stringify(decryptbody));
                         return decryptbody;
                     } else {
                         const public_key = store.state.rest.access_token_info.public_key;
                         const decryptbody = RestDecrypt(cipher, public_key)
-                        console.log('resData: ' + JSON.stringify(decryptbody));
                         return decryptbody;
                     }
                 } else {
@@ -119,5 +105,25 @@ export const request = async(url, access_token = '', headers = {}, data = {}, ty
     } catch (errmsg) {
         console.log("______await_axios____" + JSON.stringify(errmsg) + "_________");
         throw errmsg;
+    }
+}
+
+export const request = async(url, headers = {}, data = {}, type = 'GET') => {
+    let access_token = await credential.get();
+    try {
+        var json = await execute(url, access_token, headers);
+        return json;
+    } catch (errormsg) {
+        if (errormsg === "AccessToken check failed" || errormsg === "Rest data decryption failure") {
+            try {
+                access_token = await Credential.flush();
+                json = await execute(url, access_token, headers);
+                return json;
+            } catch (errmsg) {
+                throw errmsg;
+            }
+        } else {
+            throw errormsg;
+        }
     }
 }

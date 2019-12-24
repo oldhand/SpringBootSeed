@@ -47,6 +47,13 @@ spring:
       # 生产环境设置成 none，避免程序运行时自动更新数据库结构
       ddl-auto: update
 
+# 接口加密配置
+rsa-encrypt:
+  open: true # 是否开启加密 true  or  false
+  show-log: true # 是否打印加解密log true  or  false
+  private-key: rsa/private_key.pem
+  public-key: rsa/public_key.pem
+
 #jwt
 jwt:
   header: accesstoken

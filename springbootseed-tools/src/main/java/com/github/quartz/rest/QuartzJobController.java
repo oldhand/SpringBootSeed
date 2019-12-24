@@ -23,7 +23,7 @@ import java.io.IOException;
 */
 @Slf4j
 @RestController
-@Api(tags = "系统：定时任务管理")
+@Api(tags = "工具：定时任务管理")
 @RequestMapping("/api/jobs")
 public class QuartzJobController {
 

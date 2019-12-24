@@ -4,11 +4,11 @@ spring:
     druid:
       type: com.alibaba.druid.pool.DruidDataSource
       # mysql 连接参数
-      #driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-      #url: jdbc:log4jdbc:mysql://localhost:3306/springbootseed?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
-      #postgresql 连接参数
       driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-      url: jdbc:log4jdbc:postgresql://localhost:5432/springbootseed
+      url: jdbc:log4jdbc:mysql://localhost:3306/springbootseed?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
+      #postgresql 连接参数
+#      driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+#      url: jdbc:log4jdbc:postgresql://localhost:5432/springbootseed
       # 用户名 root
       username: MyEnc({btTSNb3PH7saU2yQ7FeCsQ==})
       # 密码 root
@@ -48,6 +48,13 @@ spring:
     hibernate:
       # 生产环境设置成 none，避免程序运行时自动更新数据库结构
       ddl-auto: none
+
+# 接口加密配置
+rsa-encrypt:
+  open: true # 是否开启加密 true  or  false
+  show-log: false # 是否打印加解密log true  or  false
+  private-key: rsa/private_key.pem
+  public-key: rsa/public_key.pem
 
 #jwt
 jwt:

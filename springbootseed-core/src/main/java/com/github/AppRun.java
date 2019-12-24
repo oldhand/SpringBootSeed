@@ -1,5 +1,6 @@
 package com.github;
 
+import com.github.modules.config.GlobalConfig;
 import com.github.modules.rsa.annotation.EnableSecurity;
 import com.github.utils.SpringContextHolder;
 import org.springframework.boot.SpringApplication;
@@ -39,17 +40,30 @@ public class AppRun {
         ConfigurableApplicationContext application = SpringApplication.run(AppRun.class, args);
 
         Environment env = application.getEnvironment();
-        logger.info("\n----------------------------------------------------------\n\t" +
-                        "Application is running! Access URLs:\n\t" +
-                        "Local: \t\thttp://localhost:{}\n\t" +
-                        "External: \thttp://{}:{}\n\t" +
-                        "Doc: \thttp://{}:{}/doc.html\n" +
-                        "----------------------------------------------------------",
-                env.getProperty("server.port"),
-                InetAddress.getLocalHost().getHostAddress(),
-                env.getProperty("server.port"),
-                InetAddress.getLocalHost().getHostAddress(),
-                env.getProperty("server.port"));
+        if (GlobalConfig.isDev()) {
+            logger.info("\n----------------------------------------------------------\n\t" +
+                            "Application is running! Access URLs:\n\t" +
+                            "Local: \t\thttp://localhost:{}\n\t" +
+                            "External: \thttp://{}:{}\n\t" +
+                            "Doc: \thttp://{}:{}/doc.html\n" +
+                            "----------------------------------------------------------",
+                    env.getProperty("server.port"),
+                    InetAddress.getLocalHost().getHostAddress(),
+                    env.getProperty("server.port"),
+                    InetAddress.getLocalHost().getHostAddress(),
+                    env.getProperty("server.port"));
+        }
+        else {
+            logger.info("\n----------------------------------------------------------\n\t" +
+                            "Application is running! Access URLs:\n\t" +
+                            "Local: \t\thttp://localhost:{}\n\t" +
+                            "External: \thttp://{}:{}\n\t" +
+                            "----------------------------------------------------------",
+                    env.getProperty("server.port"),
+                    InetAddress.getLocalHost().getHostAddress(),
+                    env.getProperty("server.port"));
+        }
+
     }
 
     @Bean

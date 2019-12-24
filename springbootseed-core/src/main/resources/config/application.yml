@@ -34,12 +34,7 @@ spring:
     timeout: 5000
 
 
-# 接口加密配置
-rsa-encrypt:
-  open: true # 是否开启加密 true  or  false
-  show-log: true # 是否打印加解密log true  or  false
-  private-key: rsa/private_key.pem
-  public-key: rsa/public_key.pem
+
 
 
 rsa:

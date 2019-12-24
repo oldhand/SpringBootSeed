@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -111,10 +112,14 @@ public class JwtTokenUtil implements Serializable {
 
     public Boolean verify(HttpServletRequest request,String privatekey){
         if (privatekey.isEmpty()) return false;
-        final String uri = request.getRequestURI();
+        String uri = request.getRequestURI();
+        final String query = request.getQueryString();
         final String token = getToken(request);
         final String timestamp = getTimestamp(request);
-//        System.out.println("-----------uri------"+uri+"-------"+token+"------"+timestamp+"---------------");
+        if (query != null && !query.isEmpty()) {
+            uri += "?" + URLDecoder.decode(query);
+        }
+//        System.out.println("-----------uri------"+uri+"--------------"+token+"------"+timestamp+"---------------");
 //        System.out.println("-----------privatekey---------"+privatekey+"---------------------");
         if (!token.isEmpty() && !timestamp.isEmpty()  && !token.equals("anonymous") && !timestamp.equals("0")) {
             try {

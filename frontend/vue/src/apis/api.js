@@ -26,3 +26,15 @@ export const generator = async() => {
     console.log("________query__generator______errormsg__" + JSON.stringify(errormsg) + "______");
   }
 };
+
+export const jobs = async() => {
+  let url = "/api/jobs?endTime=2020-01-01 00:00:00&startTime=2010-01-01 00:00:00";
+  var headers = {};
+  try {
+    var json = await request(url, headers);
+    console.log("____query__jobs____" + JSON.stringify(json) + "______");
+    return json;
+  } catch (errormsg) {
+    console.log("________query__jobs______errormsg__" + JSON.stringify(errormsg) + "______");
+  }
+};

@@ -107,6 +107,18 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     /**
+     * 验证是否为安全IP
+     */
+    public static boolean isSafeIp(String ip) {
+        if (ip.equals("127.0.0.1")) {
+            return true;
+        }
+        else if (ip.startsWith("192.168",7)) {
+            return true;
+        }
+        return false;
+    }
+    /**
      * 获取ip地址
      */
     public static String getIp(HttpServletRequest request) {

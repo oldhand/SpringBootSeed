@@ -1,0 +1,6 @@
+/build/
+/config/
+/dist/
+/*.js
+/src/rest/md5.js
+/src/rest/base64.js

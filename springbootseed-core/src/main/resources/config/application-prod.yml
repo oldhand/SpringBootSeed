@@ -51,7 +51,7 @@ spring:
 
 #jwt
 jwt:
-  header: token
+  header: accesstoken
   secret: mySecret
   # token 过期时间 2个小时
   expiration: 7200000

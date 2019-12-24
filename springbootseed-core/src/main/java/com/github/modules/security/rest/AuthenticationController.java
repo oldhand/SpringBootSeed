@@ -1,6 +1,13 @@
 package com.github.modules.security.rest;
 
 import cn.hutool.core.util.IdUtil;
+import com.github.modules.config.GlobalConfig;
+import com.github.modules.rsa.annotation.Decrypt;
+import com.github.modules.rsa.annotation.Encrypt;
+import com.github.modules.security.security.*;
+import com.github.modules.utils.MD5Util;
+import com.github.modules.utils.RSAUtil;
+import com.github.utils.TimeUtils;
 import com.wf.captcha.ArithmeticCaptcha;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -9,10 +16,6 @@ import com.github.annotation.AnonymousAccess;
 import com.github.aop.log.Log;
 import com.github.exception.BadRequestException;
 import com.github.modules.monitor.service.RedisService;
-import com.github.modules.security.security.AuthInfo;
-import com.github.modules.security.security.ImgResult;
-import com.github.modules.security.security.AuthApplication;
-import com.github.modules.security.security.JwtAuthentication;
 import com.github.modules.security.service.OnlineUserService;
 import com.github.modules.security.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,6 +27,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * @author oldhand
@@ -57,31 +61,47 @@ public class AuthenticationController {
     @Log("Token认证")
     @ApiOperation("Token认证")
     @AnonymousAccess
-    @PostMapping(value = "/login")
+    @Encrypt
+    @Decrypt
+    @PostMapping(value = "/credential")
     public ResponseEntity login(@Validated @RequestBody AuthApplication authApplication, HttpServletRequest request){
         if (authApplication.getTimestamp() == 0) {
             throw new BadRequestException("时间戳不能为空");
         }
         final JwtAuthentication jwtAuthentication = (JwtAuthentication) userDetailsService.loadUserByUsername(authApplication.getAppid());
 
-        if(!jwtAuthentication.getPassword().equals(authApplication.getSecret())){
-            throw new AccountExpiredException("密钥错误");
+        if (!GlobalConfig.isDev()) {
+            String md5_secret = MD5Util.get(authApplication.getAppid()+authApplication.getTimestamp()+jwtAuthentication.getPassword());
+
+            if(!md5_secret.equals(authApplication.getSecret())){
+                throw new AccountExpiredException("密钥错误");
+            }
         }
 
         if(!jwtAuthentication.isEnabled()){
             throw new AccountExpiredException("账号已停用，请联系管理员");
         }
-        // 生成令牌
-        final String token = jwtTokenUtil.generateToken(jwtAuthentication);
-        // 保存在线信息
-        onlineUserService.save(jwtAuthentication, token, request);
-        // 返回 token
-        return ResponseEntity.ok(new AuthInfo(token));
+        try {
+            // 生成令牌
+            final String token = jwtTokenUtil.generateToken(jwtAuthentication);
+
+            Map<String, String> keys = RSAUtil.initKey();
+
+            long timestamp = TimeUtils.gettimeStamp();
+            // 保存在线信息
+            onlineUserService.save(jwtAuthentication, token, keys.get("publickey"), keys.get("privatekey"), request);
+            // 返回 token
+            return ResponseEntity.ok(new AuthInfo(token,keys.get("publickey")));
+        }
+        catch (Exception e) {
+            throw new AccountExpiredException("生成token错误");
+        }
     }
 
     @Log("获取验证码")
+    @Encrypt
     @ApiOperation("获取验证码")
-    @GetMapping(value = "/code")
+    @GetMapping(value = "/verifycode")
     public ImgResult getCode(){
         // 算术类型 https://gitee.com/whvse/EasyCaptcha
         ArithmeticCaptcha captcha = new ArithmeticCaptcha(111, 36);
@@ -96,9 +116,9 @@ public class AuthenticationController {
 
     @Log("注销")
     @ApiOperation("注销")
-    @DeleteMapping(value = "/logout")
+    @DeleteMapping(value = "/credential")
     public ResponseEntity logout(HttpServletRequest request){
-        onlineUserService.logout(jwtTokenUtil.getToken(request));
+        onlineUserService.logout(jwtTokenUtil.getAccessToken(request));
         return new ResponseEntity(HttpStatus.OK);
     }
 }

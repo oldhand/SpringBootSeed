@@ -1,8 +1,12 @@
 package com.github.modules.security.utils;
 
+import com.github.modules.utils.MD5Util;
+import com.github.modules.utils.RSAUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
 import com.github.modules.security.security.JwtAuthentication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -105,7 +109,43 @@ public class JwtTokenUtil implements Serializable {
                 .compact();
     }
 
+    public Boolean verify(HttpServletRequest request,String privatekey){
+        if (privatekey.isEmpty()) return false;
+        final String uri = request.getRequestURI();
+        final String token = getToken(request);
+        final String timestamp = getTimestamp(request);
+//        System.out.println("-----------uri------"+uri+"-------"+token+"------"+timestamp+"---------------");
+//        System.out.println("-----------privatekey---------"+privatekey+"---------------------");
+        if (!token.isEmpty() && !timestamp.isEmpty()  && !token.equals("anonymous") && !timestamp.equals("0")) {
+            try {
+                final String decrypt_token = RSAUtil.decrypt(token, privatekey);
+                String md5token = MD5Util.get(uri + timestamp);
+                if (md5token.equals(decrypt_token)) return true;
+            }
+            catch (Exception e) {
+
+            }
+        }
+        return false;
+    }
+
     public String getToken(HttpServletRequest request){
+        final String requestHeader = request.getHeader("token");
+        if (requestHeader != null) {
+            return requestHeader;
+        }
+        return "";
+    }
+
+    public String getTimestamp(HttpServletRequest request){
+        final String requestHeader = request.getHeader("timestamp");
+        if (requestHeader != null) {
+            return requestHeader;
+        }
+        return "";
+    }
+
+    public String getAccessToken(HttpServletRequest request){
         final String requestHeader = request.getHeader(tokenHeader);
         if (requestHeader != null) {
             return requestHeader;

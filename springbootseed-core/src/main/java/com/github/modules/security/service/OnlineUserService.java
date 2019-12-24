@@ -38,14 +38,14 @@ public class OnlineUserService {
         this.redisTemplate = redisTemplate;
     }
 
-    public void save(JwtAuthentication jwtAuthentication, String token, HttpServletRequest request){
+    public void save(JwtAuthentication jwtAuthentication, String token, String publickey, String privatekey, HttpServletRequest request){
         String job = jwtAuthentication.getDept() + "/" + jwtAuthentication.getJob();
         String ip = StringUtils.getIp(request);
         String browser = StringUtils.getBrowser(request);
         String address = StringUtils.getCityInfo(ip);
         OnlineUser onlineUser = null;
         try {
-            onlineUser = new OnlineUser(jwtAuthentication.getUsername(), job, browser , ip, address, EncryptUtils.desEncrypt(token), new Date());
+            onlineUser = new OnlineUser(jwtAuthentication.getUsername(), job, browser , ip, address, EncryptUtils.desEncrypt(token), new Date(),publickey,privatekey);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,6 +80,31 @@ public class OnlineUserService {
         });
         return onlineUsers;
     }
+    public OnlineUser get(String val){
+        try {
+            String key = onlineKey + val;
+            OnlineUser onlineUser = (OnlineUser) redisTemplate.opsForValue().get(key);
+            return onlineUser;
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public String getPrivateKey(String val){
+        OnlineUser onlineUser = this.get(val);
+        if (onlineUser != null) {
+            return onlineUser.getPrivatekey();
+        }
+        return "";
+    }
+    public String getPublickey(String val){
+        OnlineUser onlineUser = this.get(val);
+        if (onlineUser != null) {
+            return onlineUser.getPublickey();
+        }
+        return "";
+    }
 
     public void kickOut(String val) throws Exception {
         String key = onlineKey + EncryptUtils.desDecrypt(val);
@@ -101,6 +126,8 @@ public class OnlineUserService {
             map.put("登录地点", user.getAddress());
             map.put("浏览器", user.getBrowser());
             map.put("登录日期", user.getLoginTime());
+            map.put("公钥", user.getPublickey());
+            map.put("私钥", user.getPrivatekey());
             list.add(map);
         }
         FileUtil.downloadExcel(list, response);

@@ -1,5 +1,6 @@
 package com.github;
 
+import com.github.modules.rsa.annotation.EnableSecurity;
 import com.github.utils.SpringContextHolder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,6 +30,7 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EnableEncryptableProperties
 @EnableTransactionManagement
+@EnableSecurity
 public class AppRun {
     private static Logger logger = LoggerFactory.getLogger(AppRun.class);
 

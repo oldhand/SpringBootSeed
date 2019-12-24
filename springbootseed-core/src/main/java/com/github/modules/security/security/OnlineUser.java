@@ -28,5 +28,9 @@ public class OnlineUser {
 
     private Date loginTime;
 
+    private String publickey;
+
+    private String privatekey;
+
 
 }

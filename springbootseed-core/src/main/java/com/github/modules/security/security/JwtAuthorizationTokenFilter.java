@@ -1,8 +1,14 @@
 package com.github.modules.security.security;
 
+import com.github.modules.config.GlobalConfig;
+import com.github.modules.rsa.config.SecretKeyConfig;
+import com.github.modules.security.service.OnlineUserService;
+import com.github.modules.utils.RSAUtil;
+import com.github.utils.StringUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import com.github.modules.security.utils.JwtTokenUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,53 +34,66 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
     @Value("${jwt.online}")
     private String onlineKey;
 
-    @Value("${spring.profiles.active}")
-    private String active;
+    @Autowired
+    private SecretKeyConfig secretKeyConfig;
 
     private final UserDetailsService userDetailsService;
+    private final OnlineUserService onlineUserService;
     private final JwtTokenUtil jwtTokenUtil;
     private final RedisTemplate redisTemplate;
 
-    public JwtAuthorizationTokenFilter(@Qualifier("jwtApplicationDetailsService") UserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil, RedisTemplate redisTemplate) {
+    public JwtAuthorizationTokenFilter(@Qualifier("jwtApplicationDetailsService") UserDetailsService userDetailsService,OnlineUserService onlineUserService, JwtTokenUtil jwtTokenUtil, RedisTemplate redisTemplate) {
         this.userDetailsService = userDetailsService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.redisTemplate = redisTemplate;
-    }
-    /**
-     * 是否是线上环境
-     */
-    public boolean isDev() {
-        if (active.equals("dev")) {
-            return true;
-        }
-        return false;
+        this.onlineUserService = onlineUserService;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String authToken = jwtTokenUtil.getToken(request);
-        if (isDev() && authToken != null && authToken.equals("anonymous")) {
+
+        String authToken = jwtTokenUtil.getAccessToken(request);
+        String Token = jwtTokenUtil.getToken(request);
+        String ip = StringUtils.getIp(request);
+        if (GlobalConfig.isDev() && authToken != null && authToken.equals("anonymous") && StringUtils.isSafeIp(ip)) {
             TestingAuthenticationToken authentication = new TestingAuthenticationToken("anonymous", null);
             authentication.setAuthenticated(true);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         else {
-            OnlineUser onlineUser = null;
-            try {
-                onlineUser = (OnlineUser)redisTemplate.opsForValue().get(onlineKey + authToken);
-            } catch (ExpiredJwtException e) {
-                log.error(e.getMessage());
+            if (GlobalConfig.isDev() && Token != null && Token.equals("anonymous") && StringUtils.isSafeIp(ip)) {
+                TestingAuthenticationToken authentication = new TestingAuthenticationToken("anonymous", null);
+                authentication.setAuthenticated(true);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            if (onlineUser != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                // It is not compelling necessary to load the use details from the database. You could also store the information
-                // in the token and read it from it. It's up to you ;)
-                JwtAuthentication userDetails = (JwtAuthentication)this.userDetailsService.loadUserByUsername(onlineUser.getUserName());
-                // For simple validation it is completely sufficient to just check the token integrity. You don't have to call
-                // the database compellingly. Again it's up to you ;)
-                if (jwtTokenUtil.validateToken(authToken, userDetails)) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+            else {
+                final String uri = request.getRequestURI();
+                String privatekey = "";
+                if (uri.equals("/auth/credential")) {
+                    privatekey = RSAUtil.loadKey(secretKeyConfig.getPrivateKey());
+                }
+                else if (authToken != null && !authToken.isEmpty()){
+                    privatekey = onlineUserService.getPrivateKey(authToken);
+                }
+                if (!privatekey.isEmpty() && jwtTokenUtil.verify(request, privatekey)) {
+                    OnlineUser onlineUser = null;
+                    try {
+                        onlineUser = (OnlineUser)redisTemplate.opsForValue().get(onlineKey + authToken);
+                    } catch (ExpiredJwtException e) {
+                        log.error(e.getMessage());
+                    }
+                    if (onlineUser != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                        // It is not compelling necessary to load the use details from the database. You could also store the information
+                        // in the token and read it from it. It's up to you ;)
+                        JwtAuthentication userDetails = (JwtAuthentication)this.userDetailsService.loadUserByUsername(onlineUser.getUserName());
+                        // For simple validation it is completely sufficient to just check the token integrity. You don't have to call
+                        // the database compellingly. Again it's up to you ;)
+                        if (jwtTokenUtil.validateToken(authToken, userDetails)) {
+                            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                        }
+                    }
                 }
             }
         }

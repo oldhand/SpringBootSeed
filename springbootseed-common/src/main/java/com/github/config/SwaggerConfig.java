@@ -63,23 +63,17 @@ public class SwaggerConfig {
 
     @Bean(value = "defaultApi")
     public Docket defaultApi() {
-        ParameterBuilder ticketPar = new ParameterBuilder();
         List<Parameter> pars = new ArrayList<>();
-        ticketPar.name(tokenHeader).description("token")
-                .modelRef(new ModelRef("string"))
-                .parameterType("header")
-                .defaultValue("anonymous")
-                .description("令牌")
-                .required(true)
-                .build();
-        pars.add(ticketPar.build());
+        pars.add(accesstoken());
+        pars.add(token());
+        pars.add(timestamp());
         return new Docket(DocumentationType.SWAGGER_2)
                 .enable(enabled)
                 .directModelSubstitute(Timestamp.class, String.class)
                 .directModelSubstitute(Date.class, String.class)
                 .apiInfo(apiInfo())
                 .select()
-                .paths(Predicates.and(Predicates.not(PathSelectors.regex("/error.*")),Predicates.not(PathSelectors.regex("/auth/login"))))
+                .paths(Predicates.and(Predicates.not(PathSelectors.regex("/error.*")),Predicates.not(PathSelectors.regex("/auth/credential"))))
                 .build()
                 .groupName("Authentication required")
                 .globalOperationParameters(pars);
@@ -87,23 +81,61 @@ public class SwaggerConfig {
 
     @Bean(value = "publicApi")
     public Docket publicApi() {
+        List<Parameter> pars = new ArrayList<>();
+        pars.add(token());
+        pars.add(timestamp());
         return new Docket(DocumentationType.SWAGGER_2)
                 .enable(enabled)
                 .directModelSubstitute(Timestamp.class, String.class)
                 .directModelSubstitute(Date.class, String.class)
                 .apiInfo(apiInfo())
                 .select()
-                .paths(PathSelectors.regex("/auth/login"))
+                .paths(PathSelectors.regex("/auth/credential"))
                 .build()
-                .groupName("No Authentication required");
+                .groupName("No Authentication required")
+                .globalOperationParameters(pars);
     }
 
+    private Parameter accesstoken() {
+        ParameterBuilder ticketPar = new ParameterBuilder();
+        ticketPar.name(tokenHeader).description("accesstoken")
+                .modelRef(new ModelRef("string"))
+                .parameterType("header")
+                .defaultValue("anonymous")
+                .description("访问令牌 (默认：anonymous)")
+                .required(true)
+                .build();
+        return ticketPar.build();
+    }
+    private Parameter token() {
+        ParameterBuilder ticketPar = new ParameterBuilder();
+        ticketPar.name("token").description("token")
+                .modelRef(new ModelRef("string"))
+                .parameterType("header")
+                .defaultValue("")
+                .description("认证令牌 (默认：anonymous)")
+                .required(true)
+                .build();
+        return ticketPar.build();
+    }
+
+    private Parameter timestamp() {
+        ParameterBuilder ticketPar = new ParameterBuilder();
+        ticketPar.name("timestamp").description("timestamp")
+                .modelRef(new ModelRef("string"))
+                .parameterType("header")
+                .defaultValue("0")
+                .description("时间戳 (格林威治时间)")
+                .required(true)
+                .build();
+        return ticketPar.build();
+    }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("SpringBootSeed 接口文档 by 网数科技")
                 .version("1.0")
-                .description("SpringBoot的种子框架项目，一个拿来即用的快速框架。")
+                .description("SpringBoot的种子框架，一个拿来即用，稳定，可靠的java框架。")
                 .contact(new Contact("网数科技 (手机: 15111122026)", "", ""))
                 .build();
     }
@@ -133,13 +165,13 @@ class SwaggerDataConfig {
     @ApiModel
     @Data
     private static class Page {
-        @ApiModelProperty("页码 (0..N)")
+        @ApiModelProperty("页码(0..N)")
         private Integer page;
 
         @ApiModelProperty("每页显示的数目")
         private Integer size;
 
-        @ApiModelProperty("以下列格式排序标准：property[,asc | desc]。 默认排序顺序为升序。 支持多种排序条件：如：id,asc")
+        @ApiModelProperty("以下列格式排序标准：property,[asc|desc]。 默认排序顺序为升序。 支持多种排序条件：如：id,asc")
         private List<String> sort;
     }
 }

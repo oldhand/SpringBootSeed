@@ -16,27 +16,6 @@ import java.util.List;
 */
 public interface ApplicationService {
 
-//    UserDTO findById(long id);
-//
-//    UserDTO create(User resources);
-//
-//    void update(User resources);
-//
-//    void delete(Long id);
-//
     ApplicationDTO findByAppid(String appid);
 
-
-//
-//    void updatePass(String username, String encryptPassword);
-//
-//    void updateAvatar(MultipartFile file);
-//
-//    void updateEmail(String username, String email);
-//
-//    Object queryAll(UserQueryCriteria criteria, Pageable pageable);
-//
-//    List<UserDTO> queryAll(UserQueryCriteria criteria);
-//
-//    void download(List<UserDTO> queryAll, HttpServletResponse response) throws IOException;
 }

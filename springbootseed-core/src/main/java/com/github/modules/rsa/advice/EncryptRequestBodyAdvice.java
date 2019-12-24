@@ -1,7 +1,8 @@
 package com.github.modules.rsa.advice;
 
-import com.github.modules.rsa.annotation.Decrypt;
 import com.github.modules.rsa.config.SecretKeyConfig;
+import com.github.modules.security.service.OnlineUserService;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,19 @@ public class EncryptRequestBodyAdvice  implements RequestBodyAdvice {
 
     private boolean encrypt;
 
+    private final OnlineUserService onlineUserService;
+
+    public EncryptRequestBodyAdvice(OnlineUserService onlineUserService) {
+        this.onlineUserService = onlineUserService;
+    }
+
     @Autowired
     private SecretKeyConfig secretKeyConfig;
 
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
         encrypt = false;
-        if (methodParameter.getMethod().isAnnotationPresent(Decrypt.class) && secretKeyConfig.isOpen()) {
+        if (methodParameter.getMethod().isAnnotationPresent(ApiOperation.class) && secretKeyConfig.isOpen()) {
             encrypt = true;
         }
         return encrypt;
@@ -46,7 +53,7 @@ public class EncryptRequestBodyAdvice  implements RequestBodyAdvice {
                                            Class<? extends HttpMessageConverter<?>> converterType){
         if (encrypt) {
             try {
-                return new DecryptHttpInputMessage(inputMessage, secretKeyConfig.getPublicKey(), secretKeyConfig.getCharset(),secretKeyConfig.isShowLog());
+                return new DecryptHttpInputMessage(inputMessage,onlineUserService,secretKeyConfig.getPublicKey(), secretKeyConfig.getCharset(),secretKeyConfig.isShowLog());
             } catch (Exception e) {
                 log.error("Decryption failed", e);
             }

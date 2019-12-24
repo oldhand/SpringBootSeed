@@ -77,10 +77,10 @@ public class LogAspect {
         String address = StringUtils.getCityInfo(ip);
         if (result.getClass().toString().indexOf("ResponseEntity") >= 0) {
             ResponseEntity response = (ResponseEntity)result;
-            log.info("[{}][{}][{}ms][statcode:{}]:{}{}",address,browser,costtime,response.getStatusCodeValue(),methodName,params.toString() + "}");
+            log.info("[{}][{}][{}][{}ms][statcode:{}]:{}{}",address,browser,request.getMethod(),costtime,response.getStatusCodeValue(),methodName,params.toString() + "}");
         }
         else {
-            log.info("[{}][{}][{}ms]:{}{}",address,browser,costtime,methodName,params.toString() + "}");
+            log.info("[{}][{}][{}][{}ms]:{}{}",address,browser,request.getMethod(),costtime,methodName,params.toString() + "}");
         }
 
         return result;

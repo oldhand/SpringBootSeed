@@ -2,13 +2,13 @@ package com.github.modules.rsa.advice;
 
 import com.github.modules.config.GlobalConfig;
 import com.github.modules.monitor.service.RedisService;
-import com.github.modules.rsa.annotation.Encrypt;
 import com.github.modules.rsa.config.SecretKeyConfig;
 import com.github.modules.security.service.OnlineUserService;
 import com.github.modules.utils.DESedeUtil;
 import com.github.modules.utils.MD5Util;
 import com.github.modules.utils.RSAUtil;
 import com.alibaba.fastjson.JSON;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         encrypt = false;
-        if (returnType.getMethod().isAnnotationPresent(Encrypt.class) && secretKeyConfig.isOpen()) {
+        if (returnType.getMethod().isAnnotationPresent(ApiOperation.class) && secretKeyConfig.isOpen()) {
             encrypt = true;
         }
         return encrypt;

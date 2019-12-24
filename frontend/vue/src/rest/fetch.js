@@ -11,7 +11,7 @@ axios.defaults.timeout = 30000;
 
 export const execute = async(url, access_token = '', headers = {}, data = {}, type = 'GET') => {
     type = type.toUpperCase();
-    console.log("url : " + baseUrl + url);
+    console.log("url : [" + type + "]" + baseUrl + url);
     const info = getRestToken(url);
     headers.token = info.token;
 
@@ -120,13 +120,13 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
 export const request = async(url, headers = {}, data = {}, type = 'GET') => {
     let access_token = await credential.get();
     try {
-        var json = await execute(url, access_token, headers);
+        var json = await execute(url, access_token, headers, data, type);
         return json;
     } catch (errormsg) {
         if (errormsg === "AccessToken check failed" || errormsg === "Rest data decryption failure") {
             try {
                 access_token = await Credential.flush();
-                json = await execute(url, access_token, headers);
+                json = await execute(url, access_token, headers, data, type);
                 return json;
             } catch (errmsg) {
                 throw errmsg;

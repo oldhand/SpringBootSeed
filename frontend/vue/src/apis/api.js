@@ -19,6 +19,8 @@ export const generator = async() => {
   try {
     var json = await request(url, headers);
     console.log("____query__generator____" + JSON.stringify(json) + "______");
+    var putjson = await request(url, headers, json, "PUT");
+    console.log("____put__generator____" + JSON.stringify(putjson) + "______");
     return json;
   } catch (errormsg) {
     console.log("________query__generator______errormsg__" + JSON.stringify(errormsg) + "______");

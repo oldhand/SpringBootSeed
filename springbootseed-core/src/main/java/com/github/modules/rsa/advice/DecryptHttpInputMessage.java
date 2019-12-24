@@ -1,6 +1,7 @@
 package com.github.modules.rsa.advice;
 
 import com.github.modules.config.GlobalConfig;
+import com.github.modules.security.service.OnlineUserService;
 import com.github.modules.utils.DESedeUtil;
 import com.github.modules.utils.MD5Util;
 import com.github.modules.utils.RSAUtil;
@@ -27,12 +28,11 @@ public class DecryptHttpInputMessage implements HttpInputMessage {
     private InputStream body;
 
 
-    public DecryptHttpInputMessage(HttpInputMessage inputMessage, String publicKey, String charset, boolean showLog) throws Exception {
+    public DecryptHttpInputMessage(HttpInputMessage inputMessage, OnlineUserService onlineUserService,String publicKey, String charset, boolean showLog) throws Exception {
 
         if (StringUtils.isEmpty(publicKey)) {
             throw new IllegalArgumentException("publicKey is null");
         }
-        log.info("publicKey:{}", publicKey);
 
         this.headers = inputMessage.getHeaders();
         String content = new BufferedReader(new InputStreamReader(inputMessage.getBody())).lines().collect(Collectors.joining(System.lineSeparator()));
@@ -50,11 +50,16 @@ public class DecryptHttpInputMessage implements HttpInputMessage {
             if (accesstoken.equals("")) {
                 decryptBody = DESedeUtil.decrypt(content, MD5Util.get(RSAUtil.loadKey(publicKey)));
                 if(showLog) {
-                    log.info("Encrypted data received：{},After decryption：{}", content, decryptBody);
+                    log.info("Encrypted data received：{}", content);
+                    log.info("After decryption：{}", decryptBody);
                 }
             }
             else {
-                decryptBody = "";
+                decryptBody = DESedeUtil.decrypt(content, MD5Util.get(onlineUserService.getPublickey(accesstoken)));
+                if(showLog) {
+                    log.info("Encrypted data received：{}", content);
+                    log.info("After decryption：{}", decryptBody);
+                }
             }
         }
         this.body = new ByteArrayInputStream(decryptBody.getBytes());

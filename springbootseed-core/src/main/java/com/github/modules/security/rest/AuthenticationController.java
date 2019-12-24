@@ -2,8 +2,6 @@ package com.github.modules.security.rest;
 
 import cn.hutool.core.util.IdUtil;
 import com.github.modules.config.GlobalConfig;
-import com.github.modules.rsa.annotation.Decrypt;
-import com.github.modules.rsa.annotation.Encrypt;
 import com.github.modules.security.security.*;
 import com.github.modules.utils.MD5Util;
 import com.github.modules.utils.RSAUtil;
@@ -61,8 +59,6 @@ public class AuthenticationController {
     @Log("Token认证")
     @ApiOperation("Token认证")
     @AnonymousAccess
-    @Encrypt
-    @Decrypt
     @PostMapping(value = "/credential")
     public ResponseEntity login(@Validated @RequestBody AuthApplication authApplication, HttpServletRequest request){
         if (authApplication.getTimestamp() == 0) {
@@ -99,7 +95,6 @@ public class AuthenticationController {
     }
 
     @Log("获取验证码")
-    @Encrypt
     @ApiOperation("获取验证码")
     @GetMapping(value = "/verifycode")
     public ImgResult getCode(){

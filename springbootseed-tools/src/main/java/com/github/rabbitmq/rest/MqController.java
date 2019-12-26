@@ -1,8 +1,7 @@
 package com.github.rabbitmq.rest;
 
 import com.github.aop.log.Log;
-import com.github.rabbitmq.core.Sender;
-import com.github.rabbitmq.domain.Mq;
+import com.github.rabbitmq.producer.Sender;
 import com.github.rabbitmq.domain.MqMessage;
 import com.github.rabbitmq.service.MqService;
 import com.github.rabbitmq.service.dto.MqDTO;
@@ -16,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
 import java.io.IOException;
-import java.text.MessageFormat;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -73,16 +71,9 @@ public class MqController {
 //            sender.sendMessage(MessageFormat.format("mq测试{0}",i));
 //        }
         MqDTO mq = mqService.create(resources);
+        sender.sendMessage(mq);
         System.out.println("-----------mq-----"+mq.toString()+"---------------");
         return new ResponseEntity<>(mq,HttpStatus.CREATED);
-    }
-
-    @PostMapping(value = "/add")
-    @Log("add")
-    @ApiOperation("add")
-    public ResponseEntity add(@Validated @RequestBody Mq resources){
-
-        return new ResponseEntity<>("",HttpStatus.CREATED);
     }
 
 

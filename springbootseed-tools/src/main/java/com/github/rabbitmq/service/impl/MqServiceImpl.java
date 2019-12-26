@@ -3,8 +3,7 @@ package com.github.rabbitmq.service.impl;
 import com.github.rabbitmq.domain.Mq;
 import com.github.exception.EntityExistException;
 import com.github.rabbitmq.domain.MqMessage;
-import com.github.utils.ValidationUtil;
-import com.github.utils.FileUtil;
+import com.github.utils.*;
 import com.github.rabbitmq.repository.MqRepository;
 import com.github.rabbitmq.service.MqService;
 import com.github.rabbitmq.service.dto.MqDTO;
@@ -20,8 +19,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import com.github.utils.PageUtil;
-import com.github.utils.QueryHelp;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -82,12 +79,11 @@ public class MqServiceImpl implements MqService {
         resources.setIsasync(mqMessage.getIsasync());
         resources.setAck(0);
         resources.setResult("");
+        resources.setUniquekey(MD5Util.get(IdUtil.simpleUUID()));
         //resources.setAcktime(new Timestamp(System.currentTimeMillis()));
-//        Snowflake snowflake = IdUtil.createSnowflake(1, 1);
-//        resources.setId(snowflake.nextId());
-//        if(mqRepository.findByUniquekey(resources.getUniquekey()) != null){
-//            throw new EntityExistException(Mq.class,"key",resources.getUniquekey());
-       // }
+        if(mqRepository.findByUniquekey(resources.getUniquekey()) != null){
+            throw new EntityExistException(Mq.class,"uniquekey",resources.getUniquekey());
+        }
         return mqMapper.toDto(mqRepository.save(resources));
     }
 
@@ -99,7 +95,7 @@ public class MqServiceImpl implements MqService {
         ValidationUtil.isNull( mq.getId(),"Mq","id",resources.getId());
         mq = mqRepository.findByUniquekey(resources.getUniquekey());
         if(mq != null && !mq.getId().equals(mq.getId())){
-            throw new EntityExistException(Mq.class,"key",resources.getUniquekey());
+            throw new EntityExistException(Mq.class,"uniquekey",resources.getUniquekey());
         }
         mq.copy(resources);
         mqRepository.save(mq);

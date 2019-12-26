@@ -1,12 +1,9 @@
 package com.github.rabbitmq.config;
 
-import com.rabbitmq.client.ShutdownSignalException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -27,9 +24,14 @@ public class RabbitConfig {
     private String username;
     private String password;
     private String virtualHost;
+    private int concurrency;
     private int connectionTimeout;
     private boolean publisherConfirms;
     private boolean publisherReturns;
+
+    public int getConcurrency() {
+        return concurrency;
+    }
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -42,6 +44,8 @@ public class RabbitConfig {
         //如果要进行消息回调,则这里必须要设置为true
         connectionFactory.setPublisherConfirms(publisherConfirms);
         connectionFactory.setPublisherReturns(publisherReturns);
+//        connectionFactory.setPublisherConfirms(false);
+//        connectionFactory.setPublisherReturns(false);
         return connectionFactory;
     }
 

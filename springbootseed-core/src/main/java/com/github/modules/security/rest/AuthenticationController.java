@@ -3,7 +3,7 @@ package com.github.modules.security.rest;
 import cn.hutool.core.util.IdUtil;
 import com.github.modules.config.GlobalConfig;
 import com.github.modules.security.security.*;
-import com.github.modules.utils.MD5Util;
+import com.github.utils.MD5Util;
 import com.github.modules.utils.RSAUtil;
 import com.github.utils.TimeUtils;
 import com.wf.captcha.ArithmeticCaptcha;

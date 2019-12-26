@@ -36,6 +36,18 @@ spring:
 
 
 
+rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    connection-timeout: 60000 #毫秒
+    publisher-confirms: true #支持发布确认（确认消息是否发送到交换器）
+    publisher-returns: true #支持发布返回（确认消息没有存入到相应的队列）
+    concurrency: 16 #消费并发数
+
+
 
 rsa:
   # 私钥位置
@@ -45,6 +57,10 @@ rsa:
   use-file: false
   private-key: MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEA2Xjcb+LtTzoPalaHpRDvCGt10f1AOpMGhmNvJKTewhLZb8ChmcLAkCFhh9C1jqpnin2hbAf05ALtn/xLdboznwIDAQABAkEAhc3iO4kxH9UGVRQmY352xARyOqCKWz/I/PjDEpXKZTdWs1oqTM2lpYBlpnV/fJ3Sf2es6Sv6reLCLP7MZP1KGQIhAP0+wZ0c1YBVJvkkHHmhnGyaU1Bsb1alPY4A2sM97Q0lAiEA29Z7rVhw4Fgx201uhnwb0dqiuXfCZM1+fVDyTSg0XHMCIBZencGgE2fjna6yNuWzldquAx/+hBM2Q2qwvqIybScVAiEAlFhnnNHRWZIqEpJtwtJ8819V71GhG+SPNoEpAGfg7YECIHPReHdJdfBehhD1o63xH+gTZqliK4n6XvBhkcyWNYdS
   public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBANl43G/i7U86D2pWh6UQ7whrddH9QDqTBoZjbySk3sIS2W/AoZnCwJAhYYfQtY6qZ4p9oWwH9OQC7Z/8S3W6M58CAwEAAQ==
+
+
+
+
 
 
 jasypt.encryptor:

@@ -12,6 +12,7 @@
 
     <modules>
         <module>samples</module>
+        <module>springbootseed-content</module>
         <module>springbootseed-common</module>
         <module>springbootseed-logging</module>
         <module>springbootseed-tools</module>

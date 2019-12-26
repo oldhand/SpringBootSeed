@@ -94,7 +94,7 @@ public class GeneratorController {
         }
         Map<String,Object> columns = (Map<String,Object>)generatorService.getColumns(tableName);
         List<ColumnInfo> columnInfos = (List<ColumnInfo>)columns.get("content");
-        generatorService.generator((List)columnInfos,genConfigService.find(),tableName);
+        generatorService.generator(columnInfos,genConfigService.find(),tableName);
         return new ResponseEntity("ok", HttpStatus.OK);
     }
 

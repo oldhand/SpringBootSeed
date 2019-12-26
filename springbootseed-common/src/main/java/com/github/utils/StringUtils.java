@@ -116,6 +116,9 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         else if (ip.startsWith("192.168",7)) {
             return true;
         }
+        else if (ip.equals("0:0:0:0:0:0:0:1")) {
+            return true;
+        }
         return false;
     }
     /**

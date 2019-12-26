@@ -1,4 +1,4 @@
-package com.github.modules.utils;
+package com.github.utils;
 
 import org.apache.commons.codec.binary.Base64;
 

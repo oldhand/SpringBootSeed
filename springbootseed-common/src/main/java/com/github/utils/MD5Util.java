@@ -1,4 +1,4 @@
-package com.github.modules.utils;
+package com.github.utils;
 
 import java.io.File;
 import java.io.IOException;

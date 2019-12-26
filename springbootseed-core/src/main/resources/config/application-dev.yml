@@ -69,6 +69,11 @@ jwt:
 generator:
   enabled: true
 
+
+#是否开启日志系统
+log:
+  enabled: false
+
 #是否开启 swagger-ui
 swagger:
   enabled: true

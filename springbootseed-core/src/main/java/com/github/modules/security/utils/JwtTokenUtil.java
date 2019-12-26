@@ -1,6 +1,6 @@
 package com.github.modules.security.utils;
 
-import com.github.modules.utils.MD5Util;
+import com.github.utils.MD5Util;
 import com.github.modules.utils.RSAUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClock;
@@ -112,25 +112,23 @@ public class JwtTokenUtil implements Serializable {
 
     public Boolean verify(HttpServletRequest request,String privatekey){
         if (privatekey.isEmpty()) return false;
-        String uri = request.getRequestURI();
-        final String query = request.getQueryString();
-        final String token = getToken(request);
-        final String timestamp = getTimestamp(request);
-        if (query != null && !query.isEmpty()) {
-            uri += "?" + URLDecoder.decode(query);
-        }
-//        System.out.println("-----------uri------"+uri+"--------------"+token+"------"+timestamp+"---------------");
-//        System.out.println("-----------privatekey---------"+privatekey+"---------------------");
-        if (!token.isEmpty() && !timestamp.isEmpty()  && !token.equals("anonymous") && !timestamp.equals("0")) {
-            try {
-                final String decrypt_token = RSAUtil.decrypt(token, privatekey);
-                String md5token = MD5Util.get(uri + timestamp);
-                if (md5token.equals(decrypt_token)) return true;
+        try {
+            String uri = request.getRequestURI();
+            final String query = request.getQueryString();
+            final String token = getToken(request);
+            final String timestamp = getTimestamp(request);
+            if (query != null && !query.isEmpty()) {
+                uri += "?" + URLDecoder.decode(query,"UTF-8");
             }
-            catch (Exception e) {
-
+//          System.out.println("-----------uri------"+uri+"--------------"+token+"------"+timestamp+"---------------");
+//          System.out.println("-----------privatekey---------"+privatekey+"---------------------");
+            if (!token.isEmpty() && !timestamp.isEmpty()  && !token.equals("anonymous") && !timestamp.equals("0")) {
+                    final String decrypt_token = RSAUtil.decrypt(token, privatekey);
+                    String md5token = MD5Util.get(uri + timestamp);
+                    if (md5token.equals(decrypt_token)) return true;
             }
         }
+        catch (Exception e) {}
         return false;
     }
 

@@ -3,7 +3,7 @@ package com.github.modules.rsa.advice;
 import com.github.modules.config.GlobalConfig;
 import com.github.modules.security.service.OnlineUserService;
 import com.github.modules.utils.DESedeUtil;
-import com.github.modules.utils.MD5Util;
+import com.github.utils.MD5Util;
 import com.github.modules.utils.RSAUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

@@ -5,7 +5,8 @@
     <!--输出到控制台-->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%black(%contextName) %red(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{36}) - %gray(%msg%n)</pattern>
+            <!-- <pattern>%red(%contextName) %white(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{36}) - %gray(%msg%n)</pattern> -->
+			<pattern>%red(%contextName) %white(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level)- %gray(%msg%n)</pattern>
             <charset>utf-8</charset>
         </encoder>
     </appender>

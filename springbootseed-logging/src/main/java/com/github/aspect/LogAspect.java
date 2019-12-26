@@ -11,6 +11,8 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -24,11 +26,15 @@ import java.lang.reflect.Method;
 @Component
 @Aspect
 @Slf4j
+@Configuration
 public class LogAspect {
 
     private final LogService logService;
 
     private long currentTime = 0L;
+
+    @Value("${log.enabled}")
+    private Boolean enabled;
 
     public LogAspect(LogService logService) {
         this.logService = logService;
@@ -58,7 +64,10 @@ public class LogAspect {
         HttpServletRequest request = RequestHolder.getHttpServletRequest();
         String ip = StringUtils.getIp(request);
         String browser = StringUtils.getBrowser(request);
-        logService.save(getUsername(), browser, ip,joinPoint, plog);
+
+        if (enabled) {
+            logService.save(getUsername(), browser, ip,joinPoint, plog);
+        }
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         // 方法路径
@@ -94,10 +103,12 @@ public class LogAspect {
      */
     @AfterThrowing(pointcut = "logPointcut()", throwing = "e")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
-        Log log = new Log("ERROR",System.currentTimeMillis() - currentTime);
-        log.setExceptionDetail(ThrowableUtil.getStackTrace(e).getBytes());
-        HttpServletRequest request = RequestHolder.getHttpServletRequest();
-        logService.save(getUsername(), StringUtils.getBrowser(request), StringUtils.getIp(request), (ProceedingJoinPoint)joinPoint, log);
+        if (enabled) {
+            Log log = new Log("ERROR",System.currentTimeMillis() - currentTime);
+            log.setExceptionDetail(ThrowableUtil.getStackTrace(e).getBytes());
+            HttpServletRequest request = RequestHolder.getHttpServletRequest();
+            logService.save(getUsername(), StringUtils.getBrowser(request), StringUtils.getIp(request), (ProceedingJoinPoint)joinPoint, log);
+        }
     }
 
     public String getUsername() {

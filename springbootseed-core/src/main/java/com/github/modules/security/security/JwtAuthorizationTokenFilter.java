@@ -55,6 +55,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
         String authToken = jwtTokenUtil.getAccessToken(request);
         String Token = jwtTokenUtil.getToken(request);
         String ip = StringUtils.getIp(request);
+//        System.out.println("-----authToken---["+authToken+"]----Token---["+Token+"]---IP---["+ip+"]-------");
         if (GlobalConfig.isDev() && authToken != null && authToken.equals("anonymous") && StringUtils.isSafeIp(ip)) {
             TestingAuthenticationToken authentication = new TestingAuthenticationToken("anonymous", null);
             authentication.setAuthenticated(true);

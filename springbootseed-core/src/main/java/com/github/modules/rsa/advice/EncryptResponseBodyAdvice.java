@@ -5,7 +5,7 @@ import com.github.modules.monitor.service.RedisService;
 import com.github.modules.rsa.config.SecretKeyConfig;
 import com.github.modules.security.service.OnlineUserService;
 import com.github.modules.utils.DESedeUtil;
-import com.github.modules.utils.MD5Util;
+import com.github.utils.MD5Util;
 import com.github.modules.utils.RSAUtil;
 import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.ApiOperation;

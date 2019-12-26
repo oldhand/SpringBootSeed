@@ -17,6 +17,7 @@ import java.util.Map;
 
 
 import cn.hutool.core.io.resource.ClassPathResource;
+import com.github.utils.Base64Util;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;

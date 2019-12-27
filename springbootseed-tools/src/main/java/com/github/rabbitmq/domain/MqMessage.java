@@ -26,8 +26,7 @@ public class MqMessage {
     @ApiModelProperty("消息体 (json字符串)")
     private String message;
 
-    @NotBlank
-    @ApiModelProperty("唯一键 (键值相同时，判断为重复提交)")
+    @ApiModelProperty("唯一键 (键值相同时，判断为重复提交,为空时自动创建)")
     private String uniquekey;
 
     @ApiModelProperty("是否锁定 (0：并发，1，单例)")

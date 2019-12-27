@@ -6,6 +6,7 @@ import com.github.rabbitmq.domain.MqMessage;
 import com.github.rabbitmq.service.MqService;
 import com.github.rabbitmq.service.dto.MqDTO;
 import com.github.rabbitmq.service.dto.MqQueryCriteria;
+import com.github.utils.TimeUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -32,10 +35,7 @@ public class MqController {
     private RabbitTemplate rabbitTemplate;
 
     @Autowired
-    Sender sender;
-
-//    @Autowired
-//    private MqSender mqSender;
+    private Sender sender;
 
     public MqController(MqService mqService) {
         this.mqService = mqService;
@@ -59,20 +59,14 @@ public class MqController {
     @Log("新增队列")
     @ApiOperation("新增队列")
         public ResponseEntity create(@Validated @RequestBody MqMessage resources){
-//        rabbitTemplate.convertAndSend(RabbitConstants.QUEUE,"1message from web");
-//        rabbitTemplate.convertAndSend("exchange","topic.messages","2message from web for exchage");
-//        rabbitTemplate.convertAndSend(RabbitConstants.EXCHANGE,RabbitConstants.ROUTINGKEY,"3message from web for fanoutExchange");
-//
-//        //主要是下面这个
-//        mqSender.send("message from web for fanoutExchange1234234");
-
-//        sender.sendMessage(new String[]{"mq测试"});
-//        for (int i = 0; i < 10; i++) {
-//            sender.sendMessage(MessageFormat.format("mq测试{0}",i));
-//        }
         MqDTO mq = mqService.create(resources);
-        sender.sendMessage(mq);
-        System.out.println("-----------mq-----"+mq.toString()+"---------------");
+        Object result = sender.sendMessage(mq);
+        if (result != null) {
+            Map<String, String> res = (Map<String, String>)result;
+            mq.setAck(Integer.parseInt(res.get("ack")));
+            mq.setResult(res.get("result"));
+            mq.setAcktime(new Timestamp(System.currentTimeMillis()));
+        }
         return new ResponseEntity<>(mq,HttpStatus.CREATED);
     }
 

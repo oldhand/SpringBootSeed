@@ -79,34 +79,32 @@ public class MqServiceImpl implements MqService {
         resources.setIsasync(mqMessage.getIsasync());
         resources.setAck(0);
         resources.setResult("");
-        resources.setUniquekey(MD5Util.get(IdUtil.simpleUUID()));
-        //resources.setAcktime(new Timestamp(System.currentTimeMillis()));
+        if (mqMessage.getUniquekey().isEmpty()) {
+            resources.setUniquekey(MD5Util.get(IdUtil.simpleUUID()));
+        }
+        else {
+            resources.setUniquekey(mqMessage.getUniquekey());
+        }
         if(mqRepository.findByUniquekey(resources.getUniquekey()) != null){
             throw new EntityExistException(Mq.class,"uniquekey",resources.getUniquekey());
         }
         return mqMapper.toDto(mqRepository.save(resources));
     }
 
-    @Override
-    @CacheEvict(allEntries = true)
-    @Transactional(rollbackFor = Exception.class)
-    public void update(Mq resources) {
-        Mq mq = mqRepository.findById(resources.getId()).orElseGet(Mq::new);
-        ValidationUtil.isNull( mq.getId(),"Mq","id",resources.getId());
-        mq = mqRepository.findByUniquekey(resources.getUniquekey());
-        if(mq != null && !mq.getId().equals(mq.getId())){
-            throw new EntityExistException(Mq.class,"uniquekey",resources.getUniquekey());
-        }
-        mq.copy(resources);
-        mqRepository.save(mq);
-    }
+
 
     @Override
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    public void delete(Long id) {
-        mqRepository.deleteById(id);
+    public void updateAck(Long id,String ack,String result) throws Exception {
+        Mq mq = mqRepository.findById(id).orElseGet(Mq::new);
+        ValidationUtil.isNull( mq.getId(),"Mq","id",id);
+        mq.setAcktime(new Timestamp(System.currentTimeMillis()));
+        mq.setAck(Integer.parseInt(ack));
+        mq.setResult(result);
+        mqRepository.save(mq);
     }
+
 
 
     @Override

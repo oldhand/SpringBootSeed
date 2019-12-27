@@ -25,7 +25,7 @@ public class Sender {
      *
      * @param mq
      */
-    public String sendMessage(MqDTO mq) {
+    public Object sendMessage(MqDTO mq) {
         Map<String, String> keyMap = new HashMap<String, String>(3);
         keyMap.put("id", mq.getId().toString());
         keyMap.put("name", mq.getName());
@@ -33,7 +33,7 @@ public class Sender {
         if (mq.getIslock() == 0) {
             if (mq.getIsasync() == 0) {
                 send(keyMap, RabbitConstant.CONTROL_EXCHANGE, RabbitConstant.MESSAGE_ROUTING_KEY);
-                return "";
+                return null;
             }
             else {
                 return sendAndReceive(keyMap, RabbitConstant.CONTROL_EXCHANGE, RabbitConstant.ASYNC_MESSAGE_ROUTING_KEY);
@@ -42,7 +42,7 @@ public class Sender {
         else {
             if (mq.getIsasync() == 0) {
                 send(keyMap, RabbitConstant.CONTROL_EXCHANGE, RabbitConstant.LOCK_MESSAGE_ROUTING_KEY);
-                return "";
+                return null;
             }
             else {
                 return sendAndReceive(keyMap, RabbitConstant.CONTROL_EXCHANGE, RabbitConstant.ASYNC_LOCK_MESSAGE_ROUTING_KEY);
@@ -70,7 +70,7 @@ public class Sender {
      * @param exchange   交换机
      * @param routingKey 路由键
      */
-    private String sendAndReceive(Map<String, String> msg, String exchange, String routingKey) {
+    private Object sendAndReceive(Map<String, String> msg, String exchange, String routingKey) {
         try {
             CorrelationData correlationId = new CorrelationData(UUID.randomUUID().toString());
             log.info("发送阻塞消息:{}", msg);
@@ -79,7 +79,7 @@ public class Sender {
             if (response != null) {
                 log.info("消费者响应:{}", response.toString());
             }
-            return response.toString();
+            return response;
         }
         catch (Exception ee) {
             return "Failed to send message";

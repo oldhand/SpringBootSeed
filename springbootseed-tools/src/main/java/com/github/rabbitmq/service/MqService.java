@@ -40,9 +40,8 @@ public interface MqService {
 
     MqDTO create(MqMessage resources);
 
-    void update(Mq resources);
-
-    void delete(Long id);
 
     void download(List<MqDTO> all, HttpServletResponse response) throws IOException;
+
+    void updateAck(Long id,String ack,String result) throws Exception;
 }

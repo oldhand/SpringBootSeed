@@ -43,4 +43,6 @@ public class RabbitConstant {
      * 交换机
      */
     public static final String CONTROL_EXCHANGE = "control.exchange";
+
+    public static final String CONCURRENCY = "10";
 }

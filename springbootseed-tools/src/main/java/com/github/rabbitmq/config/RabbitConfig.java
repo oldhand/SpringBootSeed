@@ -24,14 +24,10 @@ public class RabbitConfig {
     private String username;
     private String password;
     private String virtualHost;
-    private int concurrency;
     private int connectionTimeout;
     private boolean publisherConfirms;
     private boolean publisherReturns;
 
-    public int getConcurrency() {
-        return concurrency;
-    }
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -63,15 +59,15 @@ public class RabbitConfig {
         //相应交换机接收后异步回调
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
             if (ack) {
-                log.info("交换机接收信息成功,id:{}", correlationData.getId());
+                //log.info("交换机接收信息成功,id:{}", correlationData.getId());
             } else {
-                log.error("交换机接收信息失败:{}", cause);
+                //log.error("交换机接收信息失败:{}", cause);
             }
         });
         //无相应队列与交换机绑定异步回调
         rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-            String msg = new String(message.getBody());
-            log.error("消息:{} 发送失败, 应答码:{} 原因:{} 交换机:{} 路由键:{}", msg, replyCode, replyText, exchange, routingKey);
+            //String msg = new String(message.getBody());
+            //log.error("消息:{} 发送失败, 应答码:{} 原因:{} 交换机:{} 路由键:{}", msg, replyCode, replyText, exchange, routingKey);
         });
         return rabbitTemplate;
     }

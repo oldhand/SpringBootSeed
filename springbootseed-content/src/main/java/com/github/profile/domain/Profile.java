@@ -5,6 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -19,15 +20,13 @@ import java.io.Serializable;
 @Table(name="profile")
 public class Profile implements Serializable {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "identifier")
-    @ApiModelProperty("自增ID")
-	private Long identifier;
-
-    // 用户ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "identifier",insertable=false, updatable=false)
+    @ApiModelProperty("自增ID")
+	private Long identifier;
+    // 用户ID
+    @Column(name = "id",updatable=false,nullable = false)
 	@ApiModelProperty("用户ID")
 	private String id;
 
@@ -37,13 +36,15 @@ public class Profile implements Serializable {
 	private String username;
 
     // 创建日期
-    @Column(name = "published",nullable = false)
+    @Column(name = "published",insertable=false, updatable=false,nullable = false)
 	@ApiModelProperty("创建日期")
+    @CreationTimestamp
 	private Timestamp published;
 
     // 更新日期
-    @Column(name = "updated",nullable = false)
+    @Column(name = "updated",insertable=false, updatable=false,nullable = false)
 	@ApiModelProperty("更新日期")
+    @CreationTimestamp
 	private Timestamp updated;
 
     // 用户类型

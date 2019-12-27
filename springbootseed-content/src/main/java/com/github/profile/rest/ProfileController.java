@@ -3,7 +3,9 @@ package com.github.profile.rest;
 import com.github.aop.log.Log;
 import com.github.profile.domain.*;
 import com.github.profile.service.ProfileService;
+import com.github.profile.service.dto.ProfileDTO;
 import com.github.profile.service.dto.ProfileQueryCriteria;
+import com.github.profile.service.utils.ProfileUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,8 +49,8 @@ public class ProfileController {
     @Log("注册用户")
     @ApiOperation("注册用户")
         public ResponseEntity create(@Validated @RequestBody RegisterProfile resources){
-        //return new ResponseEntity<>(profileService.create(resources),HttpStatus.CREATED);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        ProfileDTO profile = profileService.create(resources);
+        return new ResponseEntity<>(profile,HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/login")

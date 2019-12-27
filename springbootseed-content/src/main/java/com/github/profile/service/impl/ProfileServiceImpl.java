@@ -2,8 +2,9 @@ package com.github.profile.service.impl;
 
 import com.github.profile.domain.Profile;
 import com.github.exception.EntityExistException;
-import com.github.utils.ValidationUtil;
-import com.github.utils.FileUtil;
+import com.github.profile.domain.RegisterProfile;
+import com.github.profile.service.utils.ProfileUtils;
+import com.github.utils.*;
 import com.github.profile.repository.ProfileRepository;
 import com.github.profile.service.ProfileService;
 import com.github.profile.service.dto.ProfileDTO;
@@ -17,8 +18,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import com.github.utils.PageUtil;
-import com.github.utils.QueryHelp;
+
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
@@ -68,11 +68,34 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    public ProfileDTO create(Profile resources) {
-        if(profileRepository.findByUsername(resources.getUsername()) != null){
-            throw new EntityExistException(Profile.class,"username",resources.getUsername());
+    public ProfileDTO create(RegisterProfile resources) {
+        Profile profile = new Profile();
+        profile.setId(ProfileUtils.makeProfileId());
+        profile.setUsername(resources.getUsername());
+        profile.setPassword(EncryptUtils.encryptPassword(resources.getPassword()));
+        profile.setType(resources.getType());
+        profile.setRegioncode(resources.getRegioncode());
+        profile.setMobile(resources.getMobile());
+        profile.setGivenname(resources.getGivenname());
+        profile.setStatus(0);
+        profile.setEmail(resources.getEmail());
+        profile.setLink(resources.getLink());
+        profile.setGender(resources.getGender());
+        profile.setCountry(resources.getCountry());
+        profile.setRegion(resources.getRegion());
+        profile.setBirthdate(resources.getBirthdate());
+        profile.setProvince(resources.getProvince());
+        profile.setCity(resources.getCity());
+        profile.setRealname(resources.getRealname());
+        profile.setIdentitycard(resources.getIdentitycard());
+        profile.setRegIp(resources.getRegIp());
+        profile.setSystem(resources.getSystem());
+        profile.setBrowser(resources.getBrowser());
+
+        if(profileRepository.findByUsername(profile.getUsername()) != null){
+            throw new EntityExistException(Profile.class,"username",profile.getUsername());
         }
-        return profileMapper.toDto(profileRepository.save(resources));
+        return profileMapper.toDto(profileRepository.saveAndFlush(profile));
     }
 
     @Override
@@ -102,13 +125,14 @@ public class ProfileServiceImpl implements ProfileService {
         List<Map<String, Object>> list = new ArrayList<>();
         for (ProfileDTO profile : all) {
             Map<String,Object> map = new LinkedHashMap<>();
+            map.put("自增ID", profile.getIdentifier());
+            map.put("用户ID", profile.getId());
             map.put("用户名称", profile.getUsername());
             map.put("创建日期", profile.getPublished());
             map.put("更新日期", profile.getUpdated());
             map.put("用户类型", profile.getType());
             map.put("国家代码", profile.getRegioncode());
             map.put("手机号码", profile.getMobile());
-            map.put("密码", profile.getPassword());
             map.put("昵称", profile.getGivenname());
             map.put("用户状态", profile.getStatus());
             map.put("用户邮箱", profile.getEmail());

@@ -1,6 +1,7 @@
 package com.github.profile.service;
 
 import com.github.profile.domain.Profile;
+import com.github.profile.domain.RegisterProfile;
 import com.github.profile.service.dto.ProfileDTO;
 import com.github.profile.service.dto.ProfileQueryCriteria;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +38,7 @@ public interface ProfileService {
      */
     ProfileDTO findById(String id);
 
-    ProfileDTO create(Profile resources);
+    ProfileDTO create(RegisterProfile resources);
 
     void update(Profile resources);
 

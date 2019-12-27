@@ -83,6 +83,7 @@ public class EncryptUtils {
      * 密码加密
      */
     public static String encryptPassword(String password){
-        return  DigestUtils.md5DigestAsHex(password.getBytes());
+        String secret = DigestUtils.md5DigestAsHex(password.getBytes()) + "springboot";
+        return DigestUtils.md5DigestAsHex(secret.getBytes());
     }
 }

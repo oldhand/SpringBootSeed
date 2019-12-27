@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Author:Bobby
+ * Author: oldhand
  * DateTime:2019/4/9
  **/
 @ConfigurationProperties(prefix = "rsa-encrypt")

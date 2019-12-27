@@ -51,10 +51,6 @@ public class RegisterProfile {
 	@ApiModelProperty("昵称")
 	private String givenname;
 
-    // 用户状态
-	@ApiModelProperty("用户状态")
-	private Integer status;
-
     // 用户邮箱
 	@ApiModelProperty("用户邮箱")
 	private String email;

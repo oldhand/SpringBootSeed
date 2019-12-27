@@ -3,6 +3,7 @@ package com.github.modules.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -26,6 +27,10 @@ import org.bouncycastle.asn1.pkcs.RSAPrivateKeyStructure;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 /**
  * RSA Util
@@ -89,18 +94,12 @@ public class RSAUtil{
     public static String loadKey(String filepath) {
         // 从 classpath:resources/ 中加载资源
         try {
-            final ClassPathResource resource = new ClassPathResource(filepath);
-            if (!resource.getFile().exists()) {
-                throw new Exception(filepath + " not found");
-            }
-            final byte[] keyBytes = new byte[(int) resource.getFile().length()];
-            final FileInputStream in = new FileInputStream(resource.getFile());
-            in.read(keyBytes);
-            in.close();
-            return new String(keyBytes).trim();
+            ClassPathResource resource = new ClassPathResource(filepath);
+            String content = resource.getReader(Charset.defaultCharset()).lines().collect(Collectors.joining("\n"));
+            return content.trim();
         }
         catch (Exception e) {
-
+            System.out.println("RSAUtil.loadKey Exception: "+e.toString());
         }
         return "";
     }

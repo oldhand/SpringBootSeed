@@ -3,6 +3,7 @@ package com.github.profile.service.impl;
 import com.github.profile.domain.Profile;
 import com.github.exception.EntityExistException;
 import com.github.profile.domain.RegisterProfile;
+import com.github.profile.domain.UpdateProfile;
 import com.github.profile.service.utils.ProfileUtils;
 import com.github.utils.*;
 import com.github.profile.repository.ProfileRepository;
@@ -66,6 +67,14 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    @Cacheable(key = "#p0")
+    public ProfileDTO findByUsername(String username) {
+        Profile profile = profileRepository.findByUsername(username);
+        ValidationUtil.isNull(profile.getUsername(),"Profile","username",username);
+        return profileMapper.toDto(profile);
+    }
+
+    @Override
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public ProfileDTO create(RegisterProfile resources) {
@@ -101,14 +110,25 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    public void update(Profile resources) {
-        Profile profile = profileRepository.findById(resources.getId()).orElseGet(Profile::new);
-        ValidationUtil.isNull( profile.getId(),"Profile","id",resources.getId());
-        profile = profileRepository.findByUsername(resources.getUsername());
-        if(profile != null && !profile.getId().equals(profile.getId())){
-            throw new EntityExistException(Profile.class,"username",resources.getUsername());
-        }
-        profile.copy(resources);
+    public void update(UpdateProfile resources) {
+        Profile profile = profileRepository.myfindById(resources.getId());
+        profile.setUsername(resources.getUsername());
+        profile.setRegioncode(resources.getRegioncode());
+        profile.setMobile(resources.getMobile());
+        profile.setGivenname(resources.getGivenname());
+        profile.setEmail(resources.getEmail());
+        profile.setLink(resources.getLink());
+        profile.setGender(resources.getGender());
+        profile.setCountry(resources.getCountry());
+        profile.setRegion(resources.getRegion());
+        profile.setBirthdate(resources.getBirthdate());
+        profile.setProvince(resources.getProvince());
+        profile.setCity(resources.getCity());
+        profile.setRealname(resources.getRealname());
+        profile.setIdentitycard(resources.getIdentitycard());
+        profile.setRegIp(resources.getRegIp());
+        profile.setSystem(resources.getSystem());
+        profile.setBrowser(resources.getBrowser());
         profileRepository.save(profile);
     }
 

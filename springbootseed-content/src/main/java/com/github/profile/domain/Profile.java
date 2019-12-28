@@ -25,7 +25,9 @@ public class Profile implements Serializable {
     @Column(name = "identifier",insertable=false, updatable=false)
     @ApiModelProperty("自增ID")
 	private Long identifier;
+
     // 用户ID
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id",updatable=false,nullable = false)
 	@ApiModelProperty("用户ID")
 	private String id;

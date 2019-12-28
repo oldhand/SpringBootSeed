@@ -20,7 +20,7 @@ public class GlobalConfig {
   public static String active;
 
   @Value("${spring.profiles.active}")
-  public void setDatabase(String value) {
+  public void setActive(String value) {
     active = value;
   }
 

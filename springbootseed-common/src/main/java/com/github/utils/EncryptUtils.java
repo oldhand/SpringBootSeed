@@ -1,5 +1,9 @@
 package com.github.utils;
 
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -13,7 +17,17 @@ import java.nio.charset.StandardCharsets;
  * @author oldhand
  * @date 2019-12-16
 */
+
+@Component
 public class EncryptUtils {
+
+    @Getter
+    public static String password;
+
+    @Value("${springbootseed.password}")
+    public void setPassword(String value) {
+        password = value;
+    }
 
     private static String strKey = "Passw0rd", strParam = "Passw0rd";
 
@@ -82,8 +96,8 @@ public class EncryptUtils {
     /**
      * 密码加密
      */
-    public static String encryptPassword(String password){
-        String secret = DigestUtils.md5DigestAsHex(password.getBytes()) + "springboot";
+    public static String encryptPassword(String str){
+        String secret = DigestUtils.md5DigestAsHex(str.getBytes()) + password;
         return DigestUtils.md5DigestAsHex(secret.getBytes());
     }
 }

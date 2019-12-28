@@ -21,6 +21,11 @@ import java.sql.Timestamp;
 @ApiModel
 public class UpdateProfile {
 
+    // 用户ID
+    @NotBlank
+    @ApiModelProperty("用户ID")
+    private String id;
+
     // 用户名称
     @NotBlank
     @ApiModelProperty("用户名称")

@@ -73,8 +73,9 @@ public class ProfileController {
     @Log("修改用户")
     @ApiOperation("修改用户")
         public ResponseEntity update(@Validated @RequestBody UpdateProfile resources){
-        //profileService.update(resources);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        profileService.update(resources);
+        ProfileDTO profile = profileService.findByUsername(resources.getUsername());
+        return new ResponseEntity(profile,HttpStatus.OK);
     }
     @PutMapping(value = "/password")
     @Log("修改密码")

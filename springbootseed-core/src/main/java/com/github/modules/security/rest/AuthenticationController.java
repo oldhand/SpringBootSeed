@@ -94,20 +94,7 @@ public class AuthenticationController {
         }
     }
 
-    @Log("获取验证码")
-    @ApiOperation("获取验证码")
-    @GetMapping(value = "/verifycode")
-    public ImgResult getCode(){
-        // 算术类型 https://gitee.com/whvse/EasyCaptcha
-        ArithmeticCaptcha captcha = new ArithmeticCaptcha(111, 36);
-        // 几位数运算，默认是两位
-        captcha.setLen(2);
-        // 获取运算的结果：5
-        String result = captcha.text();
-        String uuid = codeKey + IdUtil.simpleUUID();
-        redisService.saveCode(uuid,result);
-        return new ImgResult(captcha.toBase64(),uuid);
-    }
+
 
     @Log("注销")
     @ApiOperation("注销")

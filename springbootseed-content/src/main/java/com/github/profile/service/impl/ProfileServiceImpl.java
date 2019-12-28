@@ -135,8 +135,19 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    public void delete(String id) {
-        profileRepository.deleteById(id);
+    public void disable(String id) {
+        Profile profile = profileRepository.myfindById(id);
+        profile.setStatus(1);
+        profileRepository.save(profile);
+    }
+
+    @Override
+    @CacheEvict(allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
+    public void enable(String id) {
+        Profile profile = profileRepository.myfindById(id);
+        profile.setStatus(0);
+        profileRepository.save(profile);
     }
 
 

@@ -1,4 +1,4 @@
-package com.github.modules.security.security;
+package com.github.profile.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

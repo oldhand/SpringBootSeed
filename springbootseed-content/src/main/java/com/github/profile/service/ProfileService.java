@@ -45,7 +45,8 @@ public interface ProfileService {
 
     void update(UpdateProfile resources);
 
-    void delete(String id);
+    void enable(String id);
+    void disable(String id);
 
     void download(List<ProfileDTO> all, HttpServletResponse response) throws IOException;
 }

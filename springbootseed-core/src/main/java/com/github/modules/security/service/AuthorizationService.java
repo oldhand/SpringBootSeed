@@ -39,13 +39,12 @@ public class AuthorizationService {
     }
 
     public void save(JwtAuthentication jwtAuthentication, String token, String publickey, String privatekey, HttpServletRequest request){
-        String job = jwtAuthentication.getDept() + "/" + jwtAuthentication.getJob();
         String ip = StringUtils.getIp(request);
         String browser = StringUtils.getBrowser(request);
         String address = StringUtils.getCityInfo(ip);
         Authorization authorization = null;
         try {
-            authorization = new Authorization("",jwtAuthentication.getUsername(), job, browser , ip, address, EncryptUtils.desEncrypt(token), new Date(),publickey,privatekey);
+            authorization = new Authorization("",jwtAuthentication.getUsername(), browser , ip, address, EncryptUtils.desEncrypt(token), new Date(),publickey,privatekey);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -120,8 +119,8 @@ public class AuthorizationService {
         List<Map<String, Object>> list = new ArrayList<>();
         for (Authorization user : all) {
             Map<String,Object> map = new LinkedHashMap<>();
-            map.put("用户名", user.getUserName());
-            map.put("岗位", user.getJob());
+            map.put("用户ID", user.getAppid());
+            map.put("应用ID", user.getAppid());
             map.put("登录IP", user.getIp());
             map.put("登录地点", user.getAddress());
             map.put("浏览器", user.getBrowser());

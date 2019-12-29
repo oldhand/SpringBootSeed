@@ -59,6 +59,12 @@ public class AuthenticationController {
     @AnonymousAccess
     @PostMapping(value = "/credential")
     public ResponseEntity login(@Validated @RequestBody AuthApplication authApplication, HttpServletRequest request){
+        if (authApplication.getAppid().isEmpty()) {
+            throw new BadRequestException("应用ID不能为空");
+        }
+        if (authApplication.getSecret().isEmpty()) {
+            throw new BadRequestException("密钥不能为空");
+        }
         if (authApplication.getTimestamp() == 0) {
             throw new BadRequestException("时间戳不能为空");
         }
@@ -85,7 +91,7 @@ public class AuthenticationController {
             // 保存在线信息
             authorizationService.save(jwtAuthentication, token, keys.get("publickey"), keys.get("privatekey"), request);
             // 返回 token
-            return ResponseEntity.ok(new AuthInfo(token,keys.get("publickey")));
+            return ResponseEntity.ok(new AuthInfo(token,"",keys.get("publickey")));
         }
         catch (Exception e) {
             throw new AccountExpiredException("生成token错误");
@@ -94,10 +100,10 @@ public class AuthenticationController {
 
 
 
-    @Log("注销")
-    @ApiOperation("注销")
-    @DeleteMapping(value = "/credential")
-    public ResponseEntity logout(HttpServletRequest request){
+    @Log("刷新Token")
+    @ApiOperation("刷新Token")
+    @PostMapping(value = "/flush")
+    public ResponseEntity flush(@Validated @RequestBody AuthApplication authApplication, HttpServletRequest request){
         authorizationService.logout(jwtTokenUtil.getAccessToken(request));
         return new ResponseEntity(HttpStatus.OK);
     }

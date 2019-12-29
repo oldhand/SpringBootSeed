@@ -8,10 +8,7 @@ import com.github.profile.service.ProfileService;
 import com.github.profile.service.dto.ProfileDTO;
 import com.github.profile.service.dto.ProfileQueryCriteria;
 import com.github.profile.service.utils.ProfileUtils;
-import com.github.utils.MD5Util;
-import com.github.utils.PasswordUtils;
-import com.github.utils.TimeUtils;
-import com.github.utils.redisUtils;
+import com.github.utils.*;
 import com.wf.captcha.ArithmeticCaptcha;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
 import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -69,7 +67,8 @@ public class ProfileController {
     @PostMapping(value = "/login")
     @Log("登录")
     @ApiOperation("登录")
-    public ResponseEntity login(@Validated LoginProfile loginprofile){
+    public ResponseEntity login(@Validated LoginProfile loginprofile, HttpServletRequest request){
+        System.out.println("----------profile-----"+ AuthorizationUtils.getProfileid(request)+"---------------");
         if (loginprofile.getId().isEmpty()) {
             throw new BadRequestException("用户ID不能为空");
         }
@@ -103,13 +102,17 @@ public class ProfileController {
         }
 
         final ProfileDTO profile = profileService.findById(profileid);
-        System.out.println("----------profile-----"+profile.toString()+"---------------");
-        System.out.println("----------profile-----"+profile.getPassword()+"---------------");
-        System.out.println("----------profile-----"+loginprofile.getPassword()+"---------------");
-        System.out.println("----------profile-----"+PasswordUtils.encryptPassword(loginprofile.getPassword())+"---------------");
+
+        if (profile.getStatus() != 0) {
+            throw new AccountExpiredException("用户已经被禁用");
+        }
+
         if(!profile.getPassword().equals(PasswordUtils.encryptPassword(loginprofile.getPassword()))){
             redisUtils.set(key, TimeUtils.gettimeStamp());
             throw new AccountExpiredException("密码错误");
+        }
+        if (!AuthorizationUtils.setProfileid(request,profileid)) {
+            throw new AccountExpiredException("登录失败");
         }
         if (!authlogin.isEmpty()) {
             redisUtils.delete(key);
@@ -118,8 +121,6 @@ public class ProfileController {
             // 清除验证码
             redisUtils.delete(loginprofile.getUuid());
         }
-
-        //return new ResponseEntity<>(profileService.create(resources),HttpStatus.CREATED);
         return new ResponseEntity(profile,HttpStatus.OK);
     }
 

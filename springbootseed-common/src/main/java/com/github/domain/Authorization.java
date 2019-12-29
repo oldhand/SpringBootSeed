@@ -16,9 +16,7 @@ public class Authorization {
 
     private String profileid;
 
-    private String userName;
-
-    private String job;
+    private String appid;
 
     private String browser;
 

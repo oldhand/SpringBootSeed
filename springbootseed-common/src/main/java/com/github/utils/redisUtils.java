@@ -33,7 +33,7 @@ public class redisUtils {
         redisUtils.redisTemplate = redisTemplate;
     }
     /**
-     * 获取验证码
+     * 获取缓存
      */
     public static String get(String key) {
         try {
@@ -43,10 +43,18 @@ public class redisUtils {
         }
     }
     /**
-     * 保存验证码
+     * 保存缓存
      */
     public static void set(String key, Object val) {
         redisTemplate.opsForValue().set(key,val);
+        redisTemplate.expire(key,expiration, TimeUnit.MINUTES);
+    }
+
+    /**
+     * 保存缓存
+     */
+    public static void set(String key,String tag, Object val) {
+        redisTemplate.opsForValue().set(tag + "::" + key,val);
         redisTemplate.expire(key,expiration, TimeUnit.MINUTES);
     }
 

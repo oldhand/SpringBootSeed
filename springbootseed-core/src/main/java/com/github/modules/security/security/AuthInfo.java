@@ -14,5 +14,6 @@ import java.io.Serializable;
 public class AuthInfo implements Serializable {
 
     private final String token;
+    private final String profileid;
     private final String publickey;
 }

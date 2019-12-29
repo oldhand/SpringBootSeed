@@ -1,9 +1,8 @@
 package com.github.modules.rsa.advice;
 
 import com.github.modules.config.GlobalConfig;
-import com.github.modules.monitor.service.RedisService;
 import com.github.modules.rsa.config.SecretKeyConfig;
-import com.github.modules.security.service.OnlineUserService;
+import com.github.modules.security.service.AuthorizationService;
 import com.github.modules.utils.DESedeUtil;
 import com.github.utils.MD5Util;
 import com.github.modules.utils.RSAUtil;
@@ -17,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
@@ -33,15 +31,15 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     private boolean encrypt;
 
-    private final OnlineUserService onlineUserService;
+    private final AuthorizationService authorizationService;
 
     @Autowired
     private SecretKeyConfig secretKeyConfig;
 
     private static ThreadLocal<Boolean> encryptLocal = new ThreadLocal<>();
 
-    public EncryptResponseBodyAdvice(OnlineUserService onlineUserService) {
-        this.onlineUserService = onlineUserService;
+    public EncryptResponseBodyAdvice(AuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
     }
 
     @Override
@@ -73,7 +71,7 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
                 String publicKey;
                 if (accesstoken != null && !accesstoken.isEmpty()) {
-                    publicKey = onlineUserService.getPublickey(accesstoken);
+                    publicKey = authorizationService.getPublickey(accesstoken);
                 }
                 else {
                     publicKey = RSAUtil.loadKey(secretKeyConfig.getPublicKey());

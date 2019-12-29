@@ -35,7 +35,7 @@ public class redisUtils {
     /**
      * 获取验证码
      */
-    public static String getCodeVal(String key) {
+    public static String get(String key) {
         try {
             return Objects.requireNonNull(redisTemplate.opsForValue().get(key)).toString();
         }catch (Exception e){
@@ -45,7 +45,7 @@ public class redisUtils {
     /**
      * 保存验证码
      */
-    public static void saveCode(String key, Object val) {
+    public static void set(String key, Object val) {
         redisTemplate.opsForValue().set(key,val);
         redisTemplate.expire(key,expiration, TimeUnit.MINUTES);
     }

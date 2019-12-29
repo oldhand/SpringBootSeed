@@ -8,6 +8,9 @@ import com.github.profile.service.ProfileService;
 import com.github.profile.service.dto.ProfileDTO;
 import com.github.profile.service.dto.ProfileQueryCriteria;
 import com.github.profile.service.utils.ProfileUtils;
+import com.github.utils.MD5Util;
+import com.github.utils.PasswordUtils;
+import com.github.utils.TimeUtils;
 import com.github.utils.redisUtils;
 import com.wf.captcha.ArithmeticCaptcha;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
@@ -66,21 +70,57 @@ public class ProfileController {
     @Log("登录")
     @ApiOperation("登录")
     public ResponseEntity login(@Validated LoginProfile loginprofile){
-
-        // 查询验证码
-        String code = redisUtils.getCodeVal(loginprofile.getUuid());
-        // 清除验证码
-        redisUtils.delete(loginprofile.getUuid());
-
-        if (StringUtils.isBlank(code)) {
-            throw new BadRequestException("验证码已过期");
+        if (loginprofile.getId().isEmpty()) {
+            throw new BadRequestException("用户ID不能为空");
         }
-        if (StringUtils.isBlank(loginprofile.getVerifycode()) || !loginprofile.getVerifycode().equalsIgnoreCase(code)) {
-            throw new BadRequestException("验证码错误");
+        try {
+            PasswordUtils.match(loginprofile.getPassword());
+        }catch(Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
+        String profileid = loginprofile.getId();
+
+        // 查询上一次登录出错时间戳
+        String key = "auth_login::" + MD5Util.get(profileid);
+        String authlogin = redisUtils.get(key);
+
+        System.out.println("----------authlogin-----"+authlogin+"---------------");
+        if (!authlogin.isEmpty()) {
+            if (loginprofile.getUuid().isEmpty()) {
+                throw new BadRequestException("UUID不能为空");
+            }
+            if (loginprofile.getVerifycode().isEmpty()) {
+                throw new BadRequestException("验证码不能为空");
+            }
+            // 查询验证码
+            String verifycode = redisUtils.get(loginprofile.getUuid());
+            if (StringUtils.isBlank(verifycode)) {
+                throw new BadRequestException("验证码已过期");
+            }
+            if (StringUtils.isBlank(loginprofile.getVerifycode()) || !loginprofile.getVerifycode().equalsIgnoreCase(verifycode)) {
+                throw new BadRequestException("验证码错误");
+            }
+        }
+
+        final ProfileDTO profile = profileService.findById(profileid);
+        System.out.println("----------profile-----"+profile.toString()+"---------------");
+        System.out.println("----------profile-----"+profile.getPassword()+"---------------");
+        System.out.println("----------profile-----"+loginprofile.getPassword()+"---------------");
+        System.out.println("----------profile-----"+PasswordUtils.encryptPassword(loginprofile.getPassword())+"---------------");
+        if(!profile.getPassword().equals(PasswordUtils.encryptPassword(loginprofile.getPassword()))){
+            redisUtils.set(key, TimeUtils.gettimeStamp());
+            throw new AccountExpiredException("密码错误");
+        }
+        if (!authlogin.isEmpty()) {
+            redisUtils.delete(key);
+        }
+        if (!loginprofile.getUuid().isEmpty()) {
+            // 清除验证码
+            redisUtils.delete(loginprofile.getUuid());
         }
 
         //return new ResponseEntity<>(profileService.create(resources),HttpStatus.CREATED);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity(profile,HttpStatus.OK);
     }
 
     @PostMapping(value = "/logout/{id}")
@@ -134,7 +174,7 @@ public class ProfileController {
         // 获取运算的结果：5
         String result = captcha.text();
         String uuid = codeKey + "::" + IdUtil.simpleUUID();
-        redisUtils.saveCode(uuid,result);
+        redisUtils.set(uuid,result);
         return new ImgResult(captcha.toBase64(),uuid);
     }
 }

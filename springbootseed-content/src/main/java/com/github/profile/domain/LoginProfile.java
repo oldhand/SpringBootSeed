@@ -16,25 +16,11 @@ import javax.validation.constraints.NotBlank;
 @ApiModel
 public class LoginProfile {
 
-    // 用户名称
-	@ApiModelProperty("用户名称")
-	private String username;
-
-    // 用户类型
-    @NotBlank
-	@ApiModelProperty("用户类型")
-	private String type;
-
-    // 国家代码
-	@ApiModelProperty("国家代码")
-	private String regioncode;
-
-    // 手机号码
-	@ApiModelProperty("手机号码")
-	private String mobile;
+	// 用户ID
+	@ApiModelProperty("用户ID")
+	private String id;
 
     // 密码
-    @NotBlank
 	@ApiModelProperty("密码")
 	private String password;
 
@@ -48,6 +34,6 @@ public class LoginProfile {
 
     @Override
     public String toString() {
-        return "{username=" + username  + ", password= ******}";
+        return "{id=" + id  + ", password= ******}";
     }
 }

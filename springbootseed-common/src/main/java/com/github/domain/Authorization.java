@@ -1,4 +1,4 @@
-package com.github.modules.security.security;
+package com.github.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,9 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OnlineUser {
+public class Authorization {
+
+    private String profileid;
 
     private String userName;
 

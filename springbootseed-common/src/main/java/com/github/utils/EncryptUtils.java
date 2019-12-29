@@ -18,16 +18,7 @@ import java.nio.charset.StandardCharsets;
  * @date 2019-12-16
 */
 
-@Component
 public class EncryptUtils {
-
-    @Getter
-    public static String password;
-
-    @Value("${springbootseed.password}")
-    public void setPassword(String value) {
-        password = value;
-    }
 
     private static String strKey = "Passw0rd", strParam = "Passw0rd";
 
@@ -93,11 +84,4 @@ public class EncryptUtils {
         return new String(retByte);
     }
 
-    /**
-     * 密码加密
-     */
-    public static String encryptPassword(String str){
-        String secret = DigestUtils.md5DigestAsHex(str.getBytes()) + password;
-        return DigestUtils.md5DigestAsHex(secret.getBytes());
-    }
 }

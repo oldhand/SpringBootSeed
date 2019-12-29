@@ -1,8 +1,9 @@
 package com.github.modules.security.security;
 
+import com.github.domain.Authorization;
 import com.github.modules.config.GlobalConfig;
 import com.github.modules.rsa.config.SecretKeyConfig;
-import com.github.modules.security.service.OnlineUserService;
+import com.github.modules.security.service.AuthorizationService;
 import com.github.modules.utils.RSAUtil;
 import com.github.utils.StringUtils;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -38,15 +38,15 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
     private SecretKeyConfig secretKeyConfig;
 
     private final UserDetailsService userDetailsService;
-    private final OnlineUserService onlineUserService;
+    private final AuthorizationService authorizationService;
     private final JwtTokenUtil jwtTokenUtil;
     private final RedisTemplate redisTemplate;
 
-    public JwtAuthorizationTokenFilter(@Qualifier("jwtApplicationDetailsService") UserDetailsService userDetailsService,OnlineUserService onlineUserService, JwtTokenUtil jwtTokenUtil, RedisTemplate redisTemplate) {
+    public JwtAuthorizationTokenFilter(@Qualifier("jwtApplicationDetailsService") UserDetailsService userDetailsService, AuthorizationService authorizationService, JwtTokenUtil jwtTokenUtil, RedisTemplate redisTemplate) {
         this.userDetailsService = userDetailsService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.redisTemplate = redisTemplate;
-        this.onlineUserService = onlineUserService;
+        this.authorizationService = authorizationService;
     }
 
     @Override
@@ -74,19 +74,19 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
                     privatekey = RSAUtil.loadKey(secretKeyConfig.getPrivateKey());
                 }
                 else if (authToken != null && !authToken.isEmpty()){
-                    privatekey = onlineUserService.getPrivateKey(authToken);
+                    privatekey = authorizationService.getPrivateKey(authToken);
                 }
                 if (!privatekey.isEmpty() && jwtTokenUtil.verify(request, privatekey)) {
-                    OnlineUser onlineUser = null;
+                    Authorization authorization = null;
                     try {
-                        onlineUser = (OnlineUser)redisTemplate.opsForValue().get(onlineKey + authToken);
+                        authorization = (Authorization)redisTemplate.opsForValue().get(onlineKey + authToken);
                     } catch (ExpiredJwtException e) {
                         log.error(e.getMessage());
                     }
-                    if (onlineUser != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    if (authorization != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                         // It is not compelling necessary to load the use details from the database. You could also store the information
                         // in the token and read it from it. It's up to you ;)
-                        JwtAuthentication userDetails = (JwtAuthentication)this.userDetailsService.loadUserByUsername(onlineUser.getUserName());
+                        JwtAuthentication userDetails = (JwtAuthentication)this.userDetailsService.loadUserByUsername(authorization.getUserName());
                         // For simple validation it is completely sufficient to just check the token integrity. You don't have to call
                         // the database compellingly. Again it's up to you ;)
                         if (jwtTokenUtil.validateToken(authToken, userDetails)) {

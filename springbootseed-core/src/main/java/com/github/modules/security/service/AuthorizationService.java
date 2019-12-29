@@ -1,7 +1,7 @@
 package com.github.modules.security.service;
 
 import com.github.modules.security.security.JwtAuthentication;
-import com.github.modules.security.security.OnlineUser;
+import com.github.domain.Authorization;
 import com.github.utils.EncryptUtils;
 import com.github.utils.FileUtil;
 import com.github.utils.PageUtil;
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 @SuppressWarnings({"unchecked","all"})
-public class OnlineUserService {
+public class AuthorizationService {
 
     @Value("${jwt.expiration}")
     private Long expiration;
@@ -34,7 +34,7 @@ public class OnlineUserService {
 
     private final RedisTemplate redisTemplate;
 
-    public OnlineUserService(RedisTemplate redisTemplate) {
+    public AuthorizationService(RedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
@@ -43,48 +43,48 @@ public class OnlineUserService {
         String ip = StringUtils.getIp(request);
         String browser = StringUtils.getBrowser(request);
         String address = StringUtils.getCityInfo(ip);
-        OnlineUser onlineUser = null;
+        Authorization authorization = null;
         try {
-            onlineUser = new OnlineUser(jwtAuthentication.getUsername(), job, browser , ip, address, EncryptUtils.desEncrypt(token), new Date(),publickey,privatekey);
+            authorization = new Authorization("",jwtAuthentication.getUsername(), job, browser , ip, address, EncryptUtils.desEncrypt(token), new Date(),publickey,privatekey);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        redisTemplate.opsForValue().set(onlineKey + token, onlineUser);
+        redisTemplate.opsForValue().set(onlineKey + token, authorization);
         redisTemplate.expire(onlineKey + token,expiration, TimeUnit.MILLISECONDS);
     }
 
-    public Page<OnlineUser> getAll(String filter, Pageable pageable){
-        List<OnlineUser> onlineUsers = getAll(filter);
-        return new PageImpl<OnlineUser>(
-                PageUtil.toPage(pageable.getPageNumber(),pageable.getPageSize(),onlineUsers),
+    public Page<Authorization> getAll(String filter, Pageable pageable){
+        List<Authorization> authorizations = getAll(filter);
+        return new PageImpl<Authorization>(
+                PageUtil.toPage(pageable.getPageNumber(),pageable.getPageSize(), authorizations),
                 pageable,
-                onlineUsers.size());
+                authorizations.size());
     }
 
-    public List<OnlineUser> getAll(String filter){
+    public List<Authorization> getAll(String filter){
         List<String> keys = new ArrayList<>(redisTemplate.keys(onlineKey + "*"));
         Collections.reverse(keys);
-        List<OnlineUser> onlineUsers = new ArrayList<>();
+        List<Authorization> authorizations = new ArrayList<>();
         for (String key : keys) {
-            OnlineUser onlineUser = (OnlineUser) redisTemplate.opsForValue().get(key);
+            Authorization authorization = (Authorization) redisTemplate.opsForValue().get(key);
             if(StringUtils.isNotBlank(filter)){
-                if(onlineUser.toString().contains(filter)){
-                    onlineUsers.add(onlineUser);
+                if(authorization.toString().contains(filter)){
+                    authorizations.add(authorization);
                 }
             } else {
-                onlineUsers.add(onlineUser);
+                authorizations.add(authorization);
             }
         }
-        Collections.sort(onlineUsers, (o1, o2) -> {
+        Collections.sort(authorizations, (o1, o2) -> {
             return o2.getLoginTime().compareTo(o1.getLoginTime());
         });
-        return onlineUsers;
+        return authorizations;
     }
-    public OnlineUser get(String val){
+    public Authorization get(String val){
         try {
             String key = onlineKey + val;
-            OnlineUser onlineUser = (OnlineUser) redisTemplate.opsForValue().get(key);
-            return onlineUser;
+            Authorization authorization = (Authorization) redisTemplate.opsForValue().get(key);
+            return authorization;
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -92,16 +92,16 @@ public class OnlineUserService {
         return null;
     }
     public String getPrivateKey(String val){
-        OnlineUser onlineUser = this.get(val);
-        if (onlineUser != null) {
-            return onlineUser.getPrivatekey();
+        Authorization authorization = this.get(val);
+        if (authorization != null) {
+            return authorization.getPrivatekey();
         }
         return "";
     }
     public String getPublickey(String val){
-        OnlineUser onlineUser = this.get(val);
-        if (onlineUser != null) {
-            return onlineUser.getPublickey();
+        Authorization authorization = this.get(val);
+        if (authorization != null) {
+            return authorization.getPublickey();
         }
         return "";
     }
@@ -116,9 +116,9 @@ public class OnlineUserService {
         redisTemplate.delete(key);
     }
 
-    public void download(List<OnlineUser> all, HttpServletResponse response) throws IOException {
+    public void download(List<Authorization> all, HttpServletResponse response) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
-        for (OnlineUser user : all) {
+        for (Authorization user : all) {
             Map<String,Object> map = new LinkedHashMap<>();
             map.put("用户名", user.getUserName());
             map.put("岗位", user.getJob());

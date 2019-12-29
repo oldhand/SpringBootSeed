@@ -1,7 +1,7 @@
 package com.github.modules.rsa.advice;
 
 import com.github.modules.rsa.config.SecretKeyConfig;
-import com.github.modules.security.service.OnlineUserService;
+import com.github.modules.security.service.AuthorizationService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +25,10 @@ public class EncryptRequestBodyAdvice  implements RequestBodyAdvice {
 
     private boolean encrypt;
 
-    private final OnlineUserService onlineUserService;
+    private final AuthorizationService authorizationService;
 
-    public EncryptRequestBodyAdvice(OnlineUserService onlineUserService) {
-        this.onlineUserService = onlineUserService;
+    public EncryptRequestBodyAdvice(AuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
     }
 
     @Autowired
@@ -53,7 +53,7 @@ public class EncryptRequestBodyAdvice  implements RequestBodyAdvice {
                                            Class<? extends HttpMessageConverter<?>> converterType){
         if (encrypt) {
             try {
-                return new DecryptHttpInputMessage(inputMessage,onlineUserService,secretKeyConfig.getPublicKey(), secretKeyConfig.getCharset(),secretKeyConfig.isShowLog());
+                return new DecryptHttpInputMessage(inputMessage, authorizationService,secretKeyConfig.getPublicKey(), secretKeyConfig.getCharset(),secretKeyConfig.isShowLog());
             } catch (Exception e) {
                 log.error("Decryption failed", e);
             }

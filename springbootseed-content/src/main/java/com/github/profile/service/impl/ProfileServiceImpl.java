@@ -1,5 +1,6 @@
 package com.github.profile.service.impl;
 
+import com.github.exception.BadRequestException;
 import com.github.profile.domain.Profile;
 import com.github.exception.EntityExistException;
 import com.github.profile.domain.RegisterProfile;
@@ -61,7 +62,8 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     @Cacheable(key = "#p0")
     public ProfileDTO findById(String id) {
-        Profile profile = profileRepository.findById(id).orElseGet(Profile::new);
+        Profile profile = profileRepository.myfindById(id);
+        if (profile == null) throw new BadRequestException("用户不存在");
         ValidationUtil.isNull(profile.getId(),"Profile","id",id);
         return profileMapper.toDto(profile);
     }
@@ -70,6 +72,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Cacheable(key = "#p0")
     public ProfileDTO findByUsername(String username) {
         Profile profile = profileRepository.findByUsername(username);
+        if (profile == null) throw new BadRequestException("用户不存在");
         ValidationUtil.isNull(profile.getUsername(),"Profile","username",username);
         return profileMapper.toDto(profile);
     }
@@ -81,7 +84,7 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = new Profile();
         profile.setId(ProfileUtils.makeProfileId());
         profile.setUsername(resources.getUsername());
-        profile.setPassword(EncryptUtils.encryptPassword(resources.getPassword()));
+        profile.setPassword(PasswordUtils.encryptPassword(resources.getPassword()));
         profile.setType(resources.getType());
         profile.setRegioncode(resources.getRegioncode());
         profile.setMobile(resources.getMobile());
@@ -112,6 +115,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Transactional(rollbackFor = Exception.class)
     public void update(UpdateProfile resources) {
         Profile profile = profileRepository.myfindById(resources.getId());
+        if (profile == null) throw new BadRequestException("用户不存在");
         profile.setUsername(resources.getUsername());
         profile.setRegioncode(resources.getRegioncode());
         profile.setMobile(resources.getMobile());
@@ -137,6 +141,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Transactional(rollbackFor = Exception.class)
     public void disable(String id) {
         Profile profile = profileRepository.myfindById(id);
+        if (profile == null) throw new BadRequestException("用户不存在");
         profile.setStatus(1);
         profileRepository.save(profile);
     }
@@ -146,6 +151,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Transactional(rollbackFor = Exception.class)
     public void enable(String id) {
         Profile profile = profileRepository.myfindById(id);
+        if (profile == null) throw new BadRequestException("用户不存在");
         profile.setStatus(0);
         profileRepository.save(profile);
     }

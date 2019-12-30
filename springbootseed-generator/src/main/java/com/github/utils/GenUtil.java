@@ -11,10 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 代码生成
@@ -31,6 +28,8 @@ public class GenUtil {
     private static final String PK = "PRI";
 
     private static final String EXTRA = "auto_increment";
+
+    private final static List<String> ignoreColumns = Arrays.asList("published","updated","author","deleted","createnew");
 
     /**
      * 获取后端代码模板名称
@@ -82,6 +81,8 @@ public class GenUtil {
         List<Map<String,Object>> columns = new ArrayList<>();
         List<Map<String,Object>> queryColumns = new ArrayList<>();
         for (ColumnInfo column : columnInfos) {
+
+            if (ignoreColumns.indexOf(column.getColumnName()) >= 0) continue;
             Map<String,Object> listMap = new HashMap<>();
             listMap.put("columnComment",column.getColumnComment());
             listMap.put("columnKey",column.getColumnKey());

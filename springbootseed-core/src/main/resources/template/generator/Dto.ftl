@@ -1,5 +1,6 @@
 package ${package}.service.dto;
 
+import com.github.base.BaseDTO;
 import lombok.Data;
 <#if hasTimestamp>
 import java.sql.Timestamp;
@@ -19,10 +20,10 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 * @date ${date}
 */
 @Data
-public class ${className}DTO implements Serializable {
+public class ${className}DTO extends BaseDTO implements Serializable {
 <#if columns??>
     <#list columns as column>
-
+	<#if column.columnName != 'id'>
     <#if column.columnComment != ''>
     // ${column.columnComment}
     </#if>
@@ -33,6 +34,8 @@ public class ${className}DTO implements Serializable {
     </#if>
     </#if>
     private ${column.columnType} ${column.changeColumnName};
+	</#if>
+	
     </#list>
 </#if>
 }

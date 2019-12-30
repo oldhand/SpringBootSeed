@@ -4,6 +4,7 @@ import com.github.aop.log.Log;
 import ${package}.domain.${className};
 import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}QueryCriteria;
+import com.github.utils.AuthorizationUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
 import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 /**
 * @author ${author}
 * @date ${date}
@@ -46,7 +47,10 @@ public class ${className}Controller {
     @PostMapping
     @Log("新增${className}")
     @ApiOperation("新增${className}")
-        public ResponseEntity create(@Validated @RequestBody ${className} resources){
+        public ResponseEntity create(@Validated @RequestBody ${className} resources, HttpServletRequest request){
+		String profileid = AuthorizationUtils.getProfileid(request);
+		resources.setAuthor(profileid);
+		resources.setId(1000L);
         return new ResponseEntity<>(${changeClassName}Service.create(resources),HttpStatus.CREATED);
     }
 

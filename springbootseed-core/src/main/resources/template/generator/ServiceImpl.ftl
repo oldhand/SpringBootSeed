@@ -113,9 +113,6 @@ public class ${className}ServiceImpl implements ${className}Service {
 <#if columns??>
     <#list columns as column>
         <#if column.columnKey = 'UNI'>
-        <#if column_index = 1>
-        ${className} ${changeClassName} = null;
-        </#if>
         ${changeClassName} = ${changeClassName}Repository.findBy${column.capitalColumnName}(resources.get${column.capitalColumnName}());
         if(${changeClassName} != null && !${changeClassName}.get${pkCapitalColName}().equals(${changeClassName}.get${pkCapitalColName}())){
             throw new EntityExistException(${className}.class,"${column.columnName}",resources.get${column.capitalColumnName}());
@@ -140,6 +137,12 @@ public class ${className}ServiceImpl implements ${className}Service {
         List<Map<String, Object>> list = new ArrayList<>();
         for (${className}DTO ${changeClassName} : all) {
             Map<String,Object> map = new LinkedHashMap<>();
+		    map.put("ID", ${changeClassName}.getId());
+		    map.put("创建日期", ${changeClassName}.getPublished());
+		    map.put("更新日期", ${changeClassName}.getUpdated());
+		    map.put("创建者", ${changeClassName}.getAuthor());
+		    map.put("删除标记", ${changeClassName}.getDeleted());
+		    map.put("创建标记", ${changeClassName}.getCreatenew());
         <#list columns as column>
             <#if column.columnKey != 'PRI'>
             <#if column.columnComment != ''>

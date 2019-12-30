@@ -26,10 +26,24 @@ public interface GeneratorService {
     Object getColumns(String name);
 
     /**
+     * 数据表
+     * @param name 表名
+     * @return /
+     */
+    boolean checkTableIsExist(String name);
+
+    /**
      * 生成代码
      * @param columnInfos 表字段数据
      * @param genConfig 代码生成配置
      * @param tableName 表名
      */
     void generator(List<ColumnInfo> columnInfos, GenConfig genConfig, String tableName);
+
+    /**
+     * 验证表结构是否符合标准,并修正表结构
+     * @param name 表名
+     * @return /
+     */
+    void verify(String name);
 }

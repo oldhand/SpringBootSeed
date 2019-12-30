@@ -1,10 +1,14 @@
 package ${package}.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.base.BaseEntity;
 import lombok.Data;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 <#if hasTimestamp>
@@ -22,10 +26,10 @@ import java.io.Serializable;
 @Entity
 @Data
 @Table(name="${tableName}")
-public class ${className} implements Serializable {
+public class ${className} extends BaseEntity implements Serializable {
 <#if columns??>
     <#list columns as column>
-
+	<#if column.columnName != 'id'>
     <#if column.columnComment != ''>
     // ${column.columnComment}
     </#if>
@@ -40,6 +44,8 @@ public class ${className} implements Serializable {
 	@ApiModelProperty("${column.columnComment}")
     </#if>
 	private ${column.columnType} ${column.changeColumnName};
+	</#if>
+	
     </#list>
 </#if>
 

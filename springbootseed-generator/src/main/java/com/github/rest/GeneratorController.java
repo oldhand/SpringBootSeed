@@ -15,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -34,6 +31,10 @@ public class GeneratorController {
     private final GeneratorService generatorService;
 
     private final GenConfigService genConfigService;
+
+    private final static List<String> systemTableList = Arrays.asList(
+            "profile","application","mq","log","content_ids"
+    );
 
     @Value("${generator.enabled}")
     private Boolean generatorEnabled;
@@ -71,6 +72,9 @@ public class GeneratorController {
     @ApiOperation("查询表内元数据")
     @GetMapping(value = "/columns")
     public ResponseEntity getTables(@RequestParam String tableName){
+        if (!generatorService.checkTableIsExist(tableName)) {
+            throw new BadRequestException("数据库表不存在！");
+        }
         return new ResponseEntity<>(generatorService.getColumns(tableName), HttpStatus.OK);
     }
 
@@ -80,6 +84,9 @@ public class GeneratorController {
     public ResponseEntity generatorbycolumns(@RequestBody List<ColumnInfo> columnInfos, @RequestParam String tableName){
         if(!generatorEnabled){
             throw new BadRequestException("此环境不允许生成代码！");
+        }
+        if (!generatorService.checkTableIsExist(tableName)) {
+            throw new BadRequestException("数据库表不存在！");
         }
         generatorService.generator(columnInfos,genConfigService.find(),tableName);
         return new ResponseEntity("ok",HttpStatus.OK);
@@ -92,6 +99,13 @@ public class GeneratorController {
         if(!generatorEnabled){
             throw new BadRequestException("此环境不允许生成代码！");
         }
+        if (!generatorService.checkTableIsExist(tableName)) {
+            throw new BadRequestException("数据库表不存在！");
+        }
+        if (systemTableList.indexOf(tableName) >= 0) {
+            throw new BadRequestException("系统表不允许生成代码！");
+        }
+        generatorService.verify(tableName);
         Map<String,Object> columns = (Map<String,Object>)generatorService.getColumns(tableName);
         List<ColumnInfo> columnInfos = (List<ColumnInfo>)columns.get("content");
         generatorService.generator(columnInfos,genConfigService.find(),tableName);

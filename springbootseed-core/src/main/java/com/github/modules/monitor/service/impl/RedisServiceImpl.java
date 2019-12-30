@@ -70,6 +70,19 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
+    public void deleteTag(String keys) {
+        if (keys.isEmpty()) return;
+        keys = keys.replace(",",";");
+        String[] tags = keys.split(";");
+        for(String tag : tags){
+            Set<String> rediskeys = redisTemplate.keys(tag + "::*");
+            if (rediskeys.size() > 0) {
+                redisTemplate.delete(rediskeys.stream().collect(Collectors.toList()));
+            }
+        }
+    }
+
+    @Override
     public void deleteAll() {
         Set<String> keys = redisTemplate.keys(  "*");
         redisTemplate.delete(keys.stream().filter(s -> !s.contains(onlineKey)).filter(s -> !s.contains(codeKey)).collect(Collectors.toList()));

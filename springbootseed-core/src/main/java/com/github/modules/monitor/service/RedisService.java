@@ -50,6 +50,12 @@ public interface RedisService {
     void delete(String key);
 
     /**
+     * delete
+     * @param keys 标签名称，分号或逗号分隔
+     */
+    void deleteTag(String keys);
+
+    /**
      * 清空缓存
      */
     void deleteAll();

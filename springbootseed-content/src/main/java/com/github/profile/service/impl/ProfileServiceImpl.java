@@ -156,6 +156,15 @@ public class ProfileServiceImpl implements ProfileService {
         profileRepository.save(profile);
     }
 
+    @Override
+    @CacheEvict(allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
+    public void changePassword(String id,String password) {
+        Profile profile = profileRepository.myfindById(id);
+        if (profile == null) throw new BadRequestException("用户不存在");
+        profile.setPassword(PasswordUtils.encryptPassword(password));
+        profileRepository.save(profile);
+    }
 
     @Override
     public void download(List<ProfileDTO> all, HttpServletResponse response) throws IOException {

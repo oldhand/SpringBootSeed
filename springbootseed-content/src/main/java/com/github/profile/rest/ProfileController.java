@@ -143,9 +143,52 @@ public class ProfileController {
     @PutMapping(value = "/password")
     @Log("修改密码")
     @ApiOperation("修改密码")
-    public ResponseEntity changePassword(@Validated @RequestBody ChangePassword resources){
-        //profileService.update(resources);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    public ResponseEntity changePassword(@Validated @RequestBody ChangePassword profile){
+
+        if (profile.getId().isEmpty()) {
+            throw new BadRequestException("用户ID不能为空");
+        }
+        try {
+            PasswordUtils.match(profile.getOldpassword());
+        }catch(Exception e) {
+            throw new BadRequestException("老密码: " + e.getMessage());
+        }
+        try {
+            PasswordUtils.match(profile.getNewpassword());
+        }catch(Exception e) {
+            throw new BadRequestException("新密码: " + e.getMessage());
+        }
+
+        String profileid = profile.getId();
+
+        // 查询上一次登录出错时间戳
+
+        if (profile.getUuid().isEmpty()) {
+            throw new BadRequestException("UUID不能为空");
+        }
+        if (profile.getVerifycode().isEmpty()) {
+            throw new BadRequestException("验证码不能为空");
+        }
+        // 查询验证码
+        String verifycode = redisUtils.get(profile.getUuid());
+        if (StringUtils.isBlank(verifycode)) {
+            throw new BadRequestException("验证码已过期");
+        }
+        if (StringUtils.isBlank(profile.getVerifycode()) || !profile.getVerifycode().equalsIgnoreCase(verifycode)) {
+            throw new BadRequestException("验证码错误");
+        }
+
+        final ProfileDTO profiledto = profileService.findById(profileid);
+
+        if (profiledto.getStatus() != 0) {
+            throw new AccountExpiredException("用户已经被禁用");
+        }
+
+        if(!profiledto.getPassword().equals(PasswordUtils.encryptPassword(profile.getOldpassword()))){
+            throw new AccountExpiredException("密码错误");
+        }
+        profileService.changePassword(profileid,profile.getNewpassword());
+        return new ResponseEntity("ok",HttpStatus.OK);
     }
 
     @PostMapping(value = "/disable/{id}")

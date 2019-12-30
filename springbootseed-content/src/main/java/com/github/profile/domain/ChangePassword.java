@@ -16,16 +16,15 @@ import javax.validation.constraints.NotBlank;
 @ApiModel
 public class ChangePassword {
 
-    // 用户名称
-	@ApiModelProperty("用户名称")
-	private String username;
+	// 用户ID
+	@ApiModelProperty("用户ID")
+	private String id;
+
     // 密码
-    @NotBlank
 	@ApiModelProperty("原密码")
 	private String oldpassword;
 
 	// 密码
-	@NotBlank
 	@ApiModelProperty("新密码")
 	private String newpassword;
 
@@ -39,6 +38,6 @@ public class ChangePassword {
 
     @Override
     public String toString() {
-        return "{username=" + username  + ", password= ******}";
+        return "{profileid=" + id  + ", password= ******}";
     }
 }

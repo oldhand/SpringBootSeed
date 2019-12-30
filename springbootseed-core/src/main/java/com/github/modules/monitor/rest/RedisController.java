@@ -1,10 +1,13 @@
 package com.github.modules.monitor.rest;
 
+import com.github.exception.BadRequestException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import com.github.aop.log.Log;
 import com.github.modules.monitor.domain.vo.RedisVo;
 import com.github.modules.monitor.service.RedisService;
+import io.swagger.annotations.ApiParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,10 +47,26 @@ public class RedisController {
     }
 
     @Log("删除Redis缓存")
-    @DeleteMapping
+    @DeleteMapping(value = "/{id}")
+    @ApiImplicitParam(name = "id",value = "缓存id",required = true,dataType = "String",paramType = "path")
     @ApiOperation("删除Redis缓存")
-        public ResponseEntity delete(@RequestBody RedisVo resources){
-        redisService.delete(resources.getKey());
+        public ResponseEntity delete(@PathVariable String id){
+        if (id.isEmpty()) {
+            throw new BadRequestException("缓存ID不能为空");
+        }
+        redisService.delete(id);
+        return new ResponseEntity("ok", HttpStatus.OK);
+    }
+
+    @Log("删除Redis缓存标签")
+    @DeleteMapping(value = "/tag/{keys}")
+    @ApiOperation("删除Redis缓存标签")
+    @ApiImplicitParam(name = "keys",value = "缓存标签 (分号或逗号分隔)",required = true,dataType = "String",paramType = "path")
+    public ResponseEntity deleteTag(@PathVariable String keys){
+        if (keys.isEmpty()) {
+            throw new BadRequestException("缓存标签不能为空");
+        }
+        redisService.deleteTag(keys);
         return new ResponseEntity("ok", HttpStatus.OK);
     }
 

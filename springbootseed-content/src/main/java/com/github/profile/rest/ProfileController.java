@@ -68,7 +68,6 @@ public class ProfileController {
     @Log("登录")
     @ApiOperation("登录")
     public ResponseEntity login(@Validated LoginProfile loginprofile, HttpServletRequest request){
-        System.out.println("----------profile-----"+ AuthorizationUtils.getProfileid(request)+"---------------");
         if (loginprofile.getId().isEmpty()) {
             throw new BadRequestException("用户ID不能为空");
         }
@@ -83,7 +82,6 @@ public class ProfileController {
         String key = "auth_login::" + MD5Util.get(profileid);
         String authlogin = redisUtils.get(key);
 
-        System.out.println("----------authlogin-----"+authlogin+"---------------");
         if (!authlogin.isEmpty()) {
             if (loginprofile.getUuid().isEmpty()) {
                 throw new BadRequestException("UUID不能为空");
@@ -124,12 +122,14 @@ public class ProfileController {
         return new ResponseEntity(profile,HttpStatus.OK);
     }
 
-    @PostMapping(value = "/logout/{id}")
+    @PostMapping(value = "/logout")
     @Log("注销")
     @ApiOperation("注销")
-    public ResponseEntity logout(@PathVariable String id){
-        //return new ResponseEntity<>(profileService.create(resources),HttpStatus.CREATED);
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity logout(HttpServletRequest request){
+        if (!AuthorizationUtils.setProfileid(request,"")) {
+            throw new AccountExpiredException("注销失败");
+        }
+        return new ResponseEntity("ok",HttpStatus.OK);
     }
 
     @PutMapping

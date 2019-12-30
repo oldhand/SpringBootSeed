@@ -64,7 +64,7 @@ public class AuthorizationUtils {
         try {
             String token =  getAccessToken(request);
             if (!token.isEmpty()) {
-                String key = onlineKey + token;
+                String key = onlineKey + "::" + token;
                 Authorization authorization = (Authorization) redisTemplate.opsForValue().get(key);
                 if (authorization != null) {
                     return authorization.getProfileid();
@@ -80,7 +80,7 @@ public class AuthorizationUtils {
         try {
             String token =  getAccessToken(request);
             if (!token.isEmpty()) {
-                String key = onlineKey + token;
+                String key = onlineKey + "::" + token;
                 Authorization authorization = (Authorization) redisTemplate.opsForValue().get(key);
                 if (authorization != null) {
                     authorization.setProfileid(profileid);

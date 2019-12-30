@@ -38,18 +38,18 @@ public class AuthorizationService {
         this.redisTemplate = redisTemplate;
     }
 
-    public void save(JwtAuthentication jwtAuthentication, String token, String publickey, String privatekey, HttpServletRequest request){
+    public void save(JwtAuthentication jwtAuthentication, String token, String profileid, String publickey, String privatekey, HttpServletRequest request){
         String ip = StringUtils.getIp(request);
         String browser = StringUtils.getBrowser(request);
         String address = StringUtils.getCityInfo(ip);
         Authorization authorization = null;
         try {
-            authorization = new Authorization("",jwtAuthentication.getUsername(), browser , ip, address, EncryptUtils.desEncrypt(token), new Date(),publickey,privatekey);
+            authorization = new Authorization(profileid,jwtAuthentication.getUsername(), browser , ip, address, EncryptUtils.desEncrypt(token), new Date(),publickey,privatekey);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        redisTemplate.opsForValue().set(onlineKey + token, authorization);
-        redisTemplate.expire(onlineKey + token,expiration, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set(onlineKey + "::" + token, authorization);
+        redisTemplate.expire(onlineKey + "::" + token,expiration, TimeUnit.MILLISECONDS);
     }
 
     public Page<Authorization> getAll(String filter, Pageable pageable){
@@ -81,7 +81,7 @@ public class AuthorizationService {
     }
     public Authorization get(String val){
         try {
-            String key = onlineKey + val;
+            String key = onlineKey + "::" + val;
             Authorization authorization = (Authorization) redisTemplate.opsForValue().get(key);
             return authorization;
         }

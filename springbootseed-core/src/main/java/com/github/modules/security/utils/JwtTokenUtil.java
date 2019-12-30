@@ -81,13 +81,13 @@ public class JwtTokenUtil implements Serializable {
         final Date createdDate = clock.now();
         final Date expirationDate = calculateExpirationDate(createdDate);
 
-        return Jwts.builder()
+        return MD5Util.get(Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(createdDate)
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS512, secret)
-                .compact();
+                .compact());
     }
 
     public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {

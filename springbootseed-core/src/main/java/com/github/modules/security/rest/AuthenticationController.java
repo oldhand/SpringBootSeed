@@ -1,7 +1,9 @@
 package com.github.modules.security.rest;
 
+import com.github.domain.Authorization;
 import com.github.modules.config.GlobalConfig;
 import com.github.modules.security.security.*;
+import com.github.utils.AuthorizationUtils;
 import com.github.utils.MD5Util;
 import com.github.modules.utils.RSAUtil;
 import com.github.utils.TimeUtils;
@@ -59,6 +61,23 @@ public class AuthenticationController {
     @AnonymousAccess
     @PostMapping(value = "/credential")
     public ResponseEntity login(@Validated @RequestBody AuthApplication authApplication, HttpServletRequest request){
+        return authentication(authApplication,"","",request);
+    }
+
+    @Log("刷新Token")
+    @ApiOperation("刷新Token")
+    @PostMapping(value = "/flush")
+    public ResponseEntity flush(@Validated @RequestBody AuthApplication authApplication, HttpServletRequest request) {
+        String token = AuthorizationUtils.getAccessToken(request);
+        Authorization authorization = authorizationService.get(token);
+        if (authorization == null) {
+            throw new BadRequestException("刷新Token失败");
+        }
+        String profileid = authorization.getProfileid();
+        return authentication(authApplication,token,profileid,request);
+    }
+
+    private ResponseEntity authentication(AuthApplication authApplication,String token, String profileid, HttpServletRequest request){
         if (authApplication.getAppid().isEmpty()) {
             throw new BadRequestException("应用ID不能为空");
         }
@@ -83,28 +102,20 @@ public class AuthenticationController {
         }
         try {
             // 生成令牌
-            final String token = jwtTokenUtil.generateToken(jwtAuthentication);
+            if (token.isEmpty()) {
+                token = jwtTokenUtil.generateToken(jwtAuthentication);
+            }
 
             Map<String, String> keys = RSAUtil.initKey();
 
             long timestamp = TimeUtils.gettimeStamp();
             // 保存在线信息
-            authorizationService.save(jwtAuthentication, token, keys.get("publickey"), keys.get("privatekey"), request);
+            authorizationService.save(jwtAuthentication, token,profileid,keys.get("publickey"), keys.get("privatekey"), request);
             // 返回 token
-            return ResponseEntity.ok(new AuthInfo(token,"",keys.get("publickey")));
+            return ResponseEntity.ok(new AuthInfo(token,profileid,keys.get("publickey")));
         }
         catch (Exception e) {
             throw new AccountExpiredException("生成token错误");
         }
-    }
-
-
-
-    @Log("刷新Token")
-    @ApiOperation("刷新Token")
-    @PostMapping(value = "/flush")
-    public ResponseEntity flush(@Validated @RequestBody AuthApplication authApplication, HttpServletRequest request){
-        authorizationService.logout(jwtTokenUtil.getAccessToken(request));
-        return new ResponseEntity(HttpStatus.OK);
     }
 }

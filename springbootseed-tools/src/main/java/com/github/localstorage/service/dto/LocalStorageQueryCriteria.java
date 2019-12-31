@@ -16,8 +16,8 @@ public class LocalStorageQueryCriteria{
     private String blurry;
 
     @Query(type = Query.Type.GREATER_THAN,propName = "published")
-    private Timestamp startTime;
+    private Timestamp starttime;
 
     @Query(type = Query.Type.LESS_THAN,propName = "published")
-    private Timestamp endTime;
+    private Timestamp endtime;
 }

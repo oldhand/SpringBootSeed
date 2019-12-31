@@ -16,10 +16,9 @@ import java.sql.Timestamp;
 public class BaseDTO  implements Serializable {
 
     @JsonSerialize(using= ToStringSerializer.class)
-    private Long id;
-    private Timestamp published;
-    private Timestamp updated;
-    private String author;
-    private Integer deleted;
-    private Integer createnew;
+    protected Long id;
+    protected Timestamp published;
+    protected Timestamp updated;
+    protected String author;
+    protected Integer deleted;
 }

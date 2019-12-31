@@ -6,7 +6,7 @@ import com.github.modules.security.security.*;
 import com.github.utils.AuthorizationUtils;
 import com.github.utils.MD5Util;
 import com.github.modules.utils.RSAUtil;
-import com.github.utils.TimeUtils;
+import com.github.utils.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,6 @@ import com.github.modules.security.service.AuthorizationService;
 import com.github.modules.security.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -108,7 +107,7 @@ public class AuthenticationController {
 
             Map<String, String> keys = RSAUtil.initKey();
 
-            long timestamp = TimeUtils.gettimeStamp();
+            long timestamp = DateTimeUtils.gettimeStamp();
             // 保存在线信息
             authorizationService.save(jwtAuthentication, token,profileid,keys.get("publickey"), keys.get("privatekey"), request);
             // 返回 token

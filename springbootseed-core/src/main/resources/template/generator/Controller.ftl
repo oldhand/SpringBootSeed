@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 */
 @Api(tags = "实例：${className}管理")
 @RestController
-@RequestMapping("/api/${changeClassName}")
+@RequestMapping("/api/${changeClassName?lower_case}")
 public class ${className}Controller {
 
     private final ${className}Service ${changeClassName}Service;
@@ -43,6 +43,13 @@ public class ${className}Controller {
         public ResponseEntity get${className}s(${className}QueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(${changeClassName}Service.queryAll(criteria,pageable),HttpStatus.OK);
     }
+	
+    @GetMapping(value = "/load/{${pkChangeColName}}")
+    @Log("装载${className}")
+    @ApiOperation("装载${className}")
+        public ResponseEntity load(@PathVariable ${pkColumnType} ${pkChangeColName}){
+        return new ResponseEntity(HttpStatus.OK);
+    }
 
     @PostMapping
     @Log("新增${className}")
@@ -54,18 +61,26 @@ public class ${className}Controller {
         return new ResponseEntity<>(${changeClassName}Service.create(resources),HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @PutMapping(value = "/{${pkChangeColName}}")
     @Log("修改${className}")
     @ApiOperation("修改${className}")
-        public ResponseEntity update(@Validated @RequestBody ${className} resources){
+        public ResponseEntity update(@PathVariable ${pkColumnType} ${pkChangeColName},@Validated @RequestBody ${className} resources){
         ${changeClassName}Service.update(resources);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
-
+	
     @DeleteMapping(value = "/{${pkChangeColName}}")
-    @Log("删除${className}")
-    @ApiOperation("删除${className}")
+    @Log("逻辑删除${className}")
+    @ApiOperation("逻辑删除${className}")
         public ResponseEntity delete(@PathVariable ${pkColumnType} ${pkChangeColName}){
+        ${changeClassName}Service.delete(${pkChangeColName});
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/delete/{${pkChangeColName}}")
+    @Log("物理删除${className}")
+    @ApiOperation("物理删除${className}")
+        public ResponseEntity fulldelete(@PathVariable ${pkColumnType} ${pkChangeColName}){
         ${changeClassName}Service.delete(${pkChangeColName});
         return new ResponseEntity(HttpStatus.OK);
     }

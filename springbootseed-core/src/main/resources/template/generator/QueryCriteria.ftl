@@ -2,9 +2,7 @@ package ${package}.service.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-<#if queryHasTimestamp>
 import java.sql.Timestamp;
-</#if>
 <#if queryHasBigDecimal>
 import java.math.BigDecimal;
 </#if>
@@ -21,8 +19,17 @@ public class ${className}QueryCriteria{
 <#if queryColumns??>
 	 
 	// 精确
+	@Query
     @ApiModelProperty("删除标记(0表示正常数据，1表示逻辑删除)")
     private Integer deleted;	
+	
+    @Query(type = Query.Type.GREATER_THAN,propName = "published")
+	@ApiModelProperty("起始时间")
+    private Timestamp starttime;
+
+    @Query(type = Query.Type.LESS_THAN,propName = "published")
+	@ApiModelProperty("结束时间")
+    private Timestamp endtime; 
     <#list queryColumns as column>
 
     <#if column.columnQuery = '1'>

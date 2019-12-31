@@ -4,14 +4,17 @@ import com.github.aop.log.Log;
 import com.github.localstorage.domain.LocalStorage;
 import com.github.localstorage.service.LocalStorageService;
 import com.github.localstorage.service.dto.LocalStorageQueryCriteria;
+import com.github.utils.DateTimeUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -28,6 +31,11 @@ public class LocalStorageController {
 
     public LocalStorageController(LocalStorageService localStorageService) {
         this.localStorageService = localStorageService;
+    }
+
+    @InitBinder
+    protected void init(HttpServletRequest request, ServletRequestDataBinder binder) {
+        DateTimeUtils.timestampRequestDataBinder(binder);
     }
 
     @Log("查询文件")

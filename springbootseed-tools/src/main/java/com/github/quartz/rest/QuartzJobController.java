@@ -3,6 +3,7 @@ package com.github.quartz.rest;
 import com.github.quartz.domain.QuartzJob;
 import com.github.quartz.service.QuartzJobService;
 import com.github.quartz.service.dto.JobQueryCriteria;
+import com.github.utils.DateTimeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +13,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -35,6 +38,11 @@ public class QuartzJobController {
         this.quartzJobService = quartzJobService;
     }
 
+    @InitBinder
+    protected void init(HttpServletRequest request, ServletRequestDataBinder binder) {
+        DateTimeUtils.timestampRequestDataBinder(binder);
+    }
+    
     @Log("查询定时任务")
     @ApiOperation("查询定时任务")
     @GetMapping

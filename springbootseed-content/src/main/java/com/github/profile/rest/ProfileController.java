@@ -7,7 +7,6 @@ import com.github.profile.domain.*;
 import com.github.profile.service.ProfileService;
 import com.github.profile.service.dto.ProfileDTO;
 import com.github.profile.service.dto.ProfileQueryCriteria;
-import com.github.profile.service.utils.ProfileUtils;
 import com.github.utils.*;
 import com.wf.captcha.ArithmeticCaptcha;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -106,7 +104,7 @@ public class ProfileController {
         }
 
         if(!profile.getPassword().equals(PasswordUtils.encryptPassword(loginprofile.getPassword()))){
-            redisUtils.set(key, TimeUtils.gettimeStamp());
+            redisUtils.set(key, DateTimeUtils.gettimeStamp());
             throw new AccountExpiredException("密码错误");
         }
         if (!AuthorizationUtils.setProfileid(request,profileid)) {

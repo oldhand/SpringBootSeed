@@ -175,20 +175,6 @@ public class GeneratorServiceImpl implements GeneratorService {
                     query.executeUpdate();
                 }
             }
-            ColumnInfo columnCreatenewinfo = getColumnInfoByName(tableName,"createnew");
-            if (columnCreatenewinfo == null) {
-                String sql = "ALTER TABLE base_users ADD COLUMN createnew tinyint(2) NOT NULL DEFAULT 1 COMMENT '创建标记' AFTER deleted";
-                Query query = em.createNativeQuery(sql);
-                query.executeUpdate();
-            }
-            else {
-                if (!columnCreatenewinfo.getIsNullable().equals("NO") || !columnCreatenewinfo.getColumnType().equals("tinyint") || !columnCreatenewinfo.getColumnComment().equals("删除标记") || !columnCreatenewinfo.getColumnKey().equals("") || !columnCreatenewinfo.getExtra().equals("")) {
-                    String sql = "ALTER TABLE base_users MODIFY COLUMN createnew tinyint(2) NOT NULL DEFAULT 1 COMMENT '创建标记' AFTER deleted";
-                    Query query = em.createNativeQuery(sql);
-                    query.executeUpdate();
-                }
-            }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

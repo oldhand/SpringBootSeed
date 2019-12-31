@@ -19,8 +19,8 @@ public class JobQueryCriteria {
     private Boolean isSuccess;
 
     @Query(type = Query.Type.GREATER_THAN,propName = "createTime")
-    private Timestamp startTime;
+    private Timestamp starttime;
 
     @Query(type = Query.Type.LESS_THAN,propName = "createTime")
-    private Timestamp endTime;
+    private Timestamp endtime;
 }

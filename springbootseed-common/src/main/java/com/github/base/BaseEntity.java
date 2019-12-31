@@ -27,35 +27,30 @@ public class BaseEntity implements Serializable {
     @JsonIgnore
     @Column(name = "id",insertable=false, updatable=false,nullable = false)
     @ApiModelProperty("ID")
-    private Long id;
+    protected Long id;
 
     // 创建日期
     @Column(name = "published",insertable=false, updatable=false,nullable = false)
     @ApiModelProperty("创建日期")
     @CreationTimestamp
-    private Timestamp published;
+    protected Timestamp published;
 
     // 更新日期
     @Column(name = "updated",insertable=false, updatable=false,nullable = false)
     @ApiModelProperty("更新日期")
     @UpdateTimestamp
-    private Timestamp updated;
+    protected Timestamp updated;
 
     // 创建者
     @Column(name = "author",updatable=false,nullable = false)
     @ApiModelProperty("创建者")
     @JsonIgnore
-    private String author;
+    protected String author;
 
     // 删除标记
     @Column(name = "deleted",nullable = false)
     @ApiModelProperty("删除标记")
-    private Integer deleted;
-
-    // 创建标记
-    @Column(name = "createnew",nullable = false)
-    @ApiModelProperty("创建标记")
-    private Integer createnew;
+    protected Integer deleted;
 
     public @interface Update {}
 

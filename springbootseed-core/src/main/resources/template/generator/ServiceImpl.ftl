@@ -142,7 +142,6 @@ public class ${className}ServiceImpl implements ${className}Service {
 		    map.put("更新日期", ${changeClassName}.getUpdated());
 		    map.put("创建者", ${changeClassName}.getAuthor());
 		    map.put("删除标记", ${changeClassName}.getDeleted());
-		    map.put("创建标记", ${changeClassName}.getCreatenew());
         <#list columns as column>
             <#if column.columnKey != 'PRI'>
             <#if column.columnComment != ''>

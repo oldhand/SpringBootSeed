@@ -72,7 +72,7 @@ public class ${className}Controller {
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("users");
+	    long ContentID = ContentIdsService.create("${tableName}");
 	 	resources.setId(ContentID);
         return new ResponseEntity<>(${changeClassName}Service.create(resources),HttpStatus.CREATED);
     }

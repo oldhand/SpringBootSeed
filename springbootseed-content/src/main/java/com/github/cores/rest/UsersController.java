@@ -50,22 +50,22 @@ public class UsersController {
     }
 
     @GetMapping
-    @Log("查询Users")
-    @ApiOperation("查询Users")
+    @Log("查询用户")
+    @ApiOperation("查询用户")
         public ResponseEntity getUserss(UsersQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(UsersService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 	
     @GetMapping(value = "/load/{id}")
-    @Log("装载Users")
-    @ApiOperation("装载Users")
+    @Log("装载用户")
+    @ApiOperation("装载用户")
         public ResponseEntity load(@PathVariable Long id){
         return new ResponseEntity(UsersService.findById(id),HttpStatus.OK);
     }
 
     @PostMapping
-    @Log("新增Users")
-    @ApiOperation("新增Users")
+    @Log("新增用户")
+    @ApiOperation("新增用户")
         public ResponseEntity create(@Validated @RequestBody Users resources, HttpServletRequest request){
 	    if (!AuthorizationUtils.isLogin(request)) {
 	        throw new BadRequestException("请先进行登录操作");
@@ -78,23 +78,23 @@ public class UsersController {
     }
 
     @PutMapping(value = "/{id}")
-    @Log("修改Users")
-    @ApiOperation("修改Users")
+    @Log("修改用户")
+    @ApiOperation("修改用户")
         public ResponseEntity update(@PathVariable Long id,@Validated @RequestBody Users resources){
         return new ResponseEntity(UsersService.update(id,resources),HttpStatus.OK);
     }
 	
     @DeleteMapping(value = "/{id}")
-    @Log("逻辑删除Users")
-    @ApiOperation("逻辑删除Users")
+    @Log("逻辑删除用户")
+    @ApiOperation("逻辑删除用户")
         public ResponseEntity delete(@PathVariable Long id){
         UsersService.makedelete(id);
         return new ResponseEntity("ok",HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/delete/{id}")
-    @Log("物理删除Users")
-    @ApiOperation("物理删除Users")
+    @Log("物理删除用户")
+    @ApiOperation("物理删除用户")
         public ResponseEntity fulldelete(@PathVariable Long id){
         UsersService.delete(id);
         return new ResponseEntity("ok",HttpStatus.OK);

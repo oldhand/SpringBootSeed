@@ -6,9 +6,8 @@ import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.lang.reflect.Field;
@@ -25,19 +24,22 @@ public class BaseEntity implements Serializable {
     // ID
     @Id
     @JsonIgnore
-    @Column(name = "id",insertable=false, updatable=false,nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", updatable=false,nullable = false)
     @ApiModelProperty("ID")
     protected Long id;
 
     // 创建日期
     @Column(name = "published",insertable=false, updatable=false,nullable = false)
     @ApiModelProperty("创建日期")
+    @JsonIgnore
     @CreationTimestamp
     protected Timestamp published;
 
     // 更新日期
     @Column(name = "updated",insertable=false, updatable=false,nullable = false)
     @ApiModelProperty("更新日期")
+    @JsonIgnore
     @UpdateTimestamp
     protected Timestamp updated;
 

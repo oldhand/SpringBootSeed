@@ -85,13 +85,6 @@ public class ${className}ServiceImpl implements ${className}Service {
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public ${className}DTO create(${className} resources) {
-<#if !auto && pkColumnType = 'Long'>
-        Snowflake snowflake = IdUtil.createSnowflake(1, 1);
-        resources.set${pkCapitalColName}(snowflake.nextId()); 
-</#if>
-<#if !auto && pkColumnType = 'String'>
-        resources.set${pkCapitalColName}(IdUtil.simpleUUID()); 
-</#if>
 <#if columns??>
     <#list columns as column>
     <#if column.columnKey = 'UNI'>
@@ -101,27 +94,27 @@ public class ${className}ServiceImpl implements ${className}Service {
     </#if>
     </#list>
 </#if>
-        return ${changeClassName}Mapper.toDto(${changeClassName}Repository.save(resources));
+        return ${changeClassName}Mapper.toDto(${changeClassName}Repository.saveAndFlush(resources));
     }
 
     @Override
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    public void update(${className} resources) {
-        ${className} ${changeClassName} = ${changeClassName}Repository.findById(resources.get${pkCapitalColName}()).orElseGet(${className}::new);
+    public ${className}DTO update(${pkColumnType} ${pkChangeColName},${className} resources) {
+        ${className} ${changeClassName} = ${changeClassName}Repository.findById(${pkChangeColName}).orElseGet(${className}::new);
         ValidationUtil.isNull( ${changeClassName}.get${pkCapitalColName}(),"${className}","id",resources.get${pkCapitalColName}());
 <#if columns??>
     <#list columns as column>
         <#if column.columnKey = 'UNI'>
-        ${changeClassName} = ${changeClassName}Repository.findBy${column.capitalColumnName}(resources.get${column.capitalColumnName}());
-        if(${changeClassName} != null && !${changeClassName}.get${pkCapitalColName}().equals(${changeClassName}.get${pkCapitalColName}())){
+        ${className} ${changeClassName}_${column.columnName?lower_case} = ${changeClassName}Repository.findBy${column.capitalColumnName}(resources.get${column.capitalColumnName}());
+        if(${changeClassName}_${column.columnName?lower_case} != null && !${changeClassName}_${column.columnName?lower_case}.get${pkCapitalColName}().equals(${changeClassName}.get${pkCapitalColName}())){
             throw new EntityExistException(${className}.class,"${column.columnName}",resources.get${column.capitalColumnName}());
         }
         </#if>
     </#list>
 </#if>
         ${changeClassName}.copy(resources);
-        ${changeClassName}Repository.save(${changeClassName});
+		return ${changeClassName}Mapper.toDto(${changeClassName}Repository.saveAndFlush(${changeClassName}));
     }
 
     @Override
@@ -129,6 +122,16 @@ public class ${className}ServiceImpl implements ${className}Service {
     @Transactional(rollbackFor = Exception.class)
     public void delete(${pkColumnType} ${pkChangeColName}) {
         ${changeClassName}Repository.deleteById(${pkChangeColName});
+    }
+	
+    @Override
+    @CacheEvict(allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
+    public void makedelete(${pkColumnType} ${pkChangeColName}) {
+         ${className} ${changeClassName} = ${changeClassName}Repository.findById(${pkChangeColName}).orElseGet(${className}::new);
+		 ValidationUtil.isNull( ${changeClassName}.get${pkCapitalColName}(),"${className}","id",${pkChangeColName});
+		 ${changeClassName}.setDeleted(1);
+		 ${changeClassName}Repository.save(${changeClassName});
     }
 
 

@@ -45,5 +45,5 @@ public interface GeneratorService {
      * @param name 表名
      * @return /
      */
-    void verify(String name);
+    void verify(String name) throws Exception;
 }

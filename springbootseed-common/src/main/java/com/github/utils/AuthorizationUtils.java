@@ -63,7 +63,10 @@ public class AuthorizationUtils {
     public static String getProfileid(HttpServletRequest request) {
         try {
             String token =  getAccessToken(request);
-            if (!token.isEmpty()) {
+            if (token.equals("anonymous")) {
+                return "";
+            }
+            else if (!token.isEmpty()) {
                 String key = onlineKey + "::" + token;
                 Authorization authorization = (Authorization) redisTemplate.opsForValue().get(key);
                 if (authorization != null) {
@@ -79,7 +82,10 @@ public class AuthorizationUtils {
     public static boolean setProfileid(HttpServletRequest request, String profileid) {
         try {
             String token =  getAccessToken(request);
-            if (!token.isEmpty()) {
+            if (token.equals("anonymous")) {
+                return false;
+            }
+            else if (!token.isEmpty()) {
                 String key = onlineKey + "::" + token;
                 Authorization authorization = (Authorization) redisTemplate.opsForValue().get(key);
                 if (authorization != null) {

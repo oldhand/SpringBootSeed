@@ -105,7 +105,11 @@ public class GeneratorController {
         if (systemTableList.indexOf(tableName) >= 0) {
             throw new BadRequestException("系统表不允许生成代码！");
         }
-        generatorService.verify(tableName);
+        try {
+            generatorService.verify(tableName);
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
         Map<String,Object> columns = (Map<String,Object>)generatorService.getColumns(tableName);
         List<ColumnInfo> columnInfos = (List<ColumnInfo>)columns.get("content");
         generatorService.generator(columnInfos,genConfigService.find(),tableName);

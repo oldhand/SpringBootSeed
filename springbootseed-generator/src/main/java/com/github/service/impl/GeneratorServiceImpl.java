@@ -106,7 +106,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     @Override
     @Transactional
     @Modifying
-    public void verify(String tableName) {
+    public void verify(String tableName) throws Exception {
         try {
             ColumnInfo columnIdinfo = getColumnInfoByName(tableName,"id");
             if (columnIdinfo == null) {
@@ -175,11 +175,14 @@ public class GeneratorServiceImpl implements GeneratorService {
                     query.executeUpdate();
                 }
             }
+            veriyPrimaryKey(tableName);
+
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
     }
-    private ColumnInfo getColumnInfoByName(String tablename,String column_name) {
+    private ColumnInfo getColumnInfoByName(String tablename,String column_name)  {
         // 使用预编译防止sql注入
         String sql = "select column_name, is_nullable, data_type, column_comment, column_key, extra from information_schema.columns " +
                 "where table_name = ? and column_name = ? and table_schema = (select database())";
@@ -192,5 +195,16 @@ public class GeneratorServiceImpl implements GeneratorService {
             return new ColumnInfo(arr[0],arr[1],arr[2],arr[3],arr[4],arr[5],null,"true");
         }
         return null;
+    }
+    private void veriyPrimaryKey(String tablename) throws Exception {
+        // 使用预编译防止sql注入
+        String sql = "select column_name from information_schema.key_column_usage " +
+                "where table_name = ? and column_name != 'id' and constraint_name = 'PRIMARY'";
+        Query query = em.createNativeQuery(sql);
+        query.setParameter(1, tablename);
+        List result = query.getResultList();
+        if (result.size() > 0 ) {
+            throw new Exception(result.get(0).toString() + "被设置为主键，不能设置除id字段以外的主键！");
+        }
     }
 }

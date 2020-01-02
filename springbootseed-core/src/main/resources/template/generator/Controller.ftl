@@ -4,12 +4,16 @@ import com.github.aop.log.Log;
 import ${package}.domain.${className};
 import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}QueryCriteria;
+import com.github.exception.BadRequestException;
+import com.github.service.ContentIdsService;
 import com.github.utils.AuthorizationUtils;
+import com.github.utils.DateTimeUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
 import java.io.IOException;
@@ -25,9 +29,17 @@ import javax.servlet.http.HttpServletResponse;
 public class ${className}Controller {
 
     private final ${className}Service ${changeClassName}Service;
+	
+	private final ContentIdsService ContentIdsService;
 
-    public ${className}Controller(${className}Service ${changeClassName}Service) {
+    public ${className}Controller(${className}Service ${changeClassName}Service,ContentIdsService ContentIdsService) {
         this.${changeClassName}Service = ${changeClassName}Service;
+		this.ContentIdsService = ContentIdsService;
+    }
+	
+    @InitBinder
+    protected void init(HttpServletRequest request, ServletRequestDataBinder binder) {
+        DateTimeUtils.timestampRequestDataBinder(binder);
     }
 
     @Log("导出数据")
@@ -48,16 +60,20 @@ public class ${className}Controller {
     @Log("装载${className}")
     @ApiOperation("装载${className}")
         public ResponseEntity load(@PathVariable ${pkColumnType} ${pkChangeColName}){
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(${changeClassName}Service.findById(${pkChangeColName}),HttpStatus.OK);
     }
 
     @PostMapping
     @Log("新增${className}")
     @ApiOperation("新增${className}")
         public ResponseEntity create(@Validated @RequestBody ${className} resources, HttpServletRequest request){
-		String profileid = AuthorizationUtils.getProfileid(request);
-		resources.setAuthor(profileid);
-		resources.setId(1000L);
+	    if (!AuthorizationUtils.isLogin(request)) {
+	        throw new BadRequestException("请先进行登录操作");
+	    }
+	 	String profileid = AuthorizationUtils.getProfileid(request);
+	 	resources.setAuthor(profileid);
+	    long ContentID = ContentIdsService.create("users");
+	 	resources.setId(ContentID);
         return new ResponseEntity<>(${changeClassName}Service.create(resources),HttpStatus.CREATED);
     }
 
@@ -65,16 +81,15 @@ public class ${className}Controller {
     @Log("修改${className}")
     @ApiOperation("修改${className}")
         public ResponseEntity update(@PathVariable ${pkColumnType} ${pkChangeColName},@Validated @RequestBody ${className} resources){
-        ${changeClassName}Service.update(resources);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity(${changeClassName}Service.update(${pkChangeColName},resources),HttpStatus.OK);
     }
 	
     @DeleteMapping(value = "/{${pkChangeColName}}")
     @Log("逻辑删除${className}")
     @ApiOperation("逻辑删除${className}")
         public ResponseEntity delete(@PathVariable ${pkColumnType} ${pkChangeColName}){
-        ${changeClassName}Service.delete(${pkChangeColName});
-        return new ResponseEntity(HttpStatus.OK);
+        ${changeClassName}Service.makedelete(${pkChangeColName});
+        return new ResponseEntity("ok",HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/delete/{${pkChangeColName}}")
@@ -82,6 +97,6 @@ public class ${className}Controller {
     @ApiOperation("物理删除${className}")
         public ResponseEntity fulldelete(@PathVariable ${pkColumnType} ${pkChangeColName}){
         ${changeClassName}Service.delete(${pkChangeColName});
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity("ok",HttpStatus.OK);
     }
 }

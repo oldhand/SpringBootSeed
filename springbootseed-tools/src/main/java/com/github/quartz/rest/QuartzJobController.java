@@ -42,7 +42,7 @@ public class QuartzJobController {
     protected void init(HttpServletRequest request, ServletRequestDataBinder binder) {
         DateTimeUtils.timestampRequestDataBinder(binder);
     }
-    
+
     @Log("查询定时任务")
     @ApiOperation("查询定时任务")
     @GetMapping

@@ -24,6 +24,13 @@ public class SlaveDataSource {
     @Value("${spring.datasource.druid.slave.password}")
     private String password;
 
+    @Value("${spring.datasource.druid.slave.enabled}")
+    private Boolean enabled;
+
+    public boolean isEnabled() {
+         return enabled;
+    }
+
     public DruidDataSource make() {
         DruidDataSource result = new DruidDataSource();
         result.setDriverClassName(driverClassName);

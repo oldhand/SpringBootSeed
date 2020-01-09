@@ -27,7 +27,7 @@ public class DataSourceConfiguration {
     @Autowired
     private SlaveDataSource slavedatasource;
 
-
+    private Boolean slaveenabled;
 
     @Bean
     public DataSource getDataSource() throws SQLException {
@@ -36,13 +36,19 @@ public class DataSourceConfiguration {
 
 
     private DataSource buildDataSource() throws SQLException {
+        slaveenabled = slavedatasource.isEnabled();
         Map<String, DataSource> result = new HashMap<>();
         result.put(DataSourceType.MASTER.name(), druidproperties.dataSource(masterdatasource.make()));
-        result.put(DataSourceType.SLAVE.name(), druidproperties.dataSource(slavedatasource.make()));
+        if (slaveenabled) {
+            result.put(DataSourceType.SLAVE.name(), druidproperties.dataSource(slavedatasource.make()));
+        }
+
         ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
         shardingRuleConfig.setDefaultDataSourceName(DataSourceType.MASTER.name());
-        shardingRuleConfig.getTableRuleConfigs().add(YearContentIdsTableRuleConfiguration());
-        shardingRuleConfig.getTableRuleConfigs().add(YearMonthContentIdsTableRuleConfiguration());
+        if (slaveenabled) {
+            shardingRuleConfig.getTableRuleConfigs().add(YearContentIdsTableRuleConfiguration());
+            shardingRuleConfig.getTableRuleConfigs().add(YearMonthContentIdsTableRuleConfiguration());
+        }
         shardingRuleConfig.setDefaultDataSourceName(DataSourceType.MASTER.name());  return ShardingDataSourceFactory.createDataSource(result, shardingRuleConfig, new Properties());
     }
 

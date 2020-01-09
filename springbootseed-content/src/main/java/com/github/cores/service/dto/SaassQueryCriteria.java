@@ -7,10 +7,10 @@ import com.github.annotation.Query;
 
 /**
 * @author oldhand
-* @date 2020-01-02
+* @date 2020-01-03
 */
 @Data
-public class SuppliersQueryCriteria{
+public class SaassQueryCriteria{
 	 
 	// 精确
 	@Query

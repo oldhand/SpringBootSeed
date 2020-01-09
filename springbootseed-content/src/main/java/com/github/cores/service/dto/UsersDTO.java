@@ -17,8 +17,8 @@ public class UsersDTO extends BaseDTO implements Serializable {
     // 用户ID
     private String profileid;
 
-    //SaaS用户ID
-    private String supplierid;
+    // saasid
+    private Long saasid;
 	
     // 编号
     private String usersNo;

@@ -15,35 +15,45 @@ import java.io.Serializable;
 
 /**
 * @author oldhand
-* @date 2020-01-02
+* @date 2020-01-03
 */
 @Entity
 @Data
-@Table(name="base_permissions")
-public class Permissions extends BaseEntity implements Serializable {
-
+@Table(name="base_picklists")
+public class Picklists extends BaseEntity implements Serializable {
+	
     // saasid
     @Column(name = "saasid",nullable = false)
-    @ApiModelProperty("saasid")
-    private Long saasid;
-
+	@ApiModelProperty("saasid")
+	private Long saasid;
+	
+    // 名称
     @Column(name = "name",nullable = false)
+	@ApiModelProperty("名称")
 	private String name;
 	
-    @Column(name = "description",nullable = false)
-	private String description;
+    // 可见
+    @Column(name = "presence",nullable = false)
+	@ApiModelProperty("可见")
+	private Integer presence;
 	
-    @Column(name = "allowdeleted",nullable = false)
-	private Integer allowdeleted;
+    // 排序号
+    @Column(name = "sequence",nullable = false)
+	@ApiModelProperty("排序号")
+	private Integer sequence;
 	
-    @Column(name = "global_all_view",nullable = false)
-	private Integer globalAllView;
+    // 存储值
+    @Column(name = "value",nullable = false)
+	@ApiModelProperty("存储值")
+	private String value;
 	
-    @Column(name = "global_all_edit",nullable = false)
-	private Integer globalAllEdit;
+    // 显示值
+    @Column(name = "display",nullable = false)
+	@ApiModelProperty("显示值")
+	private String display;
 	
 
-    public void copy(Permissions source){
+    public void copy(Picklists source){
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

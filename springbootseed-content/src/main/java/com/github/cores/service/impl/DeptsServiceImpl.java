@@ -117,7 +117,7 @@ public class DeptsServiceImpl implements DeptsService {
             map.put("父部门ID", Depts.getParentid());
             map.put("排序号", Depts.getSequence());
             map.put("部门级别", Depts.getDepth());
-            map.put("SaaS", Depts.getSupplierid());
+            map.put("saasid", Depts.getSaasid());
             list.add(map);
         }
         FileUtil.downloadExcel(list, response);

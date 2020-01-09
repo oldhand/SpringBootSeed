@@ -21,7 +21,12 @@ import java.io.Serializable;
 @Data
 @Table(name="base_roles")
 public class Roles extends BaseEntity implements Serializable {
-	
+
+    // saasid
+    @Column(name = "saasid",nullable = false)
+    @ApiModelProperty("saasid")
+    private Long saasid;
+
     @Column(name = "name",nullable = false)
 	private String name;
 	

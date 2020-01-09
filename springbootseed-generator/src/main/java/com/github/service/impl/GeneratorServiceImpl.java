@@ -104,7 +104,7 @@ public class GeneratorServiceImpl implements GeneratorService {
      * 验证表结构是否符合标准,并修正表结构
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Modifying
     public void verify(String tableName) throws Exception {
         try {

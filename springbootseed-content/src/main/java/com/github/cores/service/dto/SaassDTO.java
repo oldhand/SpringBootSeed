@@ -9,10 +9,10 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 /**
 * @author oldhand
-* @date 2020-01-02
+* @date 2020-01-03
 */
 @Data
-public class SuppliersDTO extends BaseDTO implements Serializable {
+public class SaassDTO extends BaseDTO implements Serializable {
 	
     // 名称
     private String name;

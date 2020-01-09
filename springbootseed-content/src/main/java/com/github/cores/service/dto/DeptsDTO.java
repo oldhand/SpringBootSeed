@@ -29,7 +29,7 @@ public class DeptsDTO extends BaseDTO implements Serializable {
     // 部门级别
     private Integer depth;
 	
-    // SaaS
-    private Long supplierid;
+    // saasid
+    private Long saasid;
 	
 }

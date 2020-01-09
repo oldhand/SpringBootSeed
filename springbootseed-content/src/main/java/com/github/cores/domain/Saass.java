@@ -15,12 +15,12 @@ import java.io.Serializable;
 
 /**
 * @author oldhand
-* @date 2020-01-02
+* @date 2020-01-03
 */
 @Entity
 @Data
-@Table(name="base_suppliers")
-public class Suppliers extends BaseEntity implements Serializable {
+@Table(name="base_saass")
+public class Saass extends BaseEntity implements Serializable {
 	
     // 名称
     @Column(name = "name")
@@ -73,7 +73,7 @@ public class Suppliers extends BaseEntity implements Serializable {
 	private String approver;
 	
 
-    public void copy(Suppliers source){
+    public void copy(Saass source){
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

@@ -27,10 +27,10 @@ public class Users extends BaseEntity implements Serializable {
 	@ApiModelProperty("用户ID")
 	private String profileid;
 
-    // SaaS用户ID
-    @Column(name = "supplierid")
-    @ApiModelProperty("SaaS用户ID")
-    private String supplierid;
+    // saasid
+    @Column(name = "saasid")
+    @ApiModelProperty("saasid")
+    private long saasid;
 
 	
     // 编号

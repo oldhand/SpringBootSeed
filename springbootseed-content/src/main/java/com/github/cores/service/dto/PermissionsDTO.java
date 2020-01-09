@@ -13,7 +13,9 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 */
 @Data
 public class PermissionsDTO extends BaseDTO implements Serializable {
-	
+
+    private Long saasid;
+
     private String name;
 	
     private String description;

@@ -1,9 +1,9 @@
 package com.github.cores.rest;
 
 import com.github.aop.log.Log;
-import com.github.cores.domain.Suppliers;
-import com.github.cores.service.SuppliersService;
-import com.github.cores.service.dto.SuppliersQueryCriteria;
+import com.github.cores.domain.Saass;
+import com.github.cores.service.SaassService;
+import com.github.cores.service.dto.SaassQueryCriteria;
 import com.github.exception.BadRequestException;
 import com.github.service.ContentIdsService;
 import com.github.utils.AuthorizationUtils;
@@ -21,19 +21,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 /**
 * @author oldhand
-* @date 2020-01-02
+* @date 2020-01-03
 */
-@Api(tags = "后台：SaaS用户管理")
+@Api(tags = "后台：Saas用户管理")
 @RestController
-@RequestMapping("/api/suppliers")
-public class SuppliersController {
+@RequestMapping("/api/saass")
+public class SaassController {
 
-    private final SuppliersService SuppliersService;
+    private final SaassService SaassService;
 	
 	private final ContentIdsService ContentIdsService;
 
-    public SuppliersController(SuppliersService SuppliersService,ContentIdsService ContentIdsService) {
-        this.SuppliersService = SuppliersService;
+    public SaassController(SaassService SaassService,ContentIdsService ContentIdsService) {
+        this.SaassService = SaassService;
 		this.ContentIdsService = ContentIdsService;
     }
 	
@@ -45,58 +45,58 @@ public class SuppliersController {
     @Log("导出数据")
     @ApiOperation("导出数据")
     @GetMapping(value = "/download")
-        public void download(HttpServletResponse response, SuppliersQueryCriteria criteria) throws IOException {
-        SuppliersService.download(SuppliersService.queryAll(criteria), response);
+        public void download(HttpServletResponse response, SaassQueryCriteria criteria) throws IOException {
+        SaassService.download(SaassService.queryAll(criteria), response);
     }
 
     @GetMapping
-    @Log("查询SaaS用户")
-    @ApiOperation("查询SaaS用户")
-        public ResponseEntity getSupplierss(SuppliersQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(SuppliersService.queryAll(criteria,pageable),HttpStatus.OK);
+    @Log("查询Saas用户")
+    @ApiOperation("查询Saas用户")
+        public ResponseEntity getSaasss(SaassQueryCriteria criteria, Pageable pageable){
+        return new ResponseEntity<>(SaassService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 	
     @GetMapping(value = "/load/{id}")
-    @Log("装载SaaS用户")
-    @ApiOperation("装载SaaS用户")
+    @Log("装载Saas用户")
+    @ApiOperation("装载Saas用户")
         public ResponseEntity load(@PathVariable Long id){
-        return new ResponseEntity(SuppliersService.findById(id),HttpStatus.OK);
+        return new ResponseEntity(SaassService.findById(id),HttpStatus.OK);
     }
 
     @PostMapping
-    @Log("新增SaaS用户")
-    @ApiOperation("新增SaaS用户")
-        public ResponseEntity create(@Validated @RequestBody Suppliers resources, HttpServletRequest request){
+    @Log("新增Saas用户")
+    @ApiOperation("新增Saas用户")
+        public ResponseEntity create(@Validated @RequestBody Saass resources, HttpServletRequest request){
 	    if (!AuthorizationUtils.isLogin(request)) {
 	        throw new BadRequestException("请先进行登录操作");
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("base_suppliers");
+	    long ContentID = ContentIdsService.create("base_saass");
 	 	resources.setId(ContentID);
-        return new ResponseEntity<>(SuppliersService.create(resources),HttpStatus.CREATED);
+        return new ResponseEntity<>(SaassService.create(resources),HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}")
-    @Log("修改SaaS用户")
-    @ApiOperation("修改SaaS用户")
-        public ResponseEntity update(@PathVariable Long id,@Validated @RequestBody Suppliers resources){
-        return new ResponseEntity(SuppliersService.update(id,resources),HttpStatus.OK);
+    @Log("修改Saas用户")
+    @ApiOperation("修改Saas用户")
+        public ResponseEntity update(@PathVariable Long id,@Validated @RequestBody Saass resources){
+        return new ResponseEntity(SaassService.update(id,resources),HttpStatus.OK);
     }
 	
     @DeleteMapping(value = "/{id}")
-    @Log("逻辑删除SaaS用户")
-    @ApiOperation("逻辑删除SaaS用户")
+    @Log("逻辑删除Saas用户")
+    @ApiOperation("逻辑删除Saas用户")
         public ResponseEntity delete(@PathVariable Long id){
-        SuppliersService.makedelete(id);
+        SaassService.makedelete(id);
         return new ResponseEntity("ok",HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/delete/{id}")
-    @Log("物理删除SaaS用户")
-    @ApiOperation("物理删除SaaS用户")
+    @Log("物理删除Saas用户")
+    @ApiOperation("物理删除Saas用户")
         public ResponseEntity fulldelete(@PathVariable Long id){
-        SuppliersService.delete(id);
+        SaassService.delete(id);
         return new ResponseEntity("ok",HttpStatus.OK);
     }
 }

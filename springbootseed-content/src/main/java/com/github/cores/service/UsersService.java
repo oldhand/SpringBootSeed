@@ -42,7 +42,7 @@ public interface UsersService {
     UsersDTO update(Long id,Users resources);
 
     void delete(Long id);
-	
+
 	void makedelete(Long id);
 
     void download(List<UsersDTO> all, HttpServletResponse response) throws IOException;

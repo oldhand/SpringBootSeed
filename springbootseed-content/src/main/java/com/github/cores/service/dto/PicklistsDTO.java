@@ -9,18 +9,27 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 /**
 * @author oldhand
-* @date 2020-01-02
+* @date 2020-01-03
 */
 @Data
-public class RolesDTO extends BaseDTO implements Serializable {
-
+public class PicklistsDTO extends BaseDTO implements Serializable {
+	
     // saasid
     private Long saasid;
-
+	
+    // 名称
     private String name;
 	
-    private String description;
+    // 可见
+    private Integer presence;
 	
-    private String profileids;
+    // 排序号
+    private Integer sequence;
+	
+    // 存储值
+    private String value;
+	
+    // 显示值
+    private String display;
 	
 }

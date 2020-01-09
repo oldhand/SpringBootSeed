@@ -24,7 +24,7 @@ spring:
       max-wait: 5000
       # 连接有效性检测时间
       time-between-eviction-runs-millis: 90000
-      # 最大空闲时间
+      # 最小空闲时间
       min-evictable-idle-time-millis: 1800000
       test-while-idle: true
       test-on-borrow: false

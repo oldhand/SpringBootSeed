@@ -40,6 +40,7 @@
         <commons-pool2.version>2.5.0</commons-pool2.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <jasypt.version>2.1.0</jasypt.version>
+        <shardingsphere.version>4.0.0-RC1</shardingsphere.version>
     </properties>
 
     <dependencies>
@@ -224,6 +225,13 @@
             <artifactId>jasypt-spring-boot-starter</artifactId>
             <version>${jasypt.version}</version>
         </dependency>
+        <!-- 分表分库 -->
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>sharding-jdbc-core</artifactId>
+            <version>${shardingsphere.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

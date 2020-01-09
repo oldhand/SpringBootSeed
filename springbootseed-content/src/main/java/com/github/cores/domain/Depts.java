@@ -21,7 +21,12 @@ import java.io.Serializable;
 @Data
 @Table(name="base_depts")
 public class Depts extends BaseEntity implements Serializable {
-	
+
+    // saasid
+    @Column(name = "saasid",nullable = false)
+    @ApiModelProperty("saasid")
+    private Long saasid;
+
     // 部门名称
     @Column(name = "deptname",nullable = false)
 	@ApiModelProperty("部门名称")
@@ -47,10 +52,7 @@ public class Depts extends BaseEntity implements Serializable {
 	@ApiModelProperty("部门级别")
 	private Integer depth;
 	
-    // SaaS
-    @Column(name = "supplierid",nullable = false)
-	@ApiModelProperty("SaaS")
-	private Long supplierid;
+
 	
 
     public void copy(Depts source){

@@ -4,15 +4,29 @@ spring:
     druid:
       type: com.alibaba.druid.pool.DruidDataSource
       # mysql 连接参数
-      driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-      url: jdbc:log4jdbc:mysql://localhost:3306/springbootseed?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
-      #postgresql 连接参数
-#      driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-#      url: jdbc:log4jdbc:postgresql://localhost:5432/springbootseed
-      # 用户名 root
-      username: MyEnc({btTSNb3PH7saU2yQ7FeCsQ==})
-      # 密码 root
-      password: MyEnc({VuLn6kkmZXt1402C9w9xUA==})
+      #driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      driverClassName: com.mysql.cj.jdbc.Driver
+#      url: jdbc:log4jdbc:mysql://localhost:3306/springbootseed?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
+#      #postgresql 连接参数
+##      driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+##      url: jdbc:log4jdbc:postgresql://localhost:5432/springbootseed
+#      # 用户名 root
+#      username: MyEnc({btTSNb3PH7saU2yQ7FeCsQ==})
+#      # 密码 root
+#      password: MyEnc({VuLn6kkmZXt1402C9w9xUA==})
+
+      #主库数据源
+      master:
+        url: jdbc:mysql://localhost:3306/springbootseed?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
+        username: MyEnc({btTSNb3PH7saU2yQ7FeCsQ==})
+        password: MyEnc({VuLn6kkmZXt1402C9w9xUA==})
+      #从库数据源(存放年度，月度等业务类型数据)
+      slave:
+        #从库数据源开关、默认关闭
+        enabled: true
+        url: jdbc:mysql://localhost:3306/samples?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
+        username: MyEnc({btTSNb3PH7saU2yQ7FeCsQ==})
+        password: MyEnc({VuLn6kkmZXt1402C9w9xUA==})
 
       # 初始化配置
       initial-size: 3
@@ -24,7 +38,7 @@ spring:
       max-wait: 5000
       # 连接有效性检测时间
       time-between-eviction-runs-millis: 90000
-      # 最大空闲时间
+      # 最小空闲时间
       min-evictable-idle-time-millis: 1800000
       test-while-idle: true
       test-on-borrow: false

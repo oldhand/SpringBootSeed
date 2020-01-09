@@ -2,6 +2,7 @@ package com.github.shardingsphere.config;
 
 
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
+import org.apache.shardingsphere.api.config.sharding.TableRuleConfiguration;
 import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,11 @@ public class DataSourceConfiguration {
     @Autowired
     private MasterDataSource masterdatasource;
 
+    @Autowired
+    private SlaveDataSource slavedatasource;
+
+
+
     @Bean
     public DataSource getDataSource() throws SQLException {
         return buildDataSource();
@@ -32,8 +38,20 @@ public class DataSourceConfiguration {
     private DataSource buildDataSource() throws SQLException {
         Map<String, DataSource> result = new HashMap<>();
         result.put(DataSourceType.MASTER.name(), druidproperties.dataSource(masterdatasource.make()));
+        result.put(DataSourceType.SLAVE.name(), druidproperties.dataSource(slavedatasource.make()));
         ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
-        System.out.println("----------------------------");
+        shardingRuleConfig.setDefaultDataSourceName(DataSourceType.MASTER.name());
+        shardingRuleConfig.getTableRuleConfigs().add(YearContentIdsTableRuleConfiguration());
+        shardingRuleConfig.getTableRuleConfigs().add(YearMonthContentIdsTableRuleConfiguration());
         shardingRuleConfig.setDefaultDataSourceName(DataSourceType.MASTER.name());  return ShardingDataSourceFactory.createDataSource(result, shardingRuleConfig, new Properties());
+    }
+
+    TableRuleConfiguration YearContentIdsTableRuleConfiguration() {
+        TableRuleConfiguration result = new TableRuleConfiguration("yearcontent_ids", DataSourceType.SLAVE.name()+".yearcontent_ids");
+        return result;
+    }
+    TableRuleConfiguration YearMonthContentIdsTableRuleConfiguration() {
+        TableRuleConfiguration result = new TableRuleConfiguration("yearmonthcontent_ids", DataSourceType.SLAVE.name()+".yearmonthcontent_ids");
+        return result;
     }
 }

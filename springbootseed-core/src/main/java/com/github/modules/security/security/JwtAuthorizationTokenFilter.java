@@ -51,11 +51,9 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-
         String authToken = jwtTokenUtil.getAccessToken(request);
         String Token = jwtTokenUtil.getToken(request);
         String ip = StringUtils.getIp(request);
-//        System.out.println("-----authToken---["+authToken+"]----Token---["+Token+"]---IP---["+ip+"]-------");
         if (GlobalConfig.isDev() && authToken != null && authToken.equals("anonymous") && StringUtils.isSafeIp(ip)) {
             TestingAuthenticationToken authentication = new TestingAuthenticationToken("anonymous", null);
             authentication.setAuthenticated(true);
@@ -79,7 +77,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
                 if (!privatekey.isEmpty() && jwtTokenUtil.verify(request, privatekey)) {
                     Authorization authorization = null;
                     try {
-                        authorization = (Authorization)redisTemplate.opsForValue().get(onlineKey + authToken);
+                        authorization = (Authorization)redisTemplate.opsForValue().get(onlineKey + "::" + authToken);
                     } catch (ExpiredJwtException e) {
                         log.error(e.getMessage());
                     }
@@ -89,7 +87,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
                         JwtAuthentication userDetails = (JwtAuthentication)this.userDetailsService.loadUserByUsername(authorization.getAppid());
                         // For simple validation it is completely sufficient to just check the token integrity. You don't have to call
                         // the database compellingly. Again it's up to you ;)
-                        if (jwtTokenUtil.validateToken(authToken, userDetails)) {
+                        if (jwtTokenUtil.validateToken(authorization.getToken(), userDetails)) {
                             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                             SecurityContextHolder.getContext().setAuthentication(authentication);

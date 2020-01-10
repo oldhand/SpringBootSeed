@@ -2,10 +2,7 @@ package com.github.modules.security.service;
 
 import com.github.modules.security.security.JwtAuthentication;
 import com.github.domain.Authorization;
-import com.github.utils.EncryptUtils;
-import com.github.utils.FileUtil;
-import com.github.utils.PageUtil;
-import com.github.utils.StringUtils;
+import com.github.utils.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,18 +35,18 @@ public class AuthorizationService {
         this.redisTemplate = redisTemplate;
     }
 
-    public void save(JwtAuthentication jwtAuthentication, String token, String profileid, String publickey, String privatekey, HttpServletRequest request){
+    public void save(JwtAuthentication jwtAuthentication, String token, String md5token, String profileid, String publickey, String privatekey, HttpServletRequest request){
         String ip = StringUtils.getIp(request);
         String browser = StringUtils.getBrowser(request);
         String address = StringUtils.getCityInfo(ip);
         Authorization authorization = null;
         try {
-            authorization = new Authorization(profileid,jwtAuthentication.getUsername(), browser , ip, address, EncryptUtils.desEncrypt(token), new Date(),publickey,privatekey);
+            authorization = new Authorization(profileid, jwtAuthentication.getUsername(), token, browser , ip, address, EncryptUtils.desEncrypt(token), new Date(),publickey,privatekey);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        redisTemplate.opsForValue().set(onlineKey + "::" + token, authorization);
-        redisTemplate.expire(onlineKey + "::" + token,expiration, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set(onlineKey + "::" + md5token, authorization);
+        redisTemplate.expire(onlineKey + "::" + md5token,expiration, TimeUnit.MILLISECONDS);
     }
 
     public Page<Authorization> getAll(String filter, Pageable pageable){

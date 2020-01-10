@@ -9,6 +9,8 @@ import com.github.profile.service.dto.ProfileDTO;
 import com.github.profile.service.dto.ProfileQueryCriteria;
 import com.github.utils.*;
 import com.wf.captcha.ArithmeticCaptcha;
+import com.wf.captcha.SpecCaptcha;
+import com.wf.captcha.base.Captcha;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -210,10 +212,9 @@ public class ProfileController {
     @GetMapping(value = "/verifycode")
     public ImgResult getCode(){
         // 算术类型 https://gitee.com/whvse/EasyCaptcha
-        ArithmeticCaptcha captcha = new ArithmeticCaptcha(111, 36);
-        // 几位数运算，默认是两位
-        captcha.setLen(2);
-        // 获取运算的结果：5
+        SpecCaptcha captcha = new SpecCaptcha(111, 36, 4);
+        // 设置类型，纯数字、纯字母、字母数字混合
+        captcha.setCharType(Captcha.TYPE_ONLY_NUMBER);
         String result = captcha.text();
         String uuid = codeKey + "::" + IdUtil.simpleUUID();
         redisUtils.set(uuid,result);

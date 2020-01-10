@@ -109,9 +109,10 @@ public class AuthenticationController {
 
             long timestamp = DateTimeUtils.gettimeStamp();
             // 保存在线信息
-            authorizationService.save(jwtAuthentication, token,profileid,keys.get("publickey"), keys.get("privatekey"), request);
+            String md5token = MD5Util.get(token);
+            authorizationService.save(jwtAuthentication, token, md5token, profileid,keys.get("publickey"), keys.get("privatekey"), request);
             // 返回 token
-            return ResponseEntity.ok(new AuthInfo(token,profileid,keys.get("publickey")));
+            return ResponseEntity.ok(new AuthInfo(md5token,profileid,keys.get("publickey")));
         }
         catch (Exception e) {
             throw new AccountExpiredException("生成token错误");

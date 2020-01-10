@@ -81,13 +81,13 @@ public class JwtTokenUtil implements Serializable {
         final Date createdDate = clock.now();
         final Date expirationDate = calculateExpirationDate(createdDate);
 
-        return MD5Util.get(Jwts.builder()
+        return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(createdDate)
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS512, secret)
-                .compact());
+                .compact();
     }
 
     public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
@@ -111,7 +111,9 @@ public class JwtTokenUtil implements Serializable {
     }
 
     public Boolean verify(HttpServletRequest request,String privatekey){
-        if (privatekey.isEmpty()) return false;
+        if (privatekey.isEmpty()) {
+            return false;
+        }
         try {
             String uri = request.getRequestURI();
             final String query = request.getQueryString();
@@ -120,15 +122,20 @@ public class JwtTokenUtil implements Serializable {
             if (query != null && !query.isEmpty()) {
                 uri += "?" + URLDecoder.decode(query,"UTF-8");
             }
-//          System.out.println("-----------uri------"+uri+"--------------"+token+"------"+timestamp+"---------------");
-//          System.out.println("-----------privatekey---------"+privatekey+"---------------------");
+//            System.out.println("-----------uri------"+uri+"--------------"+token+"------"+timestamp+"---------------");
+//            System.out.println("-----------privatekey---------"+privatekey+"---------------------");
             if (!token.isEmpty() && !timestamp.isEmpty()  && !token.equals("anonymous") && !timestamp.equals("0")) {
                     final String decrypt_token = RSAUtil.decrypt(token, privatekey);
                     String md5token = MD5Util.get(uri + timestamp);
-                    if (md5token.equals(decrypt_token)) return true;
+//                    System.out.println("-----------uri------"+md5token+"--------------"+decrypt_token+"------------------");
+                    if (md5token.equals(decrypt_token)) {
+                        return true;
+                    }
             }
         }
-        catch (Exception e) {}
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return false;
     }
 

@@ -18,6 +18,8 @@ public class Authorization {
 
     private String appid;
 
+    private String token;
+
     private String browser;
 
     private String ip;

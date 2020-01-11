@@ -27,3 +27,7 @@ target/
 
 *.iml
 storage/
+
+*.old/
+
+*.zip

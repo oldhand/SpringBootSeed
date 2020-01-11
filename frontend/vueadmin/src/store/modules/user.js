@@ -29,13 +29,13 @@ const user = {
   actions: {
     // 登录
     Login({ commit }, userInfo) {
-      const username = userInfo.username
+      const id = userInfo.id
       const password = decrypt(userInfo.password)
-      const code = userInfo.code
+      const verifycode = userInfo.verifycode
       const uuid = userInfo.uuid
       const rememberMe = userInfo.rememberMe
       return new Promise((resolve, reject) => {
-        login(username, password, code, uuid).then(res => {
+        login(id, password, verifycode, uuid).then(res => {
           setToken(res.token, rememberMe)
           commit('SET_TOKEN', res.token)
           setUserInfo(res.user, commit)
@@ -43,6 +43,7 @@ const user = {
           commit('SET_LOAD_MENUS', true)
           resolve()
         }).catch(error => {
+          console.log('____actions__Login____' + JSON.stringify(error) + '______');
           reject(error)
         })
       })

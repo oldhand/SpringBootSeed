@@ -3,27 +3,23 @@ import { request } from '../rest/fetch';
 
 export async function getverifycode() {
   const url = '/api/profile/verifycode';
-  const headers = {};
   try {
-    const json = await request(url, headers);
-    console.log('______verifycode____' + JSON.stringify(json) + '______');
+    const json = await request(url);
+    // console.log('______verifycode____' + JSON.stringify(json) + '______');
     return json;
   } catch (errorMsg) {
-    console.log('______verifycode__errormsg__' + JSON.stringify(errorMsg) + '______');
+    // console.log('______verifycode__errormsg__' + JSON.stringify(errorMsg) + '______');
+    throw errorMsg;
   }
 }
 
-export function login(username, password, code, uuid) {
-  return request({
-    url: 'auth/login',
-    method: 'post',
-    data: {
-      username,
-      password,
-      code,
-      uuid
-    }
-  })
+export async function login(id, password, verifycode, uuid) {
+  const url = '/api/profile/login';
+  try {
+    return await request(url, {}, { id, password, verifycode, uuid }, 'POST');
+  } catch (errorMsg) {
+    throw errorMsg;
+  }
 }
 
 export function getInfo() {

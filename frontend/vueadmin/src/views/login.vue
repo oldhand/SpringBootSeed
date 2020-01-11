@@ -12,15 +12,21 @@
           <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon"/>
         </el-input>
       </el-form-item>
-      <el-form-item prop="code">
-        <el-input v-model="loginForm.code" auto-complete="off" placeholder="验证码" style="width: 63%" @keyup.enter.native="handleLogin">
+      <el-form-item v-if="needverifycode" prop="code" >
+        <el-input v-model="loginForm.code" auto-complete="off" placeholder="验证码" maxlength="4" style="width: 63%" @keyup.enter.native="handleLogin">
           <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon"/>
         </el-input>
         <div class="login-code">
           <img :src="codeUrl" @click="getCode">
         </div>
       </el-form-item>
+
       <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住我</el-checkbox>
+
+      <div v-if="errorMsg != ''" class="error-msg">
+        {{ errorMsg }}
+      </div>
+
       <el-form-item style="width:100%;">
         <el-button :loading="loading" size="medium" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
           <span v-if="!loading">登 录</span>
@@ -61,7 +67,9 @@ export default {
         code: [{ required: true, trigger: 'change', message: '验证码不能为空' }]
       },
       loading: false,
-      redirect: undefined
+      needverifycode: false,
+      redirect: undefined,
+      errorMsg: ''
     }
   },
   watch: {
@@ -73,7 +81,6 @@ export default {
     }
   },
   created() {
-    this.getCode()
     this.getCookie()
   },
   methods: {
@@ -81,12 +88,18 @@ export default {
       getverifycode().then(res => {
         this.codeUrl = res.img
         this.loginForm.uuid = res.uuid
-      })
+      }).catch((errorMsg) => {
+        this.errorMsg = errorMsg;
+      });
     },
     getCookie() {
       const username = Cookies.get('username')
       let password = Cookies.get('password')
       const rememberMe = Cookies.get('rememberMe')
+      this.needverifycode = Cookies.get('needverifycode')
+      if (this.needverifycode) {
+        this.getCode()
+      }
       // 保存cookie里面的加密后的密码
       this.cookiePass = password === undefined ? '' : password
       password = password === undefined ? this.loginForm.password : password
@@ -99,12 +112,23 @@ export default {
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
-        const user = {
-          username: this.loginForm.username,
-          password: this.loginForm.password,
-          rememberMe: this.loginForm.rememberMe,
-          code: this.loginForm.code,
-          uuid: this.loginForm.uuid
+        let user
+        if (this.needverifycode) {
+          user = {
+            id: this.loginForm.username,
+            password: this.loginForm.password,
+            rememberMe: this.loginForm.rememberMe,
+            verifycode: this.loginForm.code,
+            uuid: this.loginForm.uuid
+          }
+        } else {
+          user = {
+            id: this.loginForm.username,
+            password: this.loginForm.password,
+            rememberMe: this.loginForm.rememberMe,
+            verifycode: '',
+            uuid: ''
+          }
         }
         if (user.password !== this.cookiePass) {
           user.password = encrypt(user.password)
@@ -122,9 +146,13 @@ export default {
           }
           this.$store.dispatch('Login', user).then(() => {
             this.loading = false
+            Cookies.remove('needverifycode')
             this.$router.push({ path: this.redirect || '/' })
-          }).catch(() => {
+          }).catch((errorMsg) => {
+            this.errorMsg = errorMsg;
             this.loading = false
+            Cookies.set('needverifycode', true, { expires: Config.passCookieExpires })
+            this.needverifycode = true;
             this.getCode()
           })
         } else {
@@ -180,5 +208,10 @@ export default {
       cursor: pointer;
       vertical-align:middle
     }
+  }
+  .error-msg {
+    font-size: 13px;
+    margin:0px 0px 25px 0px;
+    color: red;
   }
 </style>

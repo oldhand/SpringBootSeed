@@ -21,9 +21,14 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
     url = process.env.baseUrl + url;
     try {
         if (type === 'GET') {
-            console.log('______GET____' + JSON.stringify(url) + '____' + JSON.stringify(headers) + '___');
-            const result = await axios.get(url, { headers: headers });
-            console.log('______GET____' + JSON.stringify(result) + '______');
+            const result = await axios.get(url, { headers: headers }).catch(function(errorMsg) {
+              if (errorMsg.response) {
+                if (errorMsg.response.status === 400) {
+                  throw errorMsg.response.data.message;
+                }
+              }
+              throw errorMsg;
+            });
             if (result.status === 200) {
                 const cipher = result.data;
                 if (cipher && cipher !== '' && base64.isbase64(cipher)) {
@@ -50,7 +55,14 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
                 encryptdata = RestEncrypt(JSON.stringify(data), public_key);
             }
             headers['Content-Type'] = 'application/json; charset=UTF-8';
-            const result = await axios.post(url, encryptdata, { headers: headers });
+            const result = await axios.post(url, encryptdata, { headers: headers }).catch(function(errorMsg) {
+              if (errorMsg.response) {
+                if (errorMsg.response.status === 400) {
+                  throw errorMsg.response.data.message;
+                }
+              }
+              throw errorMsg;
+            });
             if (result.status === 200) {
                 const cipher = result.data;
                 if (cipher && cipher !== '' && base64.isbase64(cipher)) {
@@ -72,7 +84,14 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
             const public_key = store.state.rest.access_token_info.public_key;
             const encryptdata = RestEncrypt(JSON.stringify(data), public_key);
             headers['Content-Type'] = 'application/json; charset=UTF-8';
-            const result = await axios.put(url, encryptdata, { headers: headers });
+            const result = await axios.put(url, encryptdata, { headers: headers }).catch(function(errorMsg) {
+              if (errorMsg.response) {
+                if (errorMsg.response.status === 400) {
+                  throw errorMsg.response.data.message;
+                }
+              }
+              throw errorMsg;
+            });
             if (result.status === 200) {
                 const cipher = result.data;
                 if (cipher && cipher !== '' && base64.isbase64(cipher)) {
@@ -91,7 +110,14 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
                 }
             }
         } else if (type === 'DELETE') {
-            const result = await axios.delete(url, { headers: headers });
+            const result = await axios.delete(url, { headers: headers }).catch(function(errorMsg) {
+              if (errorMsg.response) {
+                if (errorMsg.response.status === 400) {
+                  throw errorMsg.response.data.message;
+                }
+              }
+              throw errorMsg;
+            });
             if (result.status === 200) {
                 const cipher = result.data;
                 if (cipher && cipher !== '' && base64.isbase64(cipher)) {
@@ -112,9 +138,16 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
         } else {
              throw 'Wrong request type';
         }
-    } catch (errmsg) {
-        console.log('______await_axios____' + JSON.stringify(errmsg) + '_________');
-        throw errmsg;
+    } catch (errMsg) {
+        if (errMsg.message) {
+          if (errMsg.message === 'Network Error') {
+            throw 'Unable to connect to server';
+          } else {
+            throw errMsg.message;
+          }
+        } else {
+          throw errMsg;
+        }
     }
 }
 

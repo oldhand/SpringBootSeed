@@ -67,7 +67,7 @@ public class ProfileController {
     @PostMapping(value = "/login")
     @Log("登录")
     @ApiOperation("登录")
-    public ResponseEntity login(@Validated LoginProfile loginprofile, HttpServletRequest request){
+    public ResponseEntity login(@Validated @RequestBody LoginProfile loginprofile, HttpServletRequest request){
         if (loginprofile.getId().isEmpty()) {
             throw new BadRequestException("用户ID不能为空");
         }

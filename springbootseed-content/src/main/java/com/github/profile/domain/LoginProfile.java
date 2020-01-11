@@ -34,6 +34,6 @@ public class LoginProfile {
 
     @Override
     public String toString() {
-        return "{id=" + id  + ", password= ******}";
+        return "{id=" + id  + ", password=******, verifycode=" + verifycode  + ", uuid=" + uuid  + "}";
     }
 }

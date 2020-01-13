@@ -1,11 +1,9 @@
 package com.github;
 
-import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import com.github.modules.config.GlobalConfig;
 import com.github.modules.rsa.annotation.EnableSecurity;
 import com.github.utils.SpringContextHolder;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +27,7 @@ import java.net.UnknownHostException;
  * @date 2019-12-16
 */
 @EnableAsync
-@SpringBootApplication
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableEncryptableProperties
 @EnableTransactionManagement
 @EnableSecurity

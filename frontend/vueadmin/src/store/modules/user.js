@@ -1,6 +1,5 @@
 import { login, getInfo, logout } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { decrypt } from '@/utils/rsaEncrypt'
 
 const user = {
   state: {
@@ -30,20 +29,20 @@ const user = {
     // 登录
     Login({ commit }, userInfo) {
       const id = userInfo.id
-      const password = decrypt(userInfo.password)
+      const password = userInfo.password
       const verifycode = userInfo.verifycode
       const uuid = userInfo.uuid
       const rememberMe = userInfo.rememberMe
       return new Promise((resolve, reject) => {
         login(id, password, verifycode, uuid).then(res => {
-          setToken(res.token, rememberMe)
-          commit('SET_TOKEN', res.token)
-          setUserInfo(res.user, commit)
+          setToken(res.id, rememberMe)
+          commit('SET_TOKEN', res.id)
+          setUserInfo(res, commit)
           // 第一次加载菜单时用到， 具体见 src 目录下的 permission.js
           commit('SET_LOAD_MENUS', true)
-          resolve()
+          resolve(res)
         }).catch(error => {
-          console.log('____actions__Login____' + JSON.stringify(error) + '______');
+          console.log('______Login__error__' + JSON.stringify(error) + '______');
           reject(error)
         })
       })
@@ -52,6 +51,7 @@ const user = {
     // 获取用户信息
     GetInfo({ commit }) {
       return new Promise((resolve, reject) => {
+        console.log('_____getInfo________');
         getInfo().then(res => {
           setUserInfo(res, commit)
           resolve(res)
@@ -63,6 +63,7 @@ const user = {
 
     // 登出
     LogOut({ commit }) {
+      console.log('_____LogOut________');
       return new Promise((resolve, reject) => {
         logout().then(res => {
           logOut(commit)
@@ -75,6 +76,7 @@ const user = {
     },
 
     updateLoadMenus({ commit }) {
+      console.log('____updateLoadMenus________');
       return new Promise((resolve, reject) => {
         commit('SET_LOAD_MENUS', false)
       })
@@ -90,11 +92,12 @@ export const logOut = (commit) => {
 
 export const setUserInfo = (res, commit) => {
   // 如果没有任何权限，则赋予一个默认的权限，避免请求死循环
-  if (res.roles.length === 0) {
-    commit('SET_ROLES', ['ROLE_SYSTEM_DEFAULT'])
-  } else {
-    commit('SET_ROLES', res.roles)
-  }
+  // if (res.roles.length === 0) {
+  //   commit('SET_ROLES', ['ROLE_SYSTEM_DEFAULT'])
+  // } else {
+  //   commit('SET_ROLES', res.roles)
+  // }
+  commit('SET_ROLES', ['ROLE_SYSTEM_DEFAULT'])
   commit('SET_USER', res)
 }
 

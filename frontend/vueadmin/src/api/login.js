@@ -1,7 +1,7 @@
 
 import { request } from '../rest/fetch';
 
-export async function getverifycode() {
+export async function getVerifyCode() {
   const url = '/api/profile/verifycode';
   try {
     const json = await request(url);
@@ -17,6 +17,19 @@ export async function login(id, password, verifycode, uuid) {
   const url = '/api/profile/login';
   try {
     return await request(url, {}, { id, password, verifycode, uuid }, 'POST');
+  } catch (errorMsg) {
+    throw errorMsg;
+  }
+}
+
+export async function searchUser(username) {
+  const url = '/api/profile?type=admin&username=' + username;
+  try {
+    const json = await request(url);
+    if (json.content.length > 0) {
+      return json.content[0];
+    }
+    throw 'User not found';
   } catch (errorMsg) {
     throw errorMsg;
   }

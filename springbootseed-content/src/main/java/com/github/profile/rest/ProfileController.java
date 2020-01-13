@@ -149,11 +149,6 @@ public class ProfileController {
             throw new BadRequestException("用户ID不能为空");
         }
         try {
-            PasswordUtils.match(profile.getOldpassword());
-        }catch(Exception e) {
-            throw new BadRequestException("老密码: " + e.getMessage());
-        }
-        try {
             PasswordUtils.match(profile.getNewpassword());
         }catch(Exception e) {
             throw new BadRequestException("新密码: " + e.getMessage());

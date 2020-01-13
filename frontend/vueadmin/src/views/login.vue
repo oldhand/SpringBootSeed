@@ -44,9 +44,8 @@
 </template>
 
 <script>
-import { encrypt } from '@/utils/rsaEncrypt'
 import Config from '@/config'
-import { getverifycode } from '@/api/login'
+import { getVerifyCode, searchUser } from '@/api/login'
 import Cookies from 'js-cookie'
 export default {
   name: 'Login',
@@ -55,8 +54,8 @@ export default {
       codeUrl: '',
       cookiePass: '',
       loginForm: {
-        username: 'admin',
-        password: '123456',
+        username: 'oldhand',
+        password: '123qwe',
         rememberMe: false,
         code: '',
         uuid: ''
@@ -85,7 +84,7 @@ export default {
   },
   methods: {
     getCode() {
-      getverifycode().then(res => {
+      getVerifyCode().then(res => {
         this.codeUrl = res.img
         this.loginForm.uuid = res.uuid
       }).catch((errorMsg) => {
@@ -130,31 +129,34 @@ export default {
             uuid: ''
           }
         }
-        if (user.password !== this.cookiePass) {
-          user.password = encrypt(user.password)
-        }
         if (valid) {
           this.loading = true
-          if (user.rememberMe) {
-            Cookies.set('username', user.username, { expires: Config.passCookieExpires })
-            Cookies.set('password', user.password, { expires: Config.passCookieExpires })
-            Cookies.set('rememberMe', user.rememberMe, { expires: Config.passCookieExpires })
-          } else {
-            Cookies.remove('username')
-            Cookies.remove('password')
-            Cookies.remove('rememberMe')
-          }
-          this.$store.dispatch('Login', user).then(() => {
-            this.loading = false
-            Cookies.remove('needverifycode')
-            this.$router.push({ path: this.redirect || '/' })
+          searchUser(user.id).then(res => {
+            user.id = res.id;
+            if (user.rememberMe) {
+              Cookies.set('username', this.loginForm.username, { expires: Config.passCookieExpires })
+              Cookies.set('password', user.password, { expires: Config.passCookieExpires })
+              Cookies.set('rememberMe', user.rememberMe, { expires: Config.passCookieExpires })
+            } else {
+              Cookies.remove('username')
+              Cookies.remove('password')
+              Cookies.remove('rememberMe')
+            }
+            this.$store.dispatch('Login', user).then((res) => {
+              this.loading = false
+              Cookies.remove('needverifycode')
+              this.$router.push({ path: this.redirect || '/' })
+            }).catch((errorMsg) => {
+              this.errorMsg = errorMsg;
+              this.loading = false
+              Cookies.set('needverifycode', true, { expires: Config.passCookieExpires })
+              this.needverifycode = true;
+              this.getCode()
+            })
           }).catch((errorMsg) => {
             this.errorMsg = errorMsg;
             this.loading = false
-            Cookies.set('needverifycode', true, { expires: Config.passCookieExpires })
-            this.needverifycode = true;
-            this.getCode()
-          })
+          });
         } else {
           console.log('error submit!!')
           return false

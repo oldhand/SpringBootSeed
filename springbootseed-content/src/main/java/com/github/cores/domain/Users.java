@@ -32,7 +32,6 @@ public class Users extends BaseEntity implements Serializable {
     @ApiModelProperty("saasid")
     private long saasid;
 
-	
     // 编号
     @Column(name = "users_no")
 	@ApiModelProperty("编号")
@@ -62,6 +61,16 @@ public class Users extends BaseEntity implements Serializable {
     @Column(name = "status")
 	@ApiModelProperty("用户状态")
 	private String status;
+
+    // 部门ID
+    @Column(name = "deptid")
+    @ApiModelProperty("部门ID")
+    private long deptid;
+
+    // 权限ID
+    @Column(name = "permissionid")
+    @ApiModelProperty("权限ID")
+    private long permissionid;
 	
     // 用户邮箱
     @Column(name = "email")

@@ -10,7 +10,7 @@ import com.github.annotation.Query;
 * @date 2020-01-14
 */
 @Data
-public class RolesQueryCriteria{
+public class TabsQueryCriteria{
 	 
 	// 精确
 	@Query

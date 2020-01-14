@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 /**
 * @author oldhand
-* @date 2020-01-03
+* @date 2020-01-14
 */
 @Data
 public class PicklistsDTO extends BaseDTO implements Serializable {

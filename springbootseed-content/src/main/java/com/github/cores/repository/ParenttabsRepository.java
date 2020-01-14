@@ -1,6 +1,6 @@
 package com.github.cores.repository;
 
-import com.github.cores.domain.Saass;
+import com.github.cores.domain.Parenttabs;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -8,7 +8,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 * @author oldhand
 * @date 2020-01-14
 */
-public interface SaassRepository extends JpaRepository<Saass, Long>, JpaSpecificationExecutor<Saass> {
-
-    Saass findByName(String name);
+public interface ParenttabsRepository extends JpaRepository<Parenttabs, Long>, JpaSpecificationExecutor<Parenttabs> {
 }

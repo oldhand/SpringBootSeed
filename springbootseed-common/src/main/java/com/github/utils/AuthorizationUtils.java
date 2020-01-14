@@ -78,8 +78,26 @@ public class AuthorizationUtils {
         }
         return "";
     }
+    public static Authorization get(HttpServletRequest request) {
+        try {
+            String token =  getAccessToken(request);
+            if (token.equals("anonymous")) {
+                return null;
+            }
+            else if (!token.isEmpty()) {
+                String key = onlineKey + "::" + token;
+                Authorization authorization = (Authorization) redisTemplate.opsForValue().get(key);
+                if (authorization != null) {
+                    return authorization;
+                }
+            }
+        }
+        catch(Exception e) {
+        }
+        return null;
+    }
 
-    public static boolean setProfileid(HttpServletRequest request, String profileid) {
+    public static boolean set(HttpServletRequest request, String profileid, long saasid) {
         try {
             String token =  getAccessToken(request);
             if (token.equals("anonymous")) {
@@ -90,6 +108,7 @@ public class AuthorizationUtils {
                 Authorization authorization = (Authorization) redisTemplate.opsForValue().get(key);
                 if (authorization != null) {
                     authorization.setProfileid(profileid);
+                    authorization.setSaasid(saasid);
                     redisTemplate.opsForValue().set(key, authorization);
                     redisTemplate.expire(key,expiration, TimeUnit.MILLISECONDS);
                     return true;

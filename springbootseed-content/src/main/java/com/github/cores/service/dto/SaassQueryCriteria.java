@@ -7,7 +7,7 @@ import com.github.annotation.Query;
 
 /**
 * @author oldhand
-* @date 2020-01-03
+* @date 2020-01-14
 */
 @Data
 public class SaassQueryCriteria{
@@ -29,4 +29,9 @@ public class SaassQueryCriteria{
     @Query
 	@ApiModelProperty("ID")
     private Long id;
+
+    // 精确
+    @Query
+	@ApiModelProperty("名称")
+    private String name;
 }

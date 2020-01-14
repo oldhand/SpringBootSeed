@@ -19,41 +19,39 @@ import java.io.Serializable;
 */
 @Entity
 @Data
-@Table(name="base_picklists")
-public class Picklists extends BaseEntity implements Serializable {
+@Table(name="base_parenttabs")
+public class Parenttabs extends BaseEntity implements Serializable {
 	
-    // saasid
     @Column(name = "saasid",nullable = false)
-	@ApiModelProperty("saasid")
 	private Long saasid;
 	
-    // 名称
-    @Column(name = "name",nullable = false)
-	@ApiModelProperty("名称")
-	private String name;
+    // 父模块名称
+    @Column(name = "tabname",nullable = false)
+	@ApiModelProperty("父模块名称")
+	private String tabname;
 	
-    // 可见
+    // 父模块标签
+    @Column(name = "tablabel",nullable = false)
+	@ApiModelProperty("父模块标签")
+	private String tablabel;
+	
+    // 是否可见
     @Column(name = "presence",nullable = false)
-	@ApiModelProperty("可见")
+	@ApiModelProperty("是否可见")
 	private Integer presence;
 	
     // 排序号
-    @Column(name = "sequence",nullable = false)
+    @Column(name = "squence",nullable = false)
 	@ApiModelProperty("排序号")
-	private Integer sequence;
+	private Integer squence;
 	
-    // 存储值
-    @Column(name = "value",nullable = false)
-	@ApiModelProperty("存储值")
-	private String value;
-	
-    // 显示值
-    @Column(name = "display",nullable = false)
-	@ApiModelProperty("显示值")
-	private String display;
+    // 图标
+    @Column(name = "icon",nullable = false)
+	@ApiModelProperty("图标")
+	private String icon;
 	
 
-    public void copy(Picklists source){
+    public void copy(Parenttabs source){
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

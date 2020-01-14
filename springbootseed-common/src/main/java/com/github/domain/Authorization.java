@@ -14,6 +14,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class Authorization {
 
+    private long saasid;
+
     private String profileid;
 
     private String appid;

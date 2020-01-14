@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
 
 /**
 * @author oldhand
-* @date 2020-01-03
+* @date 2020-01-14
 */
 @Service
 @CacheConfig(cacheNames = "Picklists")
@@ -112,7 +112,7 @@ public class PicklistsServiceImpl implements PicklistsService {
 		    map.put("更新日期", Picklists.getUpdated());
 		    map.put("创建者", Picklists.getAuthor());
 		    map.put("删除标记", Picklists.getDeleted());
-            map.put("SaaSId", Picklists.getSaasid());
+            map.put("saasid", Picklists.getSaasid());
             map.put("名称", Picklists.getName());
             map.put("可见", Picklists.getPresence());
             map.put("排序号", Picklists.getSequence());

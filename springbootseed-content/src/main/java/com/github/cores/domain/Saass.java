@@ -15,7 +15,7 @@ import java.io.Serializable;
 
 /**
 * @author oldhand
-* @date 2020-01-03
+* @date 2020-01-14
 */
 @Entity
 @Data
@@ -23,17 +23,17 @@ import java.io.Serializable;
 public class Saass extends BaseEntity implements Serializable {
 	
     // 名称
-    @Column(name = "name")
+    @Column(name = "name",unique = true,nullable = false)
 	@ApiModelProperty("名称")
 	private String name;
 	
     // 公司名称
-    @Column(name = "companyname")
+    @Column(name = "companyname",nullable = false)
 	@ApiModelProperty("公司名称")
 	private String companyname;
 	
     // 短名称
-    @Column(name = "shortname")
+    @Column(name = "shortname",nullable = false)
 	@ApiModelProperty("短名称")
 	private String shortname;
 	
@@ -48,7 +48,7 @@ public class Saass extends BaseEntity implements Serializable {
 	private String city;
 	
     // 创建人
-    @Column(name = "profileid")
+    @Column(name = "profileid",nullable = false)
 	@ApiModelProperty("创建人")
 	private String profileid;
 	

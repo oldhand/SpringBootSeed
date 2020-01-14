@@ -2,6 +2,8 @@ package com.github.profile.rest;
 
 import cn.hutool.core.util.IdUtil;
 import com.github.aop.log.Log;
+import com.github.cores.service.UsersService;
+import com.github.cores.service.dto.UsersDTO;
 import com.github.exception.BadRequestException;
 import com.github.profile.domain.*;
 import com.github.profile.service.ProfileService;
@@ -35,11 +37,14 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
+    private final UsersService usersservice;
+
     @Value("${jwt.codeKey}")
     private String codeKey;
 
-    public ProfileController(ProfileService profileService) {
+    public ProfileController(ProfileService profileService,UsersService usersservice) {
         this.profileService = profileService;
+        this.usersservice = usersservice;
     }
 
     @Log("导出用户数据")
@@ -109,8 +114,18 @@ public class ProfileController {
             redisUtils.set(key, DateTimeUtils.gettimeStamp());
             throw new AccountExpiredException("密码错误");
         }
-        if (!AuthorizationUtils.setProfileid(request,profileid)) {
-            throw new AccountExpiredException("登录失败");
+        final UsersDTO users = usersservice.findByProfileid(profileid);
+
+        if (users != null) {
+            Long saasid = users.getSaasid();
+            if (!AuthorizationUtils.set(request,profileid,saasid)) {
+                throw new AccountExpiredException("登录失败");
+            }
+        }
+        else {
+            if (!AuthorizationUtils.set(request,profileid,0)) {
+                throw new AccountExpiredException("登录失败");
+            }
         }
         if (!authlogin.isEmpty()) {
             redisUtils.delete(key);
@@ -126,7 +141,7 @@ public class ProfileController {
     @Log("注销")
     @ApiOperation("注销")
     public ResponseEntity logout(HttpServletRequest request){
-        if (!AuthorizationUtils.setProfileid(request,"")) {
+        if (!AuthorizationUtils.set(request,"",0)) {
             throw new AccountExpiredException("注销失败");
         }
         return new ResponseEntity("ok",HttpStatus.OK);

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
 * @author oldhand
-* @date 2020-01-03
+* @date 2020-01-14
 */
 public interface PicklistsRepository extends JpaRepository<Picklists, Long>, JpaSpecificationExecutor<Picklists> {
 }

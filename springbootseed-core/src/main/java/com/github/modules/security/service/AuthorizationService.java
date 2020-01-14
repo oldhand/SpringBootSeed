@@ -35,13 +35,13 @@ public class AuthorizationService {
         this.redisTemplate = redisTemplate;
     }
 
-    public void save(JwtAuthentication jwtAuthentication, String token, String md5token, String profileid, String publickey, String privatekey, HttpServletRequest request){
+    public void save(JwtAuthentication jwtAuthentication, String token, String md5token, String profileid,long saasid, String publickey, String privatekey, HttpServletRequest request){
         String ip = StringUtils.getIp(request);
         String browser = StringUtils.getBrowser(request);
         String address = StringUtils.getCityInfo(ip);
         Authorization authorization = null;
         try {
-            authorization = new Authorization(profileid, jwtAuthentication.getUsername(), token, browser , ip, address, EncryptUtils.desEncrypt(token), new Date(),publickey,privatekey);
+            authorization = new Authorization(saasid, profileid, jwtAuthentication.getUsername(), token, browser , ip, address, EncryptUtils.desEncrypt(token), new Date(),publickey,privatekey);
         } catch (Exception e) {
             e.printStackTrace();
         }

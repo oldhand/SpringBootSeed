@@ -15,25 +15,29 @@ import java.io.Serializable;
 
 /**
 * @author oldhand
-* @date 2020-01-02
+* @date 2020-01-14
 */
 @Entity
 @Data
 @Table(name="base_roles")
 public class Roles extends BaseEntity implements Serializable {
-
-    // saasid
+	
     @Column(name = "saasid",nullable = false)
-    @ApiModelProperty("saasid")
-    private Long saasid;
-
+	private Long saasid;
+	
+    // 角色名称
     @Column(name = "name",nullable = false)
+	@ApiModelProperty("角色名称")
 	private String name;
 	
-    @Column(name = "description")
+    // 描述
+    @Column(name = "description",nullable = false)
+	@ApiModelProperty("描述")
 	private String description;
 	
-    @Column(name = "profileids",nullable = false)
+    // 用户ID列表，逗号分隔
+    @Column(name = "profileids")
+	@ApiModelProperty("用户ID列表，逗号分隔")
 	private String profileids;
 	
 

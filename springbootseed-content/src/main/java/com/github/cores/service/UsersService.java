@@ -37,6 +37,8 @@ public interface UsersService {
      */
     UsersDTO findById(Long id);
 
+    UsersDTO findByProfileid(String profileid);
+
     UsersDTO create(Users resources);
 
     UsersDTO update(Long id,Users resources);

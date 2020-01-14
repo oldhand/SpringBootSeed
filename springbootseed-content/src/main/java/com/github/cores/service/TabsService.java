@@ -1,8 +1,8 @@
 package com.github.cores.service;
 
-import com.github.cores.domain.Roles;
-import com.github.cores.service.dto.RolesDTO;
-import com.github.cores.service.dto.RolesQueryCriteria;
+import com.github.cores.domain.Tabs;
+import com.github.cores.service.dto.TabsDTO;
+import com.github.cores.service.dto.TabsQueryCriteria;
 import org.springframework.data.domain.Pageable;
 import java.util.Map;
 import java.util.List;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 * @author oldhand
 * @date 2020-01-14
 */
-public interface RolesService {
+public interface TabsService {
 
     /**
     * 查询数据分页
@@ -21,29 +21,29 @@ public interface RolesService {
     * @param pageable 分页参数
     * @return Map<String,Object>
     */
-    Map<String,Object> queryAll(RolesQueryCriteria criteria, Pageable pageable);
+    Map<String,Object> queryAll(TabsQueryCriteria criteria, Pageable pageable);
 
     /**
     * 查询所有数据不分页
     * @param criteria 条件参数
-    * @return List<RolesDTO>
+    * @return List<TabsDTO>
     */
-    List<RolesDTO> queryAll(RolesQueryCriteria criteria);
+    List<TabsDTO> queryAll(TabsQueryCriteria criteria);
 
     /**
      * 根据ID查询
      * @param id ID
-     * @return RolesDTO
+     * @return TabsDTO
      */
-    RolesDTO findById(Long id);
+    TabsDTO findById(Long id);
 
-    RolesDTO create(Roles resources);
+    TabsDTO create(Tabs resources);
 
-    RolesDTO update(Long id,Roles resources);
+    TabsDTO update(Long id,Tabs resources);
 
     void delete(Long id);
 	
 	void makedelete(Long id);
 
-    void download(List<RolesDTO> all, HttpServletResponse response) throws IOException;
+    void download(List<TabsDTO> all, HttpServletResponse response) throws IOException;
 }

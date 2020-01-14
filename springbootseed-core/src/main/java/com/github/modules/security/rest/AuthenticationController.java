@@ -60,7 +60,7 @@ public class AuthenticationController {
     @AnonymousAccess
     @PostMapping(value = "/credential")
     public ResponseEntity login(@Validated @RequestBody AuthApplication authApplication, HttpServletRequest request){
-        return authentication(authApplication,"","",request);
+        return authentication(authApplication,"","",0,request);
     }
 
     @Log("刷新Token")
@@ -73,10 +73,11 @@ public class AuthenticationController {
             throw new BadRequestException("刷新Token失败");
         }
         String profileid = authorization.getProfileid();
-        return authentication(authApplication,token,profileid,request);
+        long saasid = authorization.getSaasid();
+        return authentication(authApplication,token,profileid,saasid,request);
     }
 
-    private ResponseEntity authentication(AuthApplication authApplication,String token, String profileid, HttpServletRequest request){
+    private ResponseEntity authentication(AuthApplication authApplication,String token, String profileid, long saasid, HttpServletRequest request){
         if (authApplication.getAppid().isEmpty()) {
             throw new BadRequestException("应用ID不能为空");
         }
@@ -110,9 +111,9 @@ public class AuthenticationController {
             long timestamp = DateTimeUtils.gettimeStamp();
             // 保存在线信息
             String md5token = MD5Util.get(token);
-            authorizationService.save(jwtAuthentication, token, md5token, profileid,keys.get("publickey"), keys.get("privatekey"), request);
+            authorizationService.save(jwtAuthentication, token, md5token, profileid, saasid, keys.get("publickey"), keys.get("privatekey"), request);
             // 返回 token
-            return ResponseEntity.ok(new AuthInfo(md5token,profileid,keys.get("publickey")));
+            return ResponseEntity.ok(new AuthInfo(md5token,profileid,saasid,keys.get("publickey")));
         }
         catch (Exception e) {
             throw new AccountExpiredException("生成token错误");

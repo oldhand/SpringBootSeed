@@ -12,17 +12,23 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 * @date 2020-01-14
 */
 @Data
-public class RolesDTO extends BaseDTO implements Serializable {
+public class ParenttabsDTO extends BaseDTO implements Serializable {
 	
     private Long saasid;
 	
-    // 角色名称
-    private String name;
+    // 父模块名称
+    private String tabname;
 	
-    // 描述
-    private String description;
+    // 父模块标签
+    private String tablabel;
 	
-    // 用户ID列表，逗号分隔
-    private String profileids;
+    // 是否可见
+    private Integer presence;
+	
+    // 排序号
+    private Integer squence;
+	
+    // 图标
+    private String icon;
 	
 }

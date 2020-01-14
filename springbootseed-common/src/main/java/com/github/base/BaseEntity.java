@@ -24,7 +24,7 @@ public class BaseEntity implements Serializable {
     // ID
     @Id
     @JsonIgnore
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", updatable=false,nullable = false)
     @ApiModelProperty("ID")
     protected Long id;

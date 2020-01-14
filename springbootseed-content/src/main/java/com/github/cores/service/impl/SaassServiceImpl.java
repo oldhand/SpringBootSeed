@@ -2,6 +2,7 @@ package com.github.cores.service.impl;
 
 import com.github.cores.domain.Saass;
 import com.github.exception.EntityExistException;
+import com.github.exception.EntityExistException;
 import com.github.utils.ValidationUtil;
 import com.github.utils.FileUtil;
 import com.github.cores.repository.SaassRepository;
@@ -30,7 +31,7 @@ import java.util.LinkedHashMap;
 
 /**
 * @author oldhand
-* @date 2020-01-03
+* @date 2020-01-14
 */
 @Service
 @CacheConfig(cacheNames = "Saass")
@@ -71,6 +72,9 @@ public class SaassServiceImpl implements SaassService {
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public SaassDTO create(Saass resources) {
+        if(SaassRepository.findByName(resources.getName()) != null){
+            throw new EntityExistException(Saass.class,"name",resources.getName());
+        }
         return SaassMapper.toDto(SaassRepository.saveAndFlush(resources));
     }
 
@@ -80,6 +84,10 @@ public class SaassServiceImpl implements SaassService {
     public SaassDTO update(Long id,Saass resources) {
         Saass Saass = SaassRepository.findById(id).orElseGet(Saass::new);
         ValidationUtil.isNull( Saass.getId(),"Saass","id",resources.getId());
+        Saass Saass_name = SaassRepository.findByName(resources.getName());
+        if(Saass_name != null && !Saass_name.getId().equals(Saass.getId())){
+            throw new EntityExistException(Saass.class,"name",resources.getName());
+        }
         Saass.copy(resources);
 		return SaassMapper.toDto(SaassRepository.saveAndFlush(Saass));
     }

@@ -53,7 +53,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Cacheable(key = "#p0")
     public ApplicationDTO findByAppid(String appid) {
         Application application = applicationRepository.findByAppid(appid);
-        ValidationUtil.isNull(application.getId(),"Application","appid",appid);
+        ValidationUtil.isNull(application.getAppid(),"Application","appid",appid);
         return applicationMapper.toDto(application);
     }
 }

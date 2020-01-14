@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
 
 /**
 * @author oldhand
-* @date 2020-01-02
+* @date 2020-01-14
 */
 @Service
 @CacheConfig(cacheNames = "Roles")
@@ -112,9 +112,10 @@ public class RolesServiceImpl implements RolesService {
 		    map.put("更新日期", Roles.getUpdated());
 		    map.put("创建者", Roles.getAuthor());
 		    map.put("删除标记", Roles.getDeleted());
-            map.put("name",  Roles.getName());
-            map.put("description",  Roles.getDescription());
-            map.put("profileids",  Roles.getProfileids());
+            map.put("saasid",  Roles.getSaasid());
+            map.put("角色名称", Roles.getName());
+            map.put("描述", Roles.getDescription());
+            map.put("用户ID列表，分号分隔", Roles.getProfileids());
             list.add(map);
         }
         FileUtil.downloadExcel(list, response);

@@ -112,7 +112,7 @@ public class SwaggerConfig {
         ticketPar.name("token").description("token")
                 .modelRef(new ModelRef("string"))
                 .parameterType("header")
-                .defaultValue("")
+                .defaultValue("anonymous")
                 .description("认证令牌 (默认：anonymous)")
                 .required(true)
                 .build();

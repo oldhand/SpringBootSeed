@@ -1,9 +1,9 @@
 package com.github.cores.rest;
 
 import com.github.aop.log.Log;
-import com.github.cores.domain.Saass;
-import com.github.cores.service.SaassService;
-import com.github.cores.service.dto.SaassQueryCriteria;
+import com.github.cores.domain.Parenttabs;
+import com.github.cores.service.ParenttabsService;
+import com.github.cores.service.dto.ParenttabsQueryCriteria;
 import com.github.exception.BadRequestException;
 import com.github.service.ContentIdsService;
 import com.github.utils.AuthorizationUtils;
@@ -23,17 +23,17 @@ import javax.servlet.http.HttpServletResponse;
 * @author oldhand
 * @date 2020-01-14
 */
-@Api(tags = "后台：云服务管理")
+@Api(tags = "后台：父模块管理")
 @RestController
-@RequestMapping("/api/saass")
-public class SaassController {
+@RequestMapping("/api/parenttabs")
+public class ParenttabsController {
 
-    private final SaassService SaassService;
+    private final ParenttabsService ParenttabsService;
 	
 	private final ContentIdsService ContentIdsService;
 
-    public SaassController(SaassService SaassService,ContentIdsService ContentIdsService) {
-        this.SaassService = SaassService;
+    public ParenttabsController(ParenttabsService ParenttabsService,ContentIdsService ContentIdsService) {
+        this.ParenttabsService = ParenttabsService;
 		this.ContentIdsService = ContentIdsService;
     }
 	
@@ -45,58 +45,58 @@ public class SaassController {
     @Log("导出数据")
     @ApiOperation("导出数据")
     @GetMapping(value = "/download")
-        public void download(HttpServletResponse response, SaassQueryCriteria criteria) throws IOException {
-        SaassService.download(SaassService.queryAll(criteria), response);
+        public void download(HttpServletResponse response, ParenttabsQueryCriteria criteria) throws IOException {
+        ParenttabsService.download(ParenttabsService.queryAll(criteria), response);
     }
 
     @GetMapping
-    @Log("查询云服务")
-    @ApiOperation("查询云服务")
-        public ResponseEntity getSaasss(SaassQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(SaassService.queryAll(criteria,pageable),HttpStatus.OK);
+    @Log("查询父模块")
+    @ApiOperation("查询父模块")
+        public ResponseEntity getParenttabss(ParenttabsQueryCriteria criteria, Pageable pageable){
+        return new ResponseEntity<>(ParenttabsService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 	
     @GetMapping(value = "/load/{id}")
-    @Log("装载云服务")
-    @ApiOperation("装载云服务")
+    @Log("装载父模块")
+    @ApiOperation("装载父模块")
         public ResponseEntity load(@PathVariable Long id){
-        return new ResponseEntity(SaassService.findById(id),HttpStatus.OK);
+        return new ResponseEntity(ParenttabsService.findById(id),HttpStatus.OK);
     }
 
     @PostMapping
-    @Log("新增云服务")
-    @ApiOperation("新增云服务")
-        public ResponseEntity create(@Validated @RequestBody Saass resources, HttpServletRequest request){
+    @Log("新增父模块")
+    @ApiOperation("新增父模块")
+        public ResponseEntity create(@Validated @RequestBody Parenttabs resources, HttpServletRequest request){
 	    if (!AuthorizationUtils.isLogin(request)) {
 	        throw new BadRequestException("请先进行登录操作");
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("base_saass");
+	    long ContentID = ContentIdsService.create("base_parenttabs");
 	 	resources.setId(ContentID);
-        return new ResponseEntity<>(SaassService.create(resources),HttpStatus.CREATED);
+        return new ResponseEntity<>(ParenttabsService.create(resources),HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}")
-    @Log("修改云服务")
-    @ApiOperation("修改云服务")
-        public ResponseEntity update(@PathVariable Long id,@Validated @RequestBody Saass resources){
-        return new ResponseEntity(SaassService.update(id,resources),HttpStatus.OK);
+    @Log("修改父模块")
+    @ApiOperation("修改父模块")
+        public ResponseEntity update(@PathVariable Long id,@Validated @RequestBody Parenttabs resources){
+        return new ResponseEntity(ParenttabsService.update(id,resources),HttpStatus.OK);
     }
 	
     @DeleteMapping(value = "/{id}")
-    @Log("逻辑删除云服务")
-    @ApiOperation("逻辑删除云服务")
+    @Log("逻辑删除父模块")
+    @ApiOperation("逻辑删除父模块")
         public ResponseEntity delete(@PathVariable Long id){
-        SaassService.makedelete(id);
+        ParenttabsService.makedelete(id);
         return new ResponseEntity("ok",HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/delete/{id}")
-    @Log("物理删除云服务")
-    @ApiOperation("物理删除云服务")
+    @Log("物理删除父模块")
+    @ApiOperation("物理删除父模块")
         public ResponseEntity fulldelete(@PathVariable Long id){
-        SaassService.delete(id);
+        ParenttabsService.delete(id);
         return new ResponseEntity("ok",HttpStatus.OK);
     }
 }

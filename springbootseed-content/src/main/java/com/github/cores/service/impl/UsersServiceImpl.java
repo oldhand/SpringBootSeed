@@ -69,6 +69,14 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    @Cacheable(key = "#p0")
+    public UsersDTO findByProfileid(String profileid) {
+        Users Users = UsersRepository.findByProfileid(profileid);
+        ValidationUtil.isNull(Users.getProfileid(),"Users","profileid",profileid);
+        return UsersMapper.toDto(Users);
+    }
+
+    @Override
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public UsersDTO create(Users resources) {

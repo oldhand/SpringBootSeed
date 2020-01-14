@@ -7,7 +7,7 @@ import com.github.annotation.Query;
 
 /**
 * @author oldhand
-* @date 2020-01-03
+* @date 2020-01-14
 */
 @Data
 public class PicklistsQueryCriteria{

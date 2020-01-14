@@ -37,6 +37,12 @@ public class UsersDTO extends BaseDTO implements Serializable {
 	
     // 用户状态
     private String status;
+
+    // 部门ID
+    private long deptid;
+
+    // 权限ID
+    private long permissionid;
 	
     // 用户邮箱
     private String email;

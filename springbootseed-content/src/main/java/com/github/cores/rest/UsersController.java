@@ -55,7 +55,7 @@ public class UsersController {
         public ResponseEntity getUserss(UsersQueryCriteria criteria, Pageable pageable){
         return new ResponseEntity<>(UsersService.queryAll(criteria,pageable),HttpStatus.OK);
     }
-	
+
     @GetMapping(value = "/load/{id}")
     @Log("装载用户")
     @ApiOperation("装载用户")

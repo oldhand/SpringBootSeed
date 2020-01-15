@@ -17,6 +17,8 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 /**
@@ -60,7 +62,8 @@ public class TabsController {
     @Log("获取菜单")
     @ApiOperation("获取菜单")
     public ResponseEntity buildMemus(){
-        return new ResponseEntity("ok",HttpStatus.OK);
+        Map<String, Object> result = new HashMap<>();
+        return new ResponseEntity<>(result,HttpStatus.OK);
     }
 	
     @GetMapping(value = "/load/{id}")

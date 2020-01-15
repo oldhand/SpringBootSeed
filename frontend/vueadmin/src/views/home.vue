@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-editor-container">
-      <panel-group/>
+      <!--<panel-group/>
 
       <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
         <line-chart/>
@@ -23,7 +23,7 @@
             <bar-chart/>
           </div>
         </el-col>
-      </el-row>
+      </el-row>-->
     </div>
   </div>
 </template>

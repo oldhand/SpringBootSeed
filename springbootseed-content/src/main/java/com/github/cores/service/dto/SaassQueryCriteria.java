@@ -34,4 +34,13 @@ public class SaassQueryCriteria{
     @Query
 	@ApiModelProperty("名称")
     private String name;
+
+    @Query
+    @ApiModelProperty("创建者")
+    private String author;
+
+    // 精确
+    @Query
+    @ApiModelProperty("云服务ID")
+    private Long saasid;
 }

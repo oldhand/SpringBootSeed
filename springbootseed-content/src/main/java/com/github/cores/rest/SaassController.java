@@ -3,6 +3,7 @@ package com.github.cores.rest;
 import com.github.aop.log.Log;
 import com.github.cores.domain.Saass;
 import com.github.cores.service.SaassService;
+import com.github.cores.service.dto.SaassDTO;
 import com.github.cores.service.dto.SaassQueryCriteria;
 import com.github.exception.BadRequestException;
 import com.github.service.ContentIdsService;
@@ -40,6 +41,21 @@ public class SaassController {
     @InitBinder
     protected void init(HttpServletRequest request, ServletRequestDataBinder binder) {
         DateTimeUtils.timestampRequestDataBinder(binder);
+    }
+
+    @PostMapping(value = "/initdata/{id}")
+    @Log("初始化云服务数据")
+    @ApiOperation("初始化云服务数据")
+    public ResponseEntity initdata(@PathVariable Long id,String secret,HttpServletRequest request) {
+        if (!secret.equals("springbootseed")) {
+            throw new BadRequestException("密钥错误");
+        }
+        if (!AuthorizationUtils.isLogin(request)) {
+            throw new BadRequestException("请先进行登录操作");
+        }
+        String author = AuthorizationUtils.getProfileid(request);
+        SaassService.initdata(author, id);
+        return new ResponseEntity("ok",HttpStatus.OK);
     }
 
     @Log("导出数据")

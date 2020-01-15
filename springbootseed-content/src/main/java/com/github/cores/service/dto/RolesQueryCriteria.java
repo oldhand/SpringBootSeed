@@ -29,4 +29,13 @@ public class RolesQueryCriteria{
     @Query
 	@ApiModelProperty("ID")
     private Long id;
+
+    @Query
+    @ApiModelProperty("创建者")
+    private String author;
+
+    // 精确
+    @Query
+    @ApiModelProperty("云服务ID")
+    private Long saasid;
 }

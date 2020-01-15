@@ -22,8 +22,8 @@ export async function login(id, password, verifycode, uuid) {
   }
 }
 
-export async function searchUser(username) {
-  const url = '/api/profile?type=admin&username=' + username;
+export async function getInfo() {
+  const url = '/api/profile?type=admin&username=';
   try {
     const json = await request(url);
     if (json.content.length > 0) {
@@ -35,11 +35,17 @@ export async function searchUser(username) {
   }
 }
 
-export function getInfo() {
-  return request({
-    url: 'auth/info',
-    method: 'get'
-  })
+export async function searchUser(username) {
+  const url = '/api/profile?type=admin&username=' + username;
+  try {
+    const json = await request(url);
+    if (json.content.length > 0) {
+      return json.content[0];
+    }
+    throw 'User not found';
+  } catch (errorMsg) {
+    throw errorMsg;
+  }
 }
 
 export function getCodeImg() {

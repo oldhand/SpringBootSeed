@@ -71,6 +71,11 @@ public class Users extends BaseEntity implements Serializable {
     @Column(name = "permissionid")
     @ApiModelProperty("权限ID")
     private long permissionid;
+
+    // 是否管理员
+    @Column(name = "isadmin",nullable = false)
+    @ApiModelProperty("是否管理员")
+    private Integer isadmin;
 	
     // 用户邮箱
     @Column(name = "email")

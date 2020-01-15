@@ -43,6 +43,9 @@ public class UsersDTO extends BaseDTO implements Serializable {
 
     // 权限ID
     private long permissionid;
+
+    // 是否管理员
+    private Integer isadmin;
 	
     // 用户邮箱
     private String email;

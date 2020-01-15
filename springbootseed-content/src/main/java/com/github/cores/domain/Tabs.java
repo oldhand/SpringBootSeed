@@ -29,6 +29,11 @@ public class Tabs extends BaseEntity implements Serializable {
     @Column(name = "tabname",nullable = false)
 	@ApiModelProperty("模块名称")
 	private String tabname;
+
+    // 父模块名称
+    @Column(name = "parenttab",nullable = false)
+    @ApiModelProperty("父模块名称")
+    private String parenttab;
 	
     // 模块标签
     @Column(name = "tablabel",nullable = false)

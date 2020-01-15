@@ -115,7 +115,9 @@ public class ProfileServiceImpl implements ProfileService {
     @Transactional(rollbackFor = Exception.class)
     public void update(UpdateProfile resources) {
         Profile profile = profileRepository.myfindById(resources.getId());
-        if (profile == null) throw new BadRequestException("用户不存在");
+        if (profile == null) {
+            throw new BadRequestException("用户不存在");
+        }
         profile.setUsername(resources.getUsername());
         profile.setRegioncode(resources.getRegioncode());
         profile.setMobile(resources.getMobile());

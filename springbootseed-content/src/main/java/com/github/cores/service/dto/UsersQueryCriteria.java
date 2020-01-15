@@ -34,4 +34,13 @@ public class UsersQueryCriteria{
     @Query
 	@ApiModelProperty("用户ID")
     private String profileid;
+
+    @Query
+    @ApiModelProperty("创建者")
+    private String author;
+
+    // 精确
+    @Query
+    @ApiModelProperty("云服务ID")
+    private Long saasid;
 }

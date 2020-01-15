@@ -127,7 +127,6 @@ public class JwtTokenUtil implements Serializable {
             if (!token.isEmpty() && !timestamp.isEmpty()  && !token.equals("anonymous") && !timestamp.equals("0")) {
                     final String decrypt_token = RSAUtil.decrypt(token, privatekey);
                     String md5token = MD5Util.get(uri + timestamp);
-//                    System.out.println("-----------uri------"+md5token+"--------------"+decrypt_token+"------------------");
                     if (md5token.equals(decrypt_token)) {
                         return true;
                     }

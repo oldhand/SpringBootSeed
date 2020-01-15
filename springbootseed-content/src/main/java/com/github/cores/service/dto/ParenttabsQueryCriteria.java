@@ -29,4 +29,17 @@ public class ParenttabsQueryCriteria{
     @Query
 	@ApiModelProperty("ID")
     private Long id;
+
+    @Query
+    @ApiModelProperty("创建者")
+    private String author;
+
+    // 精确
+    @Query
+    @ApiModelProperty("云服务ID")
+    private Long saasid;
+
+    // 父模块名称
+    @ApiModelProperty("父模块名称")
+    private String tabname;
 }

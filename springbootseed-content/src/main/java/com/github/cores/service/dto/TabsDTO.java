@@ -18,7 +18,10 @@ public class TabsDTO extends BaseDTO implements Serializable {
 	
     // 模块名称
     private String tabname;
-	
+
+    // 父模块名称
+    private String parenttab;
+
     // 模块标签
     private String tablabel;
 	

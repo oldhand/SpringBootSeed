@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.github.aop.log.Log;
 import com.github.cores.service.UsersService;
 import com.github.cores.service.dto.UsersDTO;
+import com.github.domain.Authorization;
 import com.github.exception.BadRequestException;
 import com.github.profile.domain.*;
 import com.github.profile.service.ProfileService;
@@ -23,6 +24,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -46,6 +50,68 @@ public class ProfileController {
         this.profileService = profileService;
         this.usersservice = usersservice;
     }
+
+    @GetMapping(value = "/info")
+    @Log("查询当前登录用户信息")
+    @ApiOperation("查询当前登录用户信息")
+    public ResponseEntity getInfo(HttpServletRequest request){
+        if (!AuthorizationUtils.isLogin(request)) {
+            throw new BadRequestException("请先进行登录操作");
+        }
+        Map<String, Object> info = new HashMap<>();
+        Authorization authorization = AuthorizationUtils.get(request);
+
+        String profileid = authorization.getProfileid();
+        long saasid = authorization.getSaasid();
+
+        if (StringUtils.isEmpty(profileid)) {
+            throw new BadRequestException("请先进行登录操作");
+        }
+
+
+        info.put("profileid", profileid);
+
+        final ProfileDTO profile = profileService.findById(profileid);
+        Map<String,Object> profileinfo = new LinkedHashMap<>();
+        profileinfo.put("identifier", profile.getIdentifier());
+        profileinfo.put("username", profile.getUsername());
+        profileinfo.put("published", profile.getPublished());
+        profileinfo.put("updated", profile.getUpdated());
+        profileinfo.put("type", profile.getType());
+        profileinfo.put("regioncode", profile.getRegioncode());
+        profileinfo.put("mobile", profile.getMobile());
+        profileinfo.put("givenname", profile.getGivenname());
+        profileinfo.put("status", profile.getStatus());
+        profileinfo.put("email", profile.getEmail());
+        profileinfo.put("link", profile.getLink());
+        profileinfo.put("gender", profile.getGender());
+        profileinfo.put("country", profile.getCountry());
+        profileinfo.put("region", profile.getRegion());
+        profileinfo.put("birthday", profile.getBirthdate());
+        profileinfo.put("province", profile.getProvince());
+        profileinfo.put("city", profile.getCity());
+        profileinfo.put("realname", profile.getRealname());
+        profileinfo.put("identitycard", profile.getIdentitycard());
+        profileinfo.put("regip", profile.getRegIp());
+        profileinfo.put("system", profile.getSystem());
+        profileinfo.put("browser", profile.getBrowser());
+        info.put("profileinfo", profileinfo);
+
+        final UsersDTO user = usersservice.findByProfileid(profileid);
+        if (user != null) {
+            info.put("isadmin", user.getIsadmin());
+        }
+        else {
+            info.put("isadmin", null);
+        }
+        if (saasid != 0) {
+
+        }
+
+
+        return new ResponseEntity<>(info,HttpStatus.OK);
+    }
+
 
     @Log("导出用户数据")
     @ApiOperation("导出用户数据")

@@ -112,7 +112,7 @@ public class DeptsServiceImpl implements DeptsService {
 		    map.put("更新日期", Depts.getUpdated());
 		    map.put("创建者", Depts.getAuthor());
 		    map.put("删除标记", Depts.getDeleted());
-            map.put("部门名称", Depts.getDeptname());
+            map.put("部门名称", Depts.getName());
             map.put("部门ID", Depts.getDeptid());
             map.put("父部门ID", Depts.getParentid());
             map.put("排序号", Depts.getSequence());

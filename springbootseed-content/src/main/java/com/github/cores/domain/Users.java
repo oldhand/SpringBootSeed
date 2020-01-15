@@ -40,7 +40,7 @@ public class Users extends BaseEntity implements Serializable {
     // 排序号
     @Column(name = "sequence")
 	@ApiModelProperty("排序号")
-	private String sequence;
+	private Integer sequence;
 	
     // 国家代码
     @Column(name = "regioncode")
@@ -60,7 +60,7 @@ public class Users extends BaseEntity implements Serializable {
     // 用户状态
     @Column(name = "status")
 	@ApiModelProperty("用户状态")
-	private String status;
+	private Integer status;
 
     // 部门ID
     @Column(name = "deptid")

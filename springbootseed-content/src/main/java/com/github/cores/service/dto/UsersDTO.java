@@ -24,7 +24,7 @@ public class UsersDTO extends BaseDTO implements Serializable {
     private String usersNo;
 	
     // 排序号
-    private String sequence;
+    private Integer sequence;
 	
     // 国家代码
     private String regioncode;
@@ -36,7 +36,7 @@ public class UsersDTO extends BaseDTO implements Serializable {
     private String givenname;
 	
     // 用户状态
-    private String status;
+    private Integer status;
 
     // 部门ID
     private long deptid;

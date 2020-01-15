@@ -26,7 +26,7 @@ public class TabsDTO extends BaseDTO implements Serializable {
     private String tablabel;
 	
     // 排序号
-    private String sequence;
+    private Integer sequence;
 	
     // 模块ID
     private Integer tabid;

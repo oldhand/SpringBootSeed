@@ -43,7 +43,7 @@ public class Tabs extends BaseEntity implements Serializable {
     // 排序号
     @Column(name = "sequence",nullable = false)
 	@ApiModelProperty("排序号")
-	private String sequence;
+	private Integer sequence;
 	
     // 模块ID
     @Column(name = "tabid",nullable = false)

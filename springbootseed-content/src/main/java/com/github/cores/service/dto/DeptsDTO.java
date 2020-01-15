@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 public class DeptsDTO extends BaseDTO implements Serializable {
 	
     // 部门名称
-    private String deptname;
+    private String name;
 	
     // 部门ID
     private String deptid;

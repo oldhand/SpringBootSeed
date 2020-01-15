@@ -1,21 +1,14 @@
 package com.github.cores.service.impl;
 
-import com.github.cores.domain.Parenttabs;
-import com.github.cores.domain.Saass;
-import com.github.cores.domain.Tabs;
-import com.github.cores.domain.Users;
-import com.github.cores.repository.ParenttabsRepository;
-import com.github.cores.repository.TabsRepository;
-import com.github.cores.repository.UsersRepository;
+import com.github.content.ContentUtils;
+import com.github.cores.domain.*;
+import com.github.cores.repository.*;
+import com.github.cores.service.PermissionsService;
 import com.github.cores.service.dto.ParenttabsQueryCriteria;
-import com.github.exception.EntityExistException;
 import com.github.exception.EntityExistException;
 import com.github.profile.domain.Profile;
 import com.github.profile.repository.ProfileRepository;
-import com.github.repository.ContentIdsRepository;
-import com.github.service.ContentIdsService;
 import com.github.utils.*;
-import com.github.cores.repository.SaassRepository;
 import com.github.cores.service.SaassService;
 import com.github.cores.service.dto.SaassDTO;
 import com.github.cores.service.dto.SaassQueryCriteria;
@@ -24,23 +17,18 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import cn.hutool.core.lang.Snowflake;
-import cn.hutool.core.util.IdUtil;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 /**
 * @author oldhand
@@ -56,20 +44,27 @@ public class SaassServiceImpl implements SaassService {
     private final ProfileRepository profilerepository;
     private final ParenttabsRepository parenttabsrepository;
     private final TabsRepository tabsrepository;
+    private final PermissionsRepository permissionsrepository;
+    private final DeptsRepository deptsrepository;
+    private final Tabs2permissionsRepository tabs2permissionsrepository;
 
     private final SaassMapper SaassMapper;
 
     @PersistenceContext
     private EntityManager em;
 
-    public SaassServiceImpl(SaassRepository SaassRepository, SaassMapper SaassMapper, UsersRepository usersrepository, ProfileRepository profilerepository, ParenttabsRepository parenttabsrepository, TabsRepository tabsrepository) {
+    public SaassServiceImpl(SaassRepository SaassRepository, SaassMapper SaassMapper, UsersRepository usersrepository, ProfileRepository profilerepository, ParenttabsRepository parenttabsrepository, TabsRepository tabsrepository,PermissionsRepository permissionsrepository, DeptsRepository deptsrepository, Tabs2permissionsRepository tabs2permissionsrepository) {
         this.SaassRepository = SaassRepository;
         this.SaassMapper = SaassMapper;
         this.usersrepository = usersrepository;
         this.profilerepository = profilerepository;
         this.parenttabsrepository = parenttabsrepository;
         this.tabsrepository = tabsrepository;
+        this.permissionsrepository = permissionsrepository;
+        this.deptsrepository = deptsrepository;
+        this.tabs2permissionsrepository = tabs2permissionsrepository;
     }
+
 
     @Override
     @Cacheable
@@ -163,27 +158,23 @@ public class SaassServiceImpl implements SaassService {
     @Override
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
-    public void initdata(String author, Long id){
-        Saass saass = SaassRepository.findById(id).orElseGet(Saass::new);
-        ValidationUtil.isNull( saass.getId(),"Saass","id",id);
+    public void initdata(String author, Long saasid){
+        Saass saass = SaassRepository.findById(saasid).orElseGet(Saass::new);
+        ValidationUtil.isNull( saass.getId(),"Saass","id",saasid);
         String profileid = saass.getProfileid();
 
         Profile profile = profilerepository.myfindById(profileid);
 
-        ParenttabsQueryCriteria criteria = new ParenttabsQueryCriteria();
-        criteria.setSaasid(id);
-        criteria.setTabname("Settings");
 
-        Parenttabs parenttab = new Parenttabs();
-        parenttab.setDeleted(0);
-        parenttab.setSaasid(id);
-        parenttab.setTabname("Settings");
-        Example<Parenttabs> example = Example.of(parenttab);
-
-        String sql = "delete from base_parenttabs where saasid = " + id;
+        String sql = "delete from base_parenttabs where saasid = " + saasid;
         Query query = em.createNativeQuery(sql);
         query.executeUpdate();
 
+        Parenttabs parenttab = new Parenttabs();
+        parenttab.setDeleted(0);
+        parenttab.setSaasid(saasid);
+        parenttab.setTabname("Settings");
+        Example<Parenttabs> example = Example.of(parenttab);
         List<Parenttabs> parenttabs = parenttabsrepository.findAll(example);
         System.out.println("-----------parenttabs------"+parenttabs.toString()+"---------------");
         if (parenttabs.size() == 0) {
@@ -196,52 +187,135 @@ public class SaassServiceImpl implements SaassService {
             parenttabsrepository.saveAndFlush(parenttab);
         }
 
-        Tabs tab = new Tabs();
-        tab.setDeleted(0);
-        tab.setSaasid(id);
-        tab.setParenttab("Settings");
-        tab.setTabname("Users");
-        Example<Tabs> tabexample = Example.of(tab);
-        List<Tabs> tabs = tabsrepository.findAll(tabexample);
-        System.out.println("-----------tabs------"+tabs.toString()+"---------------");
-        if (tabs.size() == 0) {
-//            parenttab.setId(ContentUtils.makeContentId("base_parenttabs"));
-//            parenttab.setAuthor(author);
-//            parenttab.setTablabel("Settings");
-//            parenttab.setSquence(100);
-//            parenttab.setIcon("settings");
-//            parenttab.setPresence(0);
-//            parenttabsrepository.saveAndFlush(parenttab);
+        sql = "delete from base_tabs where saasid = " + saasid;
+        query = em.createNativeQuery(sql);
+        query.executeUpdate();
+
+        List<String> tabsConfig = Arrays.asList("Users","Depts","Permission","Roles","Setting");
+        Map<String, Integer> tabids = new HashMap<>();
+        int tabid = 101;
+        int sequence = 100;
+        for (String item : tabsConfig) {
+            Tabs tab = new Tabs();
+            tab.setDeleted(0);
+            tab.setSaasid(saasid);
+            tab.setParenttab("Settings");
+            tab.setTabname(item);
+            Example<Tabs> tabexample = Example.of(tab);
+            List<Tabs> tabs = tabsrepository.findAll(tabexample);
+            if (tabs.size() == 0) {
+                tab.setId(ContentUtils.makeContentId("base_tabs"));
+                tab.setAuthor(author);
+                tab.setTablabel(item);
+                tab.setSequence(sequence);
+                tab.setIcon(item.toLowerCase());
+                tab.setPresence(0);
+                tab.setDatatype(0);
+                tab.setTabid(tabid);
+                tabids.put(item,tabid);
+                tabsrepository.saveAndFlush(tab);
+            }
+            tabid ++;
+            sequence ++;
+        }
+        sql = "delete from base_permissions where saasid = " + saasid;
+        query = em.createNativeQuery(sql);
+        query.executeUpdate();
+        sql = "delete from base_tabs2permissions where saasid = " + saasid;
+        query = em.createNativeQuery(sql);
+        query.executeUpdate();
+
+        Permissions permission = new Permissions();
+        permission.setDeleted(0);
+        permission.setSaasid(saasid);
+        permission.setName("administrator");
+        Example<Permissions> permissionexample = Example.of(permission);
+        List<Permissions> permissions = permissionsrepository.findAll(permissionexample);
+        if (permissions.size() == 0) {
+            permission.setId(ContentUtils.makeContentId("base_permissions"));
+            permission.setAuthor(author);
+            permission.setDescription("");
+            permission.setAllowdeleted(0);
+            permission.setGlobalAllEdit(1);
+            permission.setGlobalAllView(1);
+            permission = permissionsrepository.saveAndFlush(permission);
+            for (String item : tabsConfig) {
+                Tabs2permissions tabs2permission = new Tabs2permissions();
+                tabs2permission.setId(ContentUtils.makeContentId("base_tabs2permissions"));
+                tabs2permission.setAuthor(author);
+                tabs2permission.setDeleted(0);
+                tabs2permission.setSaasid(saasid);
+                tabs2permission.setPermissionid(permission.getId());
+                tabs2permission.setTabid(tabids.get(item));
+                tabs2permission.setAll(1);
+                tabs2permission.setDelete(1);
+                tabs2permission.setAdd(1);
+                tabs2permission.setQuery(1);
+                tabs2permission.setEdit(1);
+                tabs2permissionsrepository.saveAndFlush(tabs2permission);
+            }
+        }
+        else {
+            permission = permissions.get(0);
         }
 
-//        // 删除所有后台用户
-//        String sql = "select from base_users where saasid = " + id;
-//        Query query = em.createNativeQuery(sql, SaassService.class);
-//        query.executeUpdate();
-//
-//        // 校验管理员
-//        Users user = usersrepository.findByProfileid(profileid);
-//        if (user == null) {
-//            Users resources = new Users();
-//            resources.setDeleted(0);
-//            resources.setProfileid(profileid);
-//            resources.setRegioncode(profile.getRegioncode());
-//            resources.setMobile(profile.getMobile());
-//            resources.setGivenname(resources.getGivenname());
-//            resources.setEmail(profile.getEmail());
-//            resources.setLink(profile.getLink());
-//            resources.setGender(profile.getGender());
-//            resources.setCountry(profile.getCountry());
-//            resources.setRegion(profile.getRegion());
-//            resources.setBirthdate(profile.getBirthdate());
-//            resources.setProvince(profile.getProvince());
-//            resources.setCity(profile.getCity());
-//            resources.setRealname(profile.getRealname());
-//            resources.setIdentitycard(profile.getIdentitycard());
-//            usersrepository.saveAndFlush(resources);
-//        }
+        Depts dept = new Depts();
+        dept.setDeleted(0);
+        dept.setSaasid(saasid);
+        dept.setDeptid("H1");
+        Example<Depts> deptexample = Example.of(dept);
+        List<Depts> depts = deptsrepository.findAll(deptexample);
+        if (depts.size() == 0) {
+            dept.setId(ContentUtils.makeContentId("base_depts"));
+            dept.setAuthor(author);
+            dept.setSaasid(saasid);
+            dept.setName("ROOT");
+            dept.setDepth(0);
+            dept.setParentid("H1");
+            dept.setSequence(1);
+            dept = deptsrepository.saveAndFlush(dept);
+        }
+        else {
+            dept = depts.get(0);
+        }
 
 
+
+        // 删除所有后台用户
+        sql = "delete from base_users where saasid = " + saasid;
+        query = em.createNativeQuery(sql);
+        query.executeUpdate();
+
+        Users user = new Users();
+        user.setDeleted(0);
+        user.setSaasid(saasid);
+        user.setProfileid(profileid);
+        Example<Users> userexample = Example.of(user);
+        List<Users> users = usersrepository.findAll(userexample);
+
+        if (users.size() == 0) {
+            user.setAuthor(author);
+            user.setId(ContentUtils.makeContentId("base_users"));
+            user.setRegioncode(profile.getRegioncode());
+            user.setMobile(profile.getMobile());
+            user.setGivenname(profile.getGivenname());
+            user.setEmail(profile.getEmail());
+            user.setLink(profile.getLink());
+            user.setGender(profile.getGender());
+            user.setCountry(profile.getCountry());
+            user.setRegion(profile.getRegion());
+            user.setBirthdate(profile.getBirthdate());
+            user.setProvince(profile.getProvince());
+            user.setCity(profile.getCity());
+            user.setRealname(profile.getRealname());
+            user.setIdentitycard(profile.getIdentitycard());
+            user.setSequence(100);
+            user.setIsadmin(1);
+            user.setStatus(0);
+            user.setUsersNo("USR001");
+            user.setDeptid(dept.getId());
+            user.setPermissionid(permission.getId());
+            usersrepository.saveAndFlush(user);
+        }
     }
-
 }

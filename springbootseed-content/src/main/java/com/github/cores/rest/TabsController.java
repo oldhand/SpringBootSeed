@@ -96,7 +96,7 @@ public class TabsController {
 	
     @DeleteMapping(value = "/{id}")
     @Log("逻辑删除Tabs")
-    @ApiOperation("逻辑删除Tabs")
+    @ApiOperation("逻辑删除模块")
         public ResponseEntity delete(@PathVariable Long id){
         TabsService.makedelete(id);
         return new ResponseEntity("ok",HttpStatus.OK);

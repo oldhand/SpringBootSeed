@@ -28,9 +28,9 @@ public class Depts extends BaseEntity implements Serializable {
     private Long saasid;
 
     // 部门名称
-    @Column(name = "deptname",nullable = false)
+    @Column(name = "name",nullable = false)
 	@ApiModelProperty("部门名称")
-	private String deptname;
+	private String name;
 	
     // 部门ID
     @Column(name = "deptid",nullable = false)

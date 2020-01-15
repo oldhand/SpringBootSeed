@@ -156,7 +156,7 @@ public class SaassServiceImpl implements SaassService {
 
 
     @Override
-    @CacheEvict(allEntries = true)
+    @CacheEvict(allEntries = true, cacheNames = {"Users","Depts","Tabs","Parenttabs","Permissions","Tabs2permissions"})
     @Transactional(rollbackFor = Exception.class)
     public void initdata(String author, Long saasid){
         Saass saass = SaassRepository.findById(saasid).orElseGet(Saass::new);
@@ -176,7 +176,7 @@ public class SaassServiceImpl implements SaassService {
         parenttab.setTabname("Settings");
         Example<Parenttabs> example = Example.of(parenttab);
         List<Parenttabs> parenttabs = parenttabsrepository.findAll(example);
-        System.out.println("-----------parenttabs------"+parenttabs.toString()+"---------------");
+        //System.out.println("-----------parenttabs------"+parenttabs.toString()+"---------------");
         if (parenttabs.size() == 0) {
             parenttab.setId(ContentUtils.makeContentId("base_parenttabs"));
             parenttab.setAuthor(author);

@@ -29,7 +29,15 @@ public class ${className}QueryCriteria{
 
     @Query(type = Query.Type.LESS_THAN,propName = "published")
 	@ApiModelProperty("结束时间")
-    private Timestamp endtime; 
+    private Timestamp endtime;
+
+    @Query
+    @ApiModelProperty("创建者")
+    private String author;
+
+    @Query
+    @ApiModelProperty("云服务ID")
+    private Long saasid;
     <#list queryColumns as column>
 
     <#if column.columnQuery = '1'>
@@ -45,5 +53,7 @@ public class ${className}QueryCriteria{
     </#if>
     private ${column.columnType} ${column.changeColumnName};
     </#list>
+
+
 </#if>
 }

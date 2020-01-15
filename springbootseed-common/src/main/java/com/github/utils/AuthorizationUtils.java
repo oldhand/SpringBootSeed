@@ -57,7 +57,8 @@ public class AuthorizationUtils {
     }
 
     public static boolean isLogin(HttpServletRequest request) {
-        if (getProfileid(request) != "") {
+        String profileid = getProfileid(request);
+        if (!profileid.equals("")) {
             return true;
         }
         return false;

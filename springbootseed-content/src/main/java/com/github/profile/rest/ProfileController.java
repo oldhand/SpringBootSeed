@@ -131,6 +131,11 @@ public class ProfileController {
     @Log("注册用户")
     @ApiOperation("注册用户")
         public ResponseEntity create(@Validated @RequestBody RegisterProfile resources){
+        try {
+            PasswordUtils.match(resources.getPassword());
+        }catch(Exception e) {
+            throw new BadRequestException("密码: " + e.getMessage());
+        }
         ProfileDTO profile = profileService.create(resources);
         return new ResponseEntity<>(profile,HttpStatus.CREATED);
     }

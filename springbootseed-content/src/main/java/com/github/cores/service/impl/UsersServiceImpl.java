@@ -1,6 +1,7 @@
 package com.github.cores.service.impl;
 
 import com.github.cores.domain.Users;
+import com.github.exception.BadRequestException;
 import com.github.exception.EntityExistException;
 import com.github.exception.EntityExistException;
 import com.github.utils.ValidationUtil;
@@ -72,6 +73,9 @@ public class UsersServiceImpl implements UsersService {
     @Cacheable(key = "#p0")
     public UsersDTO findByProfileid(String profileid) {
         Users Users = UsersRepository.findByProfileid(profileid);
+        if(Users == null){
+            return null;
+        }
         ValidationUtil.isNull(Users.getProfileid(),"Users","profileid",profileid);
         return UsersMapper.toDto(Users);
     }

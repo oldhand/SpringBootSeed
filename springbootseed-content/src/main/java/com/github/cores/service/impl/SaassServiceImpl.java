@@ -5,6 +5,7 @@ import com.github.cores.domain.*;
 import com.github.cores.repository.*;
 import com.github.cores.service.PermissionsService;
 import com.github.cores.service.dto.ParenttabsQueryCriteria;
+import com.github.exception.BadRequestException;
 import com.github.exception.EntityExistException;
 import com.github.profile.domain.Profile;
 import com.github.profile.repository.ProfileRepository;
@@ -13,6 +14,7 @@ import com.github.cores.service.SaassService;
 import com.github.cores.service.dto.SaassDTO;
 import com.github.cores.service.dto.SaassQueryCriteria;
 import com.github.cores.service.mapper.SaassMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -164,7 +166,9 @@ public class SaassServiceImpl implements SaassService {
         String profileid = saass.getProfileid();
 
         Profile profile = profilerepository.myfindById(profileid);
-
+        if (profile == null) {
+            throw new BadRequestException("没有找到云服务的创建用户");
+        }
 
         String sql = "delete from base_parenttabs where saasid = " + saasid;
         Query query = em.createNativeQuery(sql);

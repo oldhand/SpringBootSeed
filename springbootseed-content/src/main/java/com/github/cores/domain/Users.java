@@ -60,7 +60,7 @@ public class Users extends BaseEntity implements Serializable {
     // 用户状态
     @Column(name = "status")
 	@ApiModelProperty("用户状态")
-	private Integer status;
+	private Boolean status;
 
     // 部门ID
     @Column(name = "deptid")
@@ -75,7 +75,7 @@ public class Users extends BaseEntity implements Serializable {
     // 是否管理员
     @Column(name = "isadmin",nullable = false)
     @ApiModelProperty("是否管理员")
-    private Integer isadmin;
+    private Boolean isadmin;
 	
     // 用户邮箱
     @Column(name = "email")

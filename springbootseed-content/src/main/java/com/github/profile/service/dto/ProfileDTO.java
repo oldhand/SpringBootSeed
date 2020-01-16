@@ -42,7 +42,7 @@ public class ProfileDTO implements Serializable {
     private String givenname;
 
     // 用户状态
-    private Integer status;
+    private Boolean status;
 
     // 用户邮箱
     private String email;

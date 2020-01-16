@@ -23,18 +23,18 @@ public class Tabs2permissionsDTO extends BaseDTO implements Serializable {
     private Integer tabid;
 	
     // 全部权限
-    private Integer all;
+    private Boolean all;
 	
     // 编辑权限
-    private Integer edit;
+    private Boolean edit;
 	
     // 删除权限
-    private Integer delete;
+    private Boolean delete;
 	
     // 查询权限
-    private Integer query;
+    private Boolean query;
 	
     // 新增权限
-    private Integer add;
+    private Boolean add;
 	
 }

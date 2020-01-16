@@ -20,10 +20,10 @@ public class PermissionsDTO extends BaseDTO implements Serializable {
 	
     private String description;
 	
-    private Integer allowdeleted;
+    private Boolean allowdeleted;
 	
-    private Integer globalAllView;
+    private Boolean globalAllView;
 	
-    private Integer globalAllEdit;
+    private Boolean globalAllEdit;
 	
 }

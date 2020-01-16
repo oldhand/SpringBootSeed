@@ -35,7 +35,7 @@ public class Picklists extends BaseEntity implements Serializable {
     // 可见
     @Column(name = "presence",nullable = false)
 	@ApiModelProperty("可见")
-	private Integer presence;
+	private Boolean presence;
 	
     // 排序号
     @Column(name = "sequence",nullable = false)

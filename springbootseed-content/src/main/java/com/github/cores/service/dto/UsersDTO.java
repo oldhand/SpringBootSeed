@@ -36,7 +36,7 @@ public class UsersDTO extends BaseDTO implements Serializable {
     private String givenname;
 	
     // 用户状态
-    private Integer status;
+    private Boolean status;
 
     // 部门ID
     private long deptid;
@@ -45,7 +45,7 @@ public class UsersDTO extends BaseDTO implements Serializable {
     private long permissionid;
 
     // 是否管理员
-    private Integer isadmin;
+    private Boolean isadmin;
 	
     // 用户邮箱
     private String email;

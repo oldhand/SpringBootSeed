@@ -38,7 +38,7 @@ public class Parenttabs extends BaseEntity implements Serializable {
     // 是否可见
     @Column(name = "presence",nullable = false)
 	@ApiModelProperty("是否可见")
-	private Integer presence;
+	private Boolean presence;
 	
     // 排序号
     @Column(name = "squence",nullable = false)

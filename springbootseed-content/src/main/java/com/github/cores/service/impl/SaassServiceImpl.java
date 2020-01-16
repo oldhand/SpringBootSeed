@@ -186,7 +186,7 @@ public class SaassServiceImpl implements SaassService {
             parenttab.setTablabel("Settings");
             parenttab.setSquence(100);
             parenttab.setIcon("settings");
-            parenttab.setPresence(0);
+            parenttab.setPresence(true);
             parenttabsrepository.saveAndFlush(parenttab);
         }
 
@@ -212,7 +212,7 @@ public class SaassServiceImpl implements SaassService {
                 tab.setTablabel(item);
                 tab.setSequence(sequence);
                 tab.setIcon(item.toLowerCase());
-                tab.setPresence(0);
+                tab.setPresence(true);
                 tab.setDatatype(0);
                 tab.setTabid(tabid);
                 tabids.put(item,tabid);
@@ -238,9 +238,9 @@ public class SaassServiceImpl implements SaassService {
             permission.setId(ContentUtils.makeContentId("base_permissions"));
             permission.setAuthor(author);
             permission.setDescription("");
-            permission.setAllowdeleted(0);
-            permission.setGlobalAllEdit(1);
-            permission.setGlobalAllView(1);
+            permission.setAllowdeleted(false);
+            permission.setGlobalAllEdit(true);
+            permission.setGlobalAllView(true);
             permission = permissionsrepository.saveAndFlush(permission);
             for (String item : tabsConfig) {
                 Tabs2permissions tabs2permission = new Tabs2permissions();
@@ -250,11 +250,11 @@ public class SaassServiceImpl implements SaassService {
                 tabs2permission.setSaasid(saasid);
                 tabs2permission.setPermissionid(permission.getId());
                 tabs2permission.setTabid(tabids.get(item));
-                tabs2permission.setAll(1);
-                tabs2permission.setDelete(1);
-                tabs2permission.setAdd(1);
-                tabs2permission.setQuery(1);
-                tabs2permission.setEdit(1);
+                tabs2permission.setAll(true);
+                tabs2permission.setDelete(true);
+                tabs2permission.setAdd(true);
+                tabs2permission.setQuery(true);
+                tabs2permission.setEdit(true);
                 tabs2permissionsrepository.saveAndFlush(tabs2permission);
             }
         }
@@ -282,7 +282,7 @@ public class SaassServiceImpl implements SaassService {
             modentitynosrepository.saveAndFlush(modentityno);
         }
 
-        sql = "delete from base_tabs where saasid = " + saasid;
+        sql = "delete from base_depts where saasid = " + saasid;
         query = em.createNativeQuery(sql);
         query.executeUpdate();
 
@@ -337,8 +337,8 @@ public class SaassServiceImpl implements SaassService {
             user.setRealname(profile.getRealname());
             user.setIdentitycard(profile.getIdentitycard());
             user.setSequence(100);
-            user.setIsadmin(1);
-            user.setStatus(0);
+            user.setIsadmin(true);
+            user.setStatus(true);
             user.setUsersNo("USR001");
             user.setDeptid(dept.getId());
             user.setPermissionid(permission.getId());

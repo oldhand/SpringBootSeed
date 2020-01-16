@@ -38,6 +38,6 @@ public class TabsDTO extends BaseDTO implements Serializable {
     private Integer datatype;
 	
     // 是否可见
-    private Integer presence;
+    private Boolean presence;
 	
 }

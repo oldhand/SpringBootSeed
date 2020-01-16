@@ -38,27 +38,27 @@ public class Tabs2permissions extends BaseEntity implements Serializable {
     // 全部权限
     @Column(name = "all_permission",nullable = false)
 	@ApiModelProperty("全部权限")
-	private Integer all;
+	private Boolean all;
 	
     // 编辑权限
     @Column(name = "edit_permission",nullable = false)
 	@ApiModelProperty("编辑权限")
-	private Integer edit;
+	private Boolean edit;
 	
     // 删除权限
     @Column(name = "delete_permission",nullable = false)
 	@ApiModelProperty("删除权限")
-	private Integer delete;
+	private Boolean delete;
 	
     // 查询权限
     @Column(name = "query_permission",nullable = false)
 	@ApiModelProperty("查询权限")
-	private Integer query;
+	private Boolean query;
 	
     // 新增权限
     @Column(name = "add_permission",nullable = false)
 	@ApiModelProperty("新增权限")
-	private Integer add;
+	private Boolean add;
 	
 
     public void copy(Tabs2permissions source){

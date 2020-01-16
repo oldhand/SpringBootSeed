@@ -177,7 +177,7 @@ public class ProfileController {
 
         final ProfileDTO profile = profileService.findById(profileid);
 
-        if (profile.getStatus() != 0) {
+        if (!profile.getStatus()) {
             throw new AccountExpiredException("用户已经被禁用");
         }
 
@@ -261,7 +261,7 @@ public class ProfileController {
 
         final ProfileDTO profiledto = profileService.findById(profileid);
 
-        if (profiledto.getStatus() != 0) {
+        if (!profiledto.getStatus()) {
             throw new AccountExpiredException("用户已经被禁用");
         }
 

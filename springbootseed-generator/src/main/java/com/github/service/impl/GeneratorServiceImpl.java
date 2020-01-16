@@ -164,13 +164,13 @@ public class GeneratorServiceImpl implements GeneratorService {
             }
             ColumnInfo columnDeletedinfo = getColumnInfoByName(tableName,"deleted");
             if (columnDeletedinfo == null) {
-                String sql = "ALTER TABLE " + tableName + " ADD COLUMN deleted tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标记' AFTER author";
+                String sql = "ALTER TABLE " + tableName + " ADD COLUMN deleted tinyint(2) NOT NULL DEFAULT 0 COMMENT '删除标记' AFTER author";
                 Query query = em.createNativeQuery(sql);
                 query.executeUpdate();
             }
             else {
                 if (!columnDeletedinfo.getIsNullable().equals("NO") || !columnDeletedinfo.getColumnType().equals("tinyint") || !columnDeletedinfo.getColumnComment().equals("删除标记") || !columnDeletedinfo.getColumnKey().equals("") || !columnDeletedinfo.getExtra().equals("")) {
-                    String sql = "ALTER TABLE " + tableName + " MODIFY COLUMN deleted tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标记' AFTER author";
+                    String sql = "ALTER TABLE " + tableName + " MODIFY COLUMN deleted tinyint(2) NOT NULL DEFAULT 0 COMMENT '删除标记' AFTER author";
                     Query query = em.createNativeQuery(sql);
                     query.executeUpdate();
                 }

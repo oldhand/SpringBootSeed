@@ -77,7 +77,7 @@ public class Profile implements Serializable {
     // 用户状态
     @Column(name = "status")
 	@ApiModelProperty("用户状态")
-	private Integer status;
+	private Boolean status;
 
     // 用户邮箱
     @Column(name = "email")

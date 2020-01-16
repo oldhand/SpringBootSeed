@@ -89,7 +89,7 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setRegioncode(resources.getRegioncode());
         profile.setMobile(resources.getMobile());
         profile.setGivenname(resources.getGivenname());
-        profile.setStatus(0);
+        profile.setStatus(true);
         profile.setEmail(resources.getEmail());
         profile.setLink(resources.getLink());
         profile.setGender(resources.getGender());
@@ -143,8 +143,10 @@ public class ProfileServiceImpl implements ProfileService {
     @Transactional(rollbackFor = Exception.class)
     public void disable(String id) {
         Profile profile = profileRepository.myfindById(id);
-        if (profile == null) throw new BadRequestException("用户不存在");
-        profile.setStatus(1);
+        if (profile == null) {
+            throw new BadRequestException("用户不存在");
+        }
+        profile.setStatus(false);
         profileRepository.save(profile);
     }
 
@@ -153,8 +155,10 @@ public class ProfileServiceImpl implements ProfileService {
     @Transactional(rollbackFor = Exception.class)
     public void enable(String id) {
         Profile profile = profileRepository.myfindById(id);
-        if (profile == null) throw new BadRequestException("用户不存在");
-        profile.setStatus(0);
+        if (profile == null) {
+            throw new BadRequestException("用户不存在");
+        }
+        profile.setStatus(true);
         profileRepository.save(profile);
     }
 
@@ -163,7 +167,9 @@ public class ProfileServiceImpl implements ProfileService {
     @Transactional(rollbackFor = Exception.class)
     public void changePassword(String id,String password) {
         Profile profile = profileRepository.myfindById(id);
-        if (profile == null) throw new BadRequestException("用户不存在");
+        if (profile == null) {
+            throw new BadRequestException("用户不存在");
+        }
         profile.setPassword(PasswordUtils.encryptPassword(password));
         profileRepository.save(profile);
     }

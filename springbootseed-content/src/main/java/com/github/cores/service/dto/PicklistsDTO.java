@@ -21,7 +21,7 @@ public class PicklistsDTO extends BaseDTO implements Serializable {
     private String name;
 	
     // 可见
-    private Integer presence;
+    private Boolean presence;
 	
     // 排序号
     private Integer sequence;

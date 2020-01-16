@@ -34,13 +34,13 @@ public class Permissions extends BaseEntity implements Serializable {
 	private String description;
 	
     @Column(name = "allowdeleted",nullable = false)
-	private Integer allowdeleted;
+	private Boolean allowdeleted;
 	
     @Column(name = "global_all_view",nullable = false)
-	private Integer globalAllView;
+	private Boolean globalAllView;
 	
     @Column(name = "global_all_edit",nullable = false)
-	private Integer globalAllEdit;
+	private Boolean globalAllEdit;
 	
 
     public void copy(Permissions source){

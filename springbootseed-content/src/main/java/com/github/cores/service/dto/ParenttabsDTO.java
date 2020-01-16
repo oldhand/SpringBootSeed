@@ -23,7 +23,7 @@ public class ParenttabsDTO extends BaseDTO implements Serializable {
     private String tablabel;
 	
     // 是否可见
-    private Integer presence;
+    private Boolean presence;
 	
     // 排序号
     private Integer squence;

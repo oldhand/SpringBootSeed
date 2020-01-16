@@ -89,6 +89,7 @@ public class initData {
         }
 
         QuartzJob quartzjob = new QuartzJob();
+        quartzjob.setIsPause(null);
         Example<QuartzJob> quartzjobexample = Example.of(quartzjob);
         List<QuartzJob> quartzjobs = quartzjobrepository.findAll(quartzjobexample);
         if (quartzjobs.size() == 0) {

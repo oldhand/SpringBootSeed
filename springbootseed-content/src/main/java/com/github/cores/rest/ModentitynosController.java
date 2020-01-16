@@ -1,9 +1,9 @@
 package com.github.cores.rest;
 
 import com.github.aop.log.Log;
-import com.github.cores.domain.Modentityno;
-import com.github.cores.service.ModentitynoService;
-import com.github.cores.service.dto.ModentitynoQueryCriteria;
+import com.github.cores.domain.Modentitynos;
+import com.github.cores.service.ModentitynosService;
+import com.github.cores.service.dto.ModentitynosQueryCriteria;
 import com.github.exception.BadRequestException;
 import com.github.service.ContentIdsService;
 import com.github.utils.AuthorizationUtils;
@@ -23,17 +23,17 @@ import javax.servlet.http.HttpServletResponse;
 * @author oldhand
 * @date 2020-01-15
 */
-@Api(tags = "后台：编号管理")
+@Api(tags = "实例：编号管理")
 @RestController
-@RequestMapping("/api/modentityno")
-public class ModentitynoController {
+@RequestMapping("/api/modentitynos")
+public class ModentitynosController {
 
-    private final ModentitynoService ModentitynoService;
+    private final ModentitynosService ModentitynosService;
 	
 	private final ContentIdsService ContentIdsService;
 
-    public ModentitynoController(ModentitynoService ModentitynoService,ContentIdsService ContentIdsService) {
-        this.ModentitynoService = ModentitynoService;
+    public ModentitynosController(ModentitynosService ModentitynosService,ContentIdsService ContentIdsService) {
+        this.ModentitynosService = ModentitynosService;
 		this.ContentIdsService = ContentIdsService;
     }
 	
@@ -45,58 +45,57 @@ public class ModentitynoController {
     @Log("导出数据")
     @ApiOperation("导出数据")
     @GetMapping(value = "/download")
-        public void download(HttpServletResponse response, ModentitynoQueryCriteria criteria) throws IOException {
-        ModentitynoService.download(ModentitynoService.queryAll(criteria), response);
+        public void download(HttpServletResponse response, ModentitynosQueryCriteria criteria) throws IOException {
+        ModentitynosService.download(ModentitynosService.queryAll(criteria), response);
     }
 
     @GetMapping
     @Log("查询编号")
     @ApiOperation("查询编号")
-        public ResponseEntity getModentitynos(ModentitynoQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(ModentitynoService.queryAll(criteria,pageable),HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/make/{tabid}")
-    @Log("生成编号")
-    @ApiOperation("生成编号")
-    public ResponseEntity getModentitynos(@PathVariable long tabid){
-
-        return new ResponseEntity("ok",HttpStatus.OK);
+        public ResponseEntity getModentitynoss(ModentitynosQueryCriteria criteria, Pageable pageable){
+        return new ResponseEntity<>(ModentitynosService.queryAll(criteria,pageable),HttpStatus.OK);
     }
 	
     @GetMapping(value = "/load/{id}")
     @Log("装载编号")
     @ApiOperation("装载编号")
         public ResponseEntity load(@PathVariable Long id){
-        return new ResponseEntity(ModentitynoService.findById(id),HttpStatus.OK);
+        return new ResponseEntity(ModentitynosService.findById(id),HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/make/{tabid}")
+    @Log("生成编号")
+    @ApiOperation("生成编号")
+    public ResponseEntity make(@PathVariable Long tabid, HttpServletRequest request){
+        return new ResponseEntity("ok",HttpStatus.OK);
     }
 
     @PostMapping
     @Log("新增编号")
     @ApiOperation("新增编号")
-        public ResponseEntity create(@Validated @RequestBody Modentityno resources, HttpServletRequest request){
+        public ResponseEntity create(@Validated @RequestBody Modentitynos resources, HttpServletRequest request){
 	    if (!AuthorizationUtils.isLogin(request)) {
 	        throw new BadRequestException("请先进行登录操作");
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("base_modentityno");
+	    long ContentID = ContentIdsService.create("base_modentitynos");
 	 	resources.setId(ContentID);
-        return new ResponseEntity<>(ModentitynoService.create(resources),HttpStatus.CREATED);
+        return new ResponseEntity<>(ModentitynosService.create(resources),HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}")
     @Log("修改编号")
     @ApiOperation("修改编号")
-        public ResponseEntity update(@PathVariable Long id,@Validated @RequestBody Modentityno resources){
-        return new ResponseEntity(ModentitynoService.update(id,resources),HttpStatus.OK);
+        public ResponseEntity update(@PathVariable Long id,@Validated @RequestBody Modentitynos resources){
+        return new ResponseEntity(ModentitynosService.update(id,resources),HttpStatus.OK);
     }
 	
     @DeleteMapping(value = "/{id}")
     @Log("逻辑删除编号")
     @ApiOperation("逻辑删除编号")
         public ResponseEntity delete(@PathVariable Long id){
-        ModentitynoService.makedelete(id);
+        ModentitynosService.makedelete(id);
         return new ResponseEntity("ok",HttpStatus.OK);
     }
 
@@ -104,7 +103,7 @@ public class ModentitynoController {
     @Log("物理删除编号")
     @ApiOperation("物理删除编号")
         public ResponseEntity fulldelete(@PathVariable Long id){
-        ModentitynoService.delete(id);
+        ModentitynosService.delete(id);
         return new ResponseEntity("ok",HttpStatus.OK);
     }
 }

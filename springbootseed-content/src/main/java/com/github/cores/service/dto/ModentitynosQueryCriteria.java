@@ -10,7 +10,7 @@ import com.github.annotation.Query;
 * @date 2020-01-15
 */
 @Data
-public class ModentitynoQueryCriteria{
+public class ModentitynosQueryCriteria{
 	 
 	// 精确
 	@Query
@@ -23,13 +23,20 @@ public class ModentitynoQueryCriteria{
 
     @Query(type = Query.Type.LESS_THAN,propName = "published")
 	@ApiModelProperty("结束时间")
-    private Timestamp endtime; 
+    private Timestamp endtime;
+
+    @Query
+    @ApiModelProperty("创建者")
+    private String author;
+
+    @Query
+    @ApiModelProperty("云服务ID")
+    private Long saasid;
 
     // 精确
     @Query
 	@ApiModelProperty("ID")
     private Long id;
 
-    // saasid
-    private Long saasid;
+
 }

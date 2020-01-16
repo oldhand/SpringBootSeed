@@ -4,6 +4,8 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 
 import java.beans.PropertyEditorSupport;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -48,6 +50,21 @@ public class DateTimeUtils {
             }
         });
 
+    }
+    /**
+     * 获取当前时间
+     */
+    public static String getDatetime() {
+        return getDatetime("yyyy-MM-dd hh:mm:ss");
+    }
+
+    /**
+     * 获取指定格式的当前时间
+     */
+    public static String getDatetime(String foramat) {
+        Date date = new Date();
+        SimpleDateFormat dateFormat= new SimpleDateFormat(foramat);
+        return dateFormat.format(date);
     }
 
 }

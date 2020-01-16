@@ -19,8 +19,13 @@ import java.io.Serializable;
 */
 @Entity
 @Data
-@Table(name="base_modentityno")
-public class Modentityno extends BaseEntity implements Serializable {
+@Table(name="base_modentitynos")
+public class Modentitynos extends BaseEntity implements Serializable {
+	
+    // 云服务ID
+    @Column(name = "saasid",nullable = false)
+	@ApiModelProperty("云服务ID")
+	private Long saasid;
 	
     // 模块ID
     @Column(name = "tabid",nullable = false)
@@ -45,7 +50,7 @@ public class Modentityno extends BaseEntity implements Serializable {
     // 是否激活
     @Column(name = "active",nullable = false)
 	@ApiModelProperty("是否激活")
-	private Integer active;
+	private Boolean active;
 	
     // 编号长度
     @Column(name = "length",nullable = false)
@@ -55,10 +60,14 @@ public class Modentityno extends BaseEntity implements Serializable {
     // 是否包含日期
     @Column(name = "include_date",nullable = false)
 	@ApiModelProperty("是否包含日期")
-	private Integer includeDate;
-	
+	private Boolean includeDate;
 
-    public void copy(Modentityno source){
+    // 当前日期
+    @Column(name = "cur_date",nullable = false)
+    @ApiModelProperty("当前日期")
+    private String curDate;
+
+    public void copy(Modentitynos source){
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
     }
 }

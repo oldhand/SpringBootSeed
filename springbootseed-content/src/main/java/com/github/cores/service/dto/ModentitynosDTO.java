@@ -12,7 +12,10 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 * @date 2020-01-15
 */
 @Data
-public class ModentitynoDTO extends BaseDTO implements Serializable {
+public class ModentitynosDTO extends BaseDTO implements Serializable {
+	
+    // 云服务ID
+    private Long saasid;
 	
     // 模块ID
     private Integer tabid;
@@ -27,12 +30,15 @@ public class ModentitynoDTO extends BaseDTO implements Serializable {
     private Integer startId;
 	
     // 是否激活
-    private Integer active;
+    private Boolean active;
 	
     // 编号长度
     private Integer length;
 	
     // 是否包含日期
-    private Integer includeDate;
+    private Boolean includeDate;
+
+    // 当前日期
+    private String curDate;
 	
 }

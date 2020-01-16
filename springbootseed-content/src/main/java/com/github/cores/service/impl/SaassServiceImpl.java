@@ -3,8 +3,6 @@ package com.github.cores.service.impl;
 import com.github.content.ContentUtils;
 import com.github.cores.domain.*;
 import com.github.cores.repository.*;
-import com.github.cores.service.PermissionsService;
-import com.github.cores.service.dto.ParenttabsQueryCriteria;
 import com.github.exception.BadRequestException;
 import com.github.exception.EntityExistException;
 import com.github.profile.domain.Profile;
@@ -14,7 +12,6 @@ import com.github.cores.service.SaassService;
 import com.github.cores.service.dto.SaassDTO;
 import com.github.cores.service.dto.SaassQueryCriteria;
 import com.github.cores.service.mapper.SaassMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -49,13 +46,14 @@ public class SaassServiceImpl implements SaassService {
     private final PermissionsRepository permissionsrepository;
     private final DeptsRepository deptsrepository;
     private final Tabs2permissionsRepository tabs2permissionsrepository;
+    private final ModentitynosRepository modentitynosrepository;
 
     private final SaassMapper SaassMapper;
 
     @PersistenceContext
     private EntityManager em;
 
-    public SaassServiceImpl(SaassRepository SaassRepository, SaassMapper SaassMapper, UsersRepository usersrepository, ProfileRepository profilerepository, ParenttabsRepository parenttabsrepository, TabsRepository tabsrepository,PermissionsRepository permissionsrepository, DeptsRepository deptsrepository, Tabs2permissionsRepository tabs2permissionsrepository) {
+    public SaassServiceImpl(SaassRepository SaassRepository, SaassMapper SaassMapper, UsersRepository usersrepository, ProfileRepository profilerepository, ParenttabsRepository parenttabsrepository, TabsRepository tabsrepository,PermissionsRepository permissionsrepository, DeptsRepository deptsrepository, Tabs2permissionsRepository tabs2permissionsrepository,ModentitynosRepository modentitynosrepository) {
         this.SaassRepository = SaassRepository;
         this.SaassMapper = SaassMapper;
         this.usersrepository = usersrepository;
@@ -65,6 +63,7 @@ public class SaassServiceImpl implements SaassService {
         this.permissionsrepository = permissionsrepository;
         this.deptsrepository = deptsrepository;
         this.tabs2permissionsrepository = tabs2permissionsrepository;
+        this.modentitynosrepository = modentitynosrepository;
     }
 
 
@@ -262,6 +261,30 @@ public class SaassServiceImpl implements SaassService {
         else {
             permission = permissions.get(0);
         }
+
+
+        Modentitynos modentityno = new Modentitynos();
+        modentityno.setDeleted(0);
+        modentityno.setSaasid(saasid);
+        modentityno.setTabid(tabids.get("Users"));
+        Example<Modentitynos> modentitynosexample = Example.of(modentityno);
+        List<Modentitynos> modentitynos = modentitynosrepository.findAll(modentitynosexample);
+        if (modentitynos.size() == 0) {
+            modentityno.setId(ContentUtils.makeContentId("base_modentitynos"));
+            modentityno.setAuthor(author);
+            modentityno.setActive(true);
+            modentityno.setCurId(1);
+            modentityno.setIncludeDate(true);
+            modentityno.setPrefix("USR");
+            modentityno.setStartId(1);
+            modentityno.setLength(3);
+            modentityno.setCurDate(DateTimeUtils.getDatetime("yyMMdd"));
+            modentitynosrepository.saveAndFlush(modentityno);
+        }
+
+        sql = "delete from base_tabs where saasid = " + saasid;
+        query = em.createNativeQuery(sql);
+        query.executeUpdate();
 
         Depts dept = new Depts();
         dept.setDeleted(0);

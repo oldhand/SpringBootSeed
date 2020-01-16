@@ -50,9 +50,10 @@ const user = {
 
     // 获取用户信息
     GetInfo({ commit }) {
+      console.log('_____getInfo________');
       return new Promise((resolve, reject) => {
-        console.log('_____getInfo________');
         getInfo().then(res => {
+          console.log('_____getInfo________' + JSON.stringify(res) + '______');
           setUserInfo(res, commit)
           resolve(res)
         }).catch(error => {

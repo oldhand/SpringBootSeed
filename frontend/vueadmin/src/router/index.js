@@ -16,7 +16,7 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title + ' - ' + Config.webName
   }
   NProgress.start() // start progress bar
-  // console.log('______getToken____' + JSON.stringify(getToken()) + '______');
+  console.log('______getToken____' + JSON.stringify(getToken()) + '______');
   if (getToken()) {
     // 已登录且要跳转的页面是登录页
     if (to.path === '/login') {

@@ -25,11 +25,7 @@ export async function login(id, password, verifycode, uuid) {
 export async function getInfo() {
   const url = '/api/profile/info';
   try {
-    const json = await request(url);
-    if (json.content.length > 0) {
-      return json.content[0];
-    }
-    throw 'User not found';
+    return await request(url);
   } catch (errorMsg) {
     throw errorMsg;
   }
@@ -48,16 +44,11 @@ export async function searchUser(username) {
   }
 }
 
-export function getCodeImg() {
-  return request({
-    url: 'auth/code',
-    method: 'get'
-  })
-}
-
-export function logout() {
-  return request({
-    url: 'auth/logout',
-    method: 'delete'
-  })
+export async function logout() {
+  const url = '/api/profile/logout';
+  try {
+    return await request(url, {}, {}, 'POST');
+  } catch (errorMsg) {
+    throw errorMsg;
+  }
 }

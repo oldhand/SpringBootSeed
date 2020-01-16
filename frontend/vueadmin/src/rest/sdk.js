@@ -1,5 +1,5 @@
 import md5 from './md5'
-import store from '../store'
+import { getAccessToken } from './token'
 import JSEncrypt from 'jsencrypt/bin/jsencrypt'
 import CryptoJS from 'crypto-js'
 
@@ -24,7 +24,7 @@ export const getRestToken = (url) => {
     const secret = encryptor.encrypt(md5.hex_md5(token));
     return { timestamp: timestamp, token: secret };
   } else {
-      const public_key = store.state.rest.access_token_info.public_key;
+      const public_key = getAccessToken().public_key;
       const encryptor = new JSEncrypt();
       encryptor.setPublicKey(public_key);
       const secret = encryptor.encrypt(md5.hex_md5(token));

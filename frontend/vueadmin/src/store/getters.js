@@ -1,5 +1,4 @@
 const getters = {
-  access_token_info: state => state.rest.access_token_info,
   sidebar: state => state.app.sidebar,
   device: state => state.app.device,
   token: state => state.user.token,

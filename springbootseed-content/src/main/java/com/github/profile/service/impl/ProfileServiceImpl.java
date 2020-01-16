@@ -1,5 +1,11 @@
 package com.github.profile.service.impl;
 
+import com.github.cores.domain.Tabs;
+import com.github.cores.domain.Tabs2permissions;
+import com.github.cores.domain.Users;
+import com.github.cores.repository.Tabs2permissionsRepository;
+import com.github.cores.repository.TabsRepository;
+import com.github.cores.repository.UsersRepository;
 import com.github.exception.BadRequestException;
 import com.github.profile.domain.Profile;
 import com.github.exception.EntityExistException;
@@ -12,6 +18,7 @@ import com.github.profile.service.ProfileService;
 import com.github.profile.service.dto.ProfileDTO;
 import com.github.profile.service.dto.ProfileQueryCriteria;
 import com.github.profile.service.mapper.ProfileMapper;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +28,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 /**
 * @author oldhand
@@ -38,11 +42,18 @@ import java.util.LinkedHashMap;
 public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository profileRepository;
+    private final UsersRepository usersrepository;
+    private final TabsRepository tabsrepository;
+    private final Tabs2permissionsRepository tabs2permissionsrepository;
 
     private final ProfileMapper profileMapper;
 
-    public ProfileServiceImpl(ProfileRepository profileRepository, ProfileMapper profileMapper) {
+    public ProfileServiceImpl(ProfileRepository profileRepository, ProfileMapper profileMapper, UsersRepository usersrepository,TabsRepository tabsrepository,Tabs2permissionsRepository tabs2permissionsrepository) {
         this.profileRepository = profileRepository;
+        this.usersrepository = usersrepository;
+        this.tabsrepository = tabsrepository;
+        this.tabs2permissionsrepository = tabs2permissionsrepository;
+
         this.profileMapper = profileMapper;
     }
 
@@ -205,5 +216,92 @@ public class ProfileServiceImpl implements ProfileService {
             list.add(map);
         }
         FileUtil.downloadExcel(list, response);
+    }
+    @Override
+    @Cacheable(key = "T(String).valueOf('info::').concat(#p1)")
+    public Map<String, Object> info(long saasid, String profileid) {
+        Map<String, Object> info = new HashMap<>();
+        info.put("profileid", profileid);
+        final Profile profile = profileRepository.myfindById(profileid);
+        Map<String,Object> profileinfo = new LinkedHashMap<>();
+        profileinfo.put("identifier", profile.getIdentifier());
+        profileinfo.put("username", profile.getUsername());
+        profileinfo.put("published", profile.getPublished());
+        profileinfo.put("updated", profile.getUpdated());
+        profileinfo.put("type", profile.getType());
+        profileinfo.put("regioncode", profile.getRegioncode());
+        profileinfo.put("mobile", profile.getMobile());
+        profileinfo.put("givenname", profile.getGivenname());
+        profileinfo.put("status", profile.getStatus());
+        profileinfo.put("email", profile.getEmail());
+        profileinfo.put("link", profile.getLink());
+        profileinfo.put("gender", profile.getGender());
+        profileinfo.put("country", profile.getCountry());
+        profileinfo.put("region", profile.getRegion());
+        profileinfo.put("birthday", profile.getBirthdate());
+        profileinfo.put("province", profile.getProvince());
+        profileinfo.put("city", profile.getCity());
+        profileinfo.put("realname", profile.getRealname());
+        profileinfo.put("identitycard", profile.getIdentitycard());
+        profileinfo.put("regip", profile.getRegIp());
+        profileinfo.put("system", profile.getSystem());
+        profileinfo.put("browser", profile.getBrowser());
+        info.put("info", profileinfo);
+
+        if (saasid > 0) {
+            final Users user = usersrepository.findByProfileid(profileid);
+            if (user != null) {
+                info.put("isadmin", user.getIsadmin());
+                info.put("deptid", user.getDeptid());
+                info.put("permissionid", user.getPermissionid());
+            }
+            else {
+                info.put("isadmin", null);
+            }
+            if (saasid != user.getSaasid()) {
+                throw new BadRequestException("saasid error");
+            }
+            long premissionid = user.getPermissionid();
+            Tabs tab = new Tabs();
+            tab.setDeleted(0);
+            tab.setSaasid(saasid);
+            Example<Tabs> tabexample = Example.of(tab);
+            List<Tabs> tabs = tabsrepository.findAll(tabexample);
+            Map<Integer,String> tabids = new HashMap<>();
+            List<String> roles = new ArrayList();
+            if (tabs.size() > 0) {
+                for (Tabs item : tabs) {
+                    tabids.put(item.getTabid(),item.getTabname());
+                }
+                Tabs2permissions tabs2permission = new Tabs2permissions();
+                tabs2permission.setDeleted(0);
+                tabs2permission.setSaasid(saasid);
+                tabs2permission.setPermissionid(premissionid);
+                Example<Tabs2permissions> tabs2permissionexample = Example.of(tabs2permission);
+                List<Tabs2permissions> tabs2permissions = tabs2permissionsrepository.findAll(tabs2permissionexample);
+                for (Tabs2permissions item : tabs2permissions) {
+                    int tabid = item.getTabid();
+                    if (tabids.containsKey(tabid)) {
+                        String tabname = tabids.get(tabid).toLowerCase();
+                        if (item.getAll()) {
+                            roles.add(tabname + ":all");
+                        } else {
+                            if (item.getEdit()) {
+                                roles.add(tabname + ":edit");
+                            }
+                            if (item.getQuery()) {
+                                roles.add(tabname + ":query");
+                            }
+                            if (item.getAdd()) {
+                                roles.add(tabname + ":add");
+                            }
+                        }
+                    }
+
+                }
+            }
+            info.put("roles", roles);
+        }
+        return info;
     }
 }

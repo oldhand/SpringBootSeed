@@ -7,6 +7,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.time.Duration;
+
 @Configuration
 public class CorsConfig {
     private CorsConfiguration buildConfig() {
@@ -18,6 +20,7 @@ public class CorsConfig {
         corsConfiguration.addAllowedHeader("*");
         /* 允许任何方法（post、get等）*/
         corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.setMaxAge(3600L);
         return corsConfiguration;
     }
 

@@ -52,4 +52,6 @@ public interface ProfileService {
     void changePassword(String id,String password);
 
     void download(List<ProfileDTO> all, HttpServletResponse response) throws IOException;
+
+    Map<String, Object> info(long saasid,String profileid);
 }

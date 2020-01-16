@@ -46,4 +46,6 @@ public interface TabsService {
 	void makedelete(Long id);
 
     void download(List<TabsDTO> all, HttpServletResponse response) throws IOException;
+
+    List<Object> buildMemus(long saasid,String profileid);
 }

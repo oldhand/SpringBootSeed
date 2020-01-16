@@ -23,7 +23,7 @@ export async function login(id, password, verifycode, uuid) {
 }
 
 export async function getInfo() {
-  const url = '/api/profile?type=admin&username=';
+  const url = '/api/profile/info';
   try {
     const json = await request(url);
     if (json.content.length > 0) {

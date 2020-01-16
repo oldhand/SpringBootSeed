@@ -58,58 +58,18 @@ public class ProfileController {
         if (!AuthorizationUtils.isLogin(request)) {
             throw new BadRequestException("请先进行登录操作");
         }
-        Map<String, Object> info = new HashMap<>();
+
         Authorization authorization = AuthorizationUtils.get(request);
 
         String profileid = authorization.getProfileid();
+
         long saasid = authorization.getSaasid();
 
         if (StringUtils.isEmpty(profileid)) {
             throw new BadRequestException("请先进行登录操作");
         }
-
-
-        info.put("profileid", profileid);
-
-        final ProfileDTO profile = profileService.findById(profileid);
-        Map<String,Object> profileinfo = new LinkedHashMap<>();
-        profileinfo.put("identifier", profile.getIdentifier());
-        profileinfo.put("username", profile.getUsername());
-        profileinfo.put("published", profile.getPublished());
-        profileinfo.put("updated", profile.getUpdated());
-        profileinfo.put("type", profile.getType());
-        profileinfo.put("regioncode", profile.getRegioncode());
-        profileinfo.put("mobile", profile.getMobile());
-        profileinfo.put("givenname", profile.getGivenname());
-        profileinfo.put("status", profile.getStatus());
-        profileinfo.put("email", profile.getEmail());
-        profileinfo.put("link", profile.getLink());
-        profileinfo.put("gender", profile.getGender());
-        profileinfo.put("country", profile.getCountry());
-        profileinfo.put("region", profile.getRegion());
-        profileinfo.put("birthday", profile.getBirthdate());
-        profileinfo.put("province", profile.getProvince());
-        profileinfo.put("city", profile.getCity());
-        profileinfo.put("realname", profile.getRealname());
-        profileinfo.put("identitycard", profile.getIdentitycard());
-        profileinfo.put("regip", profile.getRegIp());
-        profileinfo.put("system", profile.getSystem());
-        profileinfo.put("browser", profile.getBrowser());
-        info.put("profileinfo", profileinfo);
-
-        final UsersDTO user = usersservice.findByProfileid(profileid);
-        if (user != null) {
-            info.put("isadmin", user.getIsadmin());
-        }
-        else {
-            info.put("isadmin", null);
-        }
-        if (saasid != 0) {
-
-        }
-
-
-        return new ResponseEntity<>(info,HttpStatus.OK);
+        Map<String, Object> info = profileService.info(saasid,profileid);
+        return new ResponseEntity(info,HttpStatus.OK);
     }
 
 

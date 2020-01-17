@@ -5,7 +5,6 @@ import ${package}.domain.${className};
 import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}QueryCriteria;
 import com.github.exception.BadRequestException;
-import com.github.service.ContentIdsService;
 import com.github.utils.AuthorizationUtils;
 import com.github.utils.DateTimeUtils;
 import org.springframework.data.domain.Pageable;
@@ -29,12 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 public class ${className}Controller {
 
     private final ${className}Service ${changeClassName}Service;
-	
-	private final ContentIdsService ContentIdsService;
 
-    public ${className}Controller(${className}Service ${changeClassName}Service,ContentIdsService ContentIdsService) {
+
+    public ${className}Controller(${className}Service ${changeClassName}Service) {
         this.${changeClassName}Service = ${changeClassName}Service;
-		this.ContentIdsService = ContentIdsService;
     }
 	
     @InitBinder
@@ -72,8 +69,7 @@ public class ${className}Controller {
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("${tableName}");
-	 	resources.setId(ContentID);
+	 	resources.setId(ContentUtils.makeContentId("${tableName}"));
         return new ResponseEntity<>(${changeClassName}Service.create(resources),HttpStatus.CREATED);
     }
 

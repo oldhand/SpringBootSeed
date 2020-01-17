@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 * @date 2020-01-14
 */
 public interface TabsRepository extends JpaRepository<Tabs, Long>, JpaSpecificationExecutor<Tabs> {
+    Tabs findByTabid(int tabid);
+    Tabs findByTabname(String tabname);
 }

@@ -9,6 +9,8 @@ import com.github.rabbitmq.service.MqService;
 import com.github.rabbitmq.service.dto.MqDTO;
 import com.github.rabbitmq.service.dto.MqQueryCriteria;
 import com.github.rabbitmq.service.mapper.MqMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,7 @@ import java.util.LinkedHashMap;
 * @author oldhand
 * @date 2019-12-25
 */
+@Slf4j
 @Service
 @CacheConfig(cacheNames = "mq")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
@@ -88,7 +91,7 @@ public class MqServiceImpl implements MqService {
         if(mqRepository.findByUniquekey(resources.getUniquekey()) != null){
             throw new EntityExistException(Mq.class,"uniquekey",resources.getUniquekey());
         }
-        return mqMapper.toDto(mqRepository.save(resources));
+        return mqMapper.toDto(mqRepository.saveAndFlush(resources));
     }
 
 
@@ -102,7 +105,7 @@ public class MqServiceImpl implements MqService {
         mq.setAcktime(new Timestamp(System.currentTimeMillis()));
         mq.setAck(Integer.parseInt(ack));
         mq.setResult(result);
-        mqRepository.save(mq);
+        mqRepository.saveAndFlush(mq);
     }
 
 

@@ -23,5 +23,10 @@
             <artifactId>springbootseed-logging</artifactId>
             <version>0.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.github</groupId>
+            <artifactId>springbootseed-tools</artifactId>
+            <version>0.1</version>
+        </dependency>
     </dependencies>
 </project>

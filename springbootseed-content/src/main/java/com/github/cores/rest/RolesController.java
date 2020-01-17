@@ -1,5 +1,6 @@
 package com.github.cores.rest;
 
+import com.github.utils.ContentUtils;
 import com.github.aop.log.Log;
 import com.github.cores.domain.Roles;
 import com.github.cores.service.RolesService;
@@ -29,12 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 public class RolesController {
 
     private final RolesService RolesService;
-	
-	private final ContentIdsService ContentIdsService;
 
-    public RolesController(RolesService RolesService,ContentIdsService ContentIdsService) {
+    public RolesController(RolesService RolesService) {
         this.RolesService = RolesService;
-		this.ContentIdsService = ContentIdsService;
     }
 	
     @InitBinder
@@ -72,8 +70,7 @@ public class RolesController {
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("base_roles");
-	 	resources.setId(ContentID);
+	 	resources.setId(ContentUtils.makeContentId("base_roles"));
         return new ResponseEntity<>(RolesService.create(resources),HttpStatus.CREATED);
     }
 

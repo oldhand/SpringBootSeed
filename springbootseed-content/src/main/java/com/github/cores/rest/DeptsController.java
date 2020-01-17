@@ -1,11 +1,11 @@
 package com.github.cores.rest;
 
+import com.github.utils.ContentUtils;
 import com.github.aop.log.Log;
 import com.github.cores.domain.Depts;
 import com.github.cores.service.DeptsService;
 import com.github.cores.service.dto.DeptsQueryCriteria;
 import com.github.exception.BadRequestException;
-import com.github.service.ContentIdsService;
 import com.github.utils.AuthorizationUtils;
 import com.github.utils.DateTimeUtils;
 import org.springframework.data.domain.Pageable;
@@ -29,12 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 public class DeptsController {
 
     private final DeptsService DeptsService;
-	
-	private final ContentIdsService ContentIdsService;
 
-    public DeptsController(DeptsService DeptsService,ContentIdsService ContentIdsService) {
+    public DeptsController(DeptsService DeptsService) {
         this.DeptsService = DeptsService;
-		this.ContentIdsService = ContentIdsService;
     }
 	
     @InitBinder
@@ -72,8 +69,7 @@ public class DeptsController {
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("base_depts");
-	 	resources.setId(ContentID);
+	 	resources.setId(ContentUtils.makeContentId("base_depts"));
         return new ResponseEntity<>(DeptsService.create(resources),HttpStatus.CREATED);
     }
 

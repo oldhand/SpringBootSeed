@@ -1,5 +1,6 @@
 package com.github.cores.rest;
 
+import com.github.utils.ContentUtils;
 import com.github.aop.log.Log;
 import com.github.cores.domain.Tabs;
 import com.github.cores.service.TabsService;
@@ -34,12 +35,9 @@ import javax.servlet.http.HttpServletResponse;
 public class TabsController {
 
     private final TabsService TabsService;
-	
-	private final ContentIdsService ContentIdsService;
 
-    public TabsController(TabsService TabsService,ContentIdsService ContentIdsService) {
+    public TabsController(TabsService TabsService) {
         this.TabsService = TabsService;
-		this.ContentIdsService = ContentIdsService;
     }
 	
     @InitBinder
@@ -97,8 +95,7 @@ public class TabsController {
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("base_tabs");
-	 	resources.setId(ContentID);
+	 	resources.setId(ContentUtils.makeContentId("base_tabs"));
         return new ResponseEntity<>(TabsService.create(resources),HttpStatus.CREATED);
     }
 

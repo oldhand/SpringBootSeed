@@ -1,13 +1,21 @@
 package com.github.cores.rest;
 
+import com.github.utils.ContentUtils;
+import com.github.utils.MqUtils;
 import com.github.aop.log.Log;
 import com.github.cores.domain.Modentitynos;
 import com.github.cores.service.ModentitynosService;
+import com.github.cores.service.dto.ModentitynosDTO;
 import com.github.cores.service.dto.ModentitynosQueryCriteria;
 import com.github.exception.BadRequestException;
+import com.github.rabbitmq.producer.Sender;
+import com.github.rabbitmq.service.MqService;
+import com.github.rabbitmq.service.dto.MqDTO;
 import com.github.service.ContentIdsService;
 import com.github.utils.AuthorizationUtils;
 import com.github.utils.DateTimeUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +25,11 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 /**
@@ -66,8 +79,15 @@ public class ModentitynosController {
     @PostMapping(value = "/make/{tabid}")
     @Log("生成编号")
     @ApiOperation("生成编号")
-    public ResponseEntity make(@PathVariable Long tabid, HttpServletRequest request){
-        return new ResponseEntity("ok",HttpStatus.OK);
+    public ResponseEntity make(@PathVariable Integer tabid, HttpServletRequest request){
+        try {
+            Map<String,Object> map = new HashMap<>();
+            map.put("tabid",tabid);
+            map.put("no",MqUtils.makeModEntityNo(tabid));
+            return new ResponseEntity(map,HttpStatus.OK);
+        }catch(Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
     }
 
     @PostMapping
@@ -79,8 +99,7 @@ public class ModentitynosController {
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("base_modentitynos");
-	 	resources.setId(ContentID);
+	 	resources.setId(ContentUtils.makeContentId("base_modentitynos"));
         return new ResponseEntity<>(ModentitynosService.create(resources),HttpStatus.CREATED);
     }
 

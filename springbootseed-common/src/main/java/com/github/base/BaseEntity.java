@@ -40,7 +40,7 @@ public class BaseEntity implements Serializable {
     @Column(name = "updated",insertable=false, updatable=false,nullable = false)
     @ApiModelProperty("更新日期")
     @JsonIgnore
-    @UpdateTimestamp
+    //@UpdateTimestamp
     protected Timestamp updated;
 
     // 创建者

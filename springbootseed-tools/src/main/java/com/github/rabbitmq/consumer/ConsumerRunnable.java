@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 
@@ -20,9 +21,9 @@ public class ConsumerRunnable implements Callable {
 	private Method method;
 	private String params;
 
-	ConsumerRunnable(String methodName, String params) throws NoSuchMethodException, SecurityException,ClassNotFoundException {
+	ConsumerRunnable(String targetClassname, String methodName, String params) throws NoSuchMethodException, SecurityException,ClassNotFoundException {
 
-		Class targetClass = Class.forName("com.github.rabbitmq.consumer.ConsumerTask");
+		Class targetClass = Class.forName(targetClassname);
 		// 使用spring content 获取类的实例
 		ApplicationContext context = SpringContextHolder.getContext();
 		this.target = context.getBean(targetClass);
@@ -47,10 +48,18 @@ public class ConsumerRunnable implements Callable {
 		// 设置访问权限
 		method.setAccessible(true);
 		Object result;
-		if (StringUtils.isNotBlank(params)) {
-			result = method.invoke(target, params);
-		} else {
-			result = method.invoke(target);
+		try {
+			if (StringUtils.isNotBlank(params)) {
+				result = method.invoke(target, params);
+			} else {
+				result = method.invoke(target);
+			}
+		}
+		catch(InvocationTargetException e) {
+			throw new Exception(e.getCause().getMessage());
+		}
+		catch(Exception e) {
+			throw e;
 		}
 		return result;
 	}

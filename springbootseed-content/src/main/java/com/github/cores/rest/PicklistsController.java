@@ -1,5 +1,6 @@
 package com.github.cores.rest;
 
+import com.github.utils.ContentUtils;
 import com.github.aop.log.Log;
 import com.github.cores.domain.Picklists;
 import com.github.cores.service.PicklistsService;
@@ -29,12 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 public class PicklistsController {
 
     private final PicklistsService PicklistsService;
-	
-	private final ContentIdsService ContentIdsService;
 
-    public PicklistsController(PicklistsService PicklistsService,ContentIdsService ContentIdsService) {
+    public PicklistsController(PicklistsService PicklistsService) {
         this.PicklistsService = PicklistsService;
-		this.ContentIdsService = ContentIdsService;
     }
 	
     @InitBinder
@@ -72,8 +70,7 @@ public class PicklistsController {
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("base_picklists");
-	 	resources.setId(ContentID);
+	 	resources.setId(ContentUtils.makeContentId("base_picklists"));
         return new ResponseEntity<>(PicklistsService.create(resources),HttpStatus.CREATED);
     }
 

@@ -66,12 +66,12 @@ public class Mq implements Serializable {
     // 是否锁定
     @Column(name = "islock",updatable=false,nullable = false)
 	@ApiModelProperty("是否锁定")
-	private Integer islock;
+	private Boolean islock;
 
     // 是否同步
     @Column(name = "isasync",updatable=false,nullable = false)
 	@ApiModelProperty("是否同步")
-	private Integer isasync;
+	private Boolean isasync;
 
     public void copy(Mq source){
         BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));

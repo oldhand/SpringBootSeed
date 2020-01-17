@@ -29,11 +29,11 @@ public class MqMessage {
     @ApiModelProperty("唯一键 (键值相同时，判断为重复提交,为空时自动创建)")
     private String uniquekey;
 
-    @ApiModelProperty("是否锁定 (0：并发，1，单例)")
-    private Integer islock;
+    @ApiModelProperty("是否锁定 (false：并发，true，单例)")
+    private Boolean islock;
 
-    @ApiModelProperty("是否同步 (0：异步，1：同步)")
-    private Integer isasync;
+    @ApiModelProperty("是否同步 (false：异步，true：同步)")
+    private Boolean isasync;
 
     @Override
     public String toString() {

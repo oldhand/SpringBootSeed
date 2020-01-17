@@ -1,5 +1,6 @@
 package com.github.cores.rest;
 
+import com.github.utils.ContentUtils;
 import com.github.aop.log.Log;
 import com.github.cores.domain.Permissions;
 import com.github.cores.service.PermissionsService;
@@ -29,12 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 public class PermissionsController {
 
     private final PermissionsService PermissionsService;
-	
-	private final ContentIdsService ContentIdsService;
 
-    public PermissionsController(PermissionsService PermissionsService,ContentIdsService ContentIdsService) {
+    public PermissionsController(PermissionsService PermissionsService) {
         this.PermissionsService = PermissionsService;
-		this.ContentIdsService = ContentIdsService;
     }
 	
     @InitBinder
@@ -72,8 +70,7 @@ public class PermissionsController {
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("base_permissions");
-	 	resources.setId(ContentID);
+	 	resources.setId(ContentUtils.makeContentId("base_permissions"));
         return new ResponseEntity<>(PermissionsService.create(resources),HttpStatus.CREATED);
     }
 

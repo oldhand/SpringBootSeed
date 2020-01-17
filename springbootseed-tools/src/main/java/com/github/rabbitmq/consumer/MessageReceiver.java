@@ -3,6 +3,7 @@ package com.github.rabbitmq.consumer;
 import com.github.config.thread.ThreadPoolExecutorUtil;
 import com.github.rabbitmq.config.RabbitConstant;
 import com.github.rabbitmq.service.MqService;
+import com.github.rabbitmq.service.dto.MqDTO;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.Exchange;
@@ -29,6 +30,9 @@ import static com.github.rabbitmq.config.RabbitConstant.MESSAGE_QUEUE;
 @Component
 @Configuration
 public class MessageReceiver {
+
+    @Value("${rabbitmq.target-class}")
+    private String targetClass;
 
     @Autowired
     private MqService mqService;
@@ -93,14 +97,20 @@ public class MessageReceiver {
         Map<String, String> result = new HashMap<String, String>(2);
         try {
             // 执行任务
-            ConsumerRunnable task = new ConsumerRunnable(name,message);
+            ConsumerRunnable task;
+            if (name.equals("makeModEntityNo")) {
+                task = new ConsumerRunnable("com.github.utils.MqUtils","run",message);
+            }
+            else {
+                task = new ConsumerRunnable(targetClass,name,message);
+            }
             Object res = task.call();
             result.put("ack", "2");
             result.put("result", res.toString());
         } catch (Exception e) {
-            log.error("队列执行出错：{}",e.toString());
+            log.error("队列执行出错：{}",e.getMessage());
             result.put("ack", "3");
-            result.put("result", e.toString());
+            result.put("result", e.getMessage());
         }
         try {
             mqService.updateAck(Long.parseLong(id),result.get("ack"),result.get("result"));

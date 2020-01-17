@@ -1,17 +1,17 @@
 package com.github.cores.rest;
 
+import com.github.utils.ContentUtils;
 import com.github.aop.log.Log;
 import com.github.cores.domain.Users;
 import com.github.cores.service.UsersService;
 import com.github.cores.service.dto.UsersQueryCriteria;
 import com.github.exception.BadRequestException;
-import com.github.service.ContentIdsService;
 import com.github.utils.AuthorizationUtils;
 import com.github.utils.DateTimeUtils;
+import com.github.utils.MqUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 public class UsersController {
 
     private final UsersService UsersService;
-	
-	private final ContentIdsService ContentIdsService;
 
-    public UsersController(UsersService UsersService,ContentIdsService ContentIdsService) {
+    public UsersController(UsersService UsersService) {
         this.UsersService = UsersService;
-		this.ContentIdsService = ContentIdsService;
     }
 	
     @InitBinder
@@ -70,10 +67,17 @@ public class UsersController {
 	    if (!AuthorizationUtils.isLogin(request)) {
 	        throw new BadRequestException("请先进行登录操作");
 	    }
+        String modentityno;
+	    try {
+	        modentityno = MqUtils.makeModEntityNo("Users");
+        }
+        catch(Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("base_users");
-	 	resources.setId(ContentID);
+	 	resources.setId(ContentUtils.makeContentId("base_users"));
+        resources.setUsersNo(modentityno);
         return new ResponseEntity<>(UsersService.create(resources),HttpStatus.CREATED);
     }
 

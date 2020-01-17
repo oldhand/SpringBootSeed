@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 * @date 2020-01-15
 */
 public interface ModentitynosRepository extends JpaRepository<Modentitynos, Long>, JpaSpecificationExecutor<Modentitynos> {
+    Modentitynos findByTabid(int tabid);
 }

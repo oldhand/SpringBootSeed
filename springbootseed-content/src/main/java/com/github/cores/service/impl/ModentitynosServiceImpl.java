@@ -1,14 +1,16 @@
 package com.github.cores.service.impl;
 
 import com.github.cores.domain.Modentitynos;
+import com.github.exception.BadRequestException;
 import com.github.exception.EntityExistException;
-import com.github.utils.ValidationUtil;
-import com.github.utils.FileUtil;
+import com.github.rabbitmq.repository.MqRepository;
+import com.github.utils.*;
 import com.github.cores.repository.ModentitynosRepository;
 import com.github.cores.service.ModentitynosService;
 import com.github.cores.service.dto.ModentitynosDTO;
 import com.github.cores.service.dto.ModentitynosQueryCriteria;
 import com.github.cores.service.mapper.ModentitynosMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +21,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import com.github.utils.PageUtil;
-import com.github.utils.QueryHelp;
+
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
@@ -32,6 +33,7 @@ import java.util.LinkedHashMap;
 * @author oldhand
 * @date 2020-01-15
 */
+@Slf4j
 @Service
 @CacheConfig(cacheNames = "Modentitynos")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
@@ -39,11 +41,14 @@ public class ModentitynosServiceImpl implements ModentitynosService {
 
     private final ModentitynosRepository ModentitynosRepository;
 
+    private final MqRepository mqrepository;
+
     private final ModentitynosMapper ModentitynosMapper;
 
-    public ModentitynosServiceImpl(ModentitynosRepository ModentitynosRepository, ModentitynosMapper ModentitynosMapper) {
+    public ModentitynosServiceImpl(ModentitynosRepository ModentitynosRepository, ModentitynosMapper ModentitynosMapper,MqRepository mqrepository) {
         this.ModentitynosRepository = ModentitynosRepository;
         this.ModentitynosMapper = ModentitynosMapper;
+        this.mqrepository = mqrepository;
     }
 
     @Override
@@ -68,6 +73,17 @@ public class ModentitynosServiceImpl implements ModentitynosService {
     }
 
     @Override
+    @Cacheable(key = "T(String).valueOf('tabid::').concat(#p0)")
+    public ModentitynosDTO findByTabid(int tabid) {
+        Modentitynos modentityno = ModentitynosRepository.findByTabid(tabid);
+        if (modentityno == null) {
+            throw new BadRequestException("编号不存在");
+        }
+        ValidationUtil.isNull(modentityno.getTabid(),"Modentitynos","tabid",tabid);
+        return ModentitynosMapper.toDto(modentityno);
+    }
+
+    @Override
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public ModentitynosDTO create(Modentitynos resources) {
@@ -82,6 +98,18 @@ public class ModentitynosServiceImpl implements ModentitynosService {
         ValidationUtil.isNull( Modentitynos.getId(),"Modentitynos","id",resources.getId());
         Modentitynos.copy(resources);
 		return ModentitynosMapper.toDto(ModentitynosRepository.saveAndFlush(Modentitynos));
+    }
+
+    @Override
+    @CacheEvict(allEntries = true)
+    @Transactional(rollbackFor = Exception.class)
+    public void update(Long id, int curid, String curdate) {
+        Modentitynos Modentitynos = ModentitynosRepository.findById(id).orElseGet(Modentitynos::new);
+        ValidationUtil.isNull( Modentitynos.getId(),"Modentitynos","id",id);
+        Modentitynos.setCurId(curid);
+        Modentitynos.setCurDate(curdate);
+        Modentitynos.setUpdated(null);
+        ModentitynosRepository.saveAndFlush(Modentitynos);
     }
 
     @Override
@@ -124,4 +152,5 @@ public class ModentitynosServiceImpl implements ModentitynosService {
         }
         FileUtil.downloadExcel(list, response);
     }
+
 }

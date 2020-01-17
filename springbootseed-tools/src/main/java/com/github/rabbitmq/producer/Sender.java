@@ -30,8 +30,8 @@ public class Sender {
         keyMap.put("id", mq.getId().toString());
         keyMap.put("name", mq.getName());
         keyMap.put("message",  mq.getMessage());
-        if (mq.getIslock() == 0) {
-            if (mq.getIsasync() == 0) {
+        if (!mq.getIslock()) {
+            if (!mq.getIsasync()) {
                 send(keyMap, RabbitConstant.CONTROL_EXCHANGE, RabbitConstant.MESSAGE_ROUTING_KEY);
                 return null;
             }
@@ -40,7 +40,7 @@ public class Sender {
             }
         }
         else {
-            if (mq.getIsasync() == 0) {
+            if (!mq.getIsasync()) {
                 send(keyMap, RabbitConstant.CONTROL_EXCHANGE, RabbitConstant.LOCK_MESSAGE_ROUTING_KEY);
                 return null;
             }

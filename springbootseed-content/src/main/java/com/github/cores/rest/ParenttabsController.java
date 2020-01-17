@@ -1,5 +1,6 @@
 package com.github.cores.rest;
 
+import com.github.utils.ContentUtils;
 import com.github.aop.log.Log;
 import com.github.cores.domain.Parenttabs;
 import com.github.cores.service.ParenttabsService;
@@ -29,12 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 public class ParenttabsController {
 
     private final ParenttabsService ParenttabsService;
-	
-	private final ContentIdsService ContentIdsService;
 
-    public ParenttabsController(ParenttabsService ParenttabsService,ContentIdsService ContentIdsService) {
+    public ParenttabsController(ParenttabsService ParenttabsService) {
         this.ParenttabsService = ParenttabsService;
-		this.ContentIdsService = ContentIdsService;
     }
 	
     @InitBinder
@@ -72,8 +70,7 @@ public class ParenttabsController {
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("base_parenttabs");
-	 	resources.setId(ContentID);
+	 	resources.setId(ContentUtils.makeContentId("base_parenttabs"));
         return new ResponseEntity<>(ParenttabsService.create(resources),HttpStatus.CREATED);
     }
 

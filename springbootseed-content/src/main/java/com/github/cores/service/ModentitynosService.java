@@ -41,9 +41,13 @@ public interface ModentitynosService {
 
     ModentitynosDTO update(Long id,Modentitynos resources);
 
+    ModentitynosDTO findByTabid(int tabid);
+
     void delete(Long id);
 	
 	void makedelete(Long id);
 
     void download(List<ModentitynosDTO> all, HttpServletResponse response) throws IOException;
+
+    void update(Long id, int curid, String curdate);
 }

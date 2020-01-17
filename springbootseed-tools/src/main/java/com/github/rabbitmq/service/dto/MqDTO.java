@@ -41,8 +41,8 @@ public class MqDTO implements Serializable {
     private String uniquekey;
 
     // 是否锁定
-    private Integer islock;
+    private Boolean islock;
 
     // 是否同步
-    private Integer isasync;
+    private Boolean isasync;
 }

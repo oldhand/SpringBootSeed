@@ -45,6 +45,7 @@ rabbitmq:
     connection-timeout: 60000 #毫秒
     publisher-confirms: true #支持发布确认（确认消息是否发送到交换器）
     publisher-returns: true #支持发布返回（确认消息没有存入到相应的队列）
+    target-class: com.github.rabbitmq.consumer.ConsumerTask
 
 
 

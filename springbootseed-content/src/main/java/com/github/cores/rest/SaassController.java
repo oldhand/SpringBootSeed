@@ -1,5 +1,6 @@
 package com.github.cores.rest;
 
+import com.github.utils.ContentUtils;
 import com.github.aop.log.Log;
 import com.github.cores.domain.Saass;
 import com.github.cores.service.SaassService;
@@ -30,12 +31,9 @@ import javax.servlet.http.HttpServletResponse;
 public class SaassController {
 
     private final SaassService SaassService;
-	
-	private final ContentIdsService ContentIdsService;
 
-    public SaassController(SaassService SaassService,ContentIdsService ContentIdsService) {
+    public SaassController(SaassService SaassService) {
         this.SaassService = SaassService;
-		this.ContentIdsService = ContentIdsService;
     }
 	
     @InitBinder
@@ -88,8 +86,7 @@ public class SaassController {
 	    }
 	 	String profileid = AuthorizationUtils.getProfileid(request);
 	 	resources.setAuthor(profileid);
-	    long ContentID = ContentIdsService.create("base_saass");
-	 	resources.setId(ContentID);
+	 	resources.setId(ContentUtils.makeContentId("base_saass"));
         return new ResponseEntity<>(SaassService.create(resources),HttpStatus.CREATED);
     }
 

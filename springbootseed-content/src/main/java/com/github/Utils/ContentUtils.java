@@ -1,4 +1,4 @@
-package com.github.content;
+package com.github.utils;
 
 import com.github.service.ContentIdsService;
 import com.github.service.YearContentIdsService;

@@ -1,6 +1,6 @@
 package com.github.cores.service.impl;
 
-import com.github.content.ContentUtils;
+import com.github.utils.ContentUtils;
 import com.github.cores.domain.*;
 import com.github.cores.repository.*;
 import com.github.exception.BadRequestException;
@@ -321,6 +321,14 @@ public class SaassServiceImpl implements SaassService {
         List<Users> users = usersrepository.findAll(userexample);
 
         if (users.size() == 0) {
+            String entityno;
+            try {
+                entityno = MqUtils.makeModEntityNo("Users");
+            }
+            catch(Exception e) {
+                throw new BadRequestException("生成用户编号失败");
+            }
+
             user.setAuthor(author);
             user.setId(ContentUtils.makeContentId("base_users"));
             user.setRegioncode(profile.getRegioncode());
@@ -339,7 +347,7 @@ public class SaassServiceImpl implements SaassService {
             user.setSequence(100);
             user.setIsadmin(true);
             user.setStatus(true);
-            user.setUsersNo("USR001");
+            user.setUsersNo(entityno);
             user.setDeptid(dept.getId());
             user.setPermissionid(permission.getId());
             usersrepository.saveAndFlush(user);

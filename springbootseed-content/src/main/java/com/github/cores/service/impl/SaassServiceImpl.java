@@ -159,7 +159,7 @@ public class SaassServiceImpl implements SaassService {
     @Override
     @CacheEvict(allEntries = true, cacheNames = {"Users","Depts","Tabs","Parenttabs","Permissions","Tabs2permissions"})
     @Transactional(rollbackFor = Exception.class)
-    public void initdata(String author, Long saasid){
+    public void initdata(String author, Long saasid, String entityno){
         Saass saass = SaassRepository.findById(saasid).orElseGet(Saass::new);
         ValidationUtil.isNull( saass.getId(),"Saass","id",saasid);
         String profileid = saass.getProfileid();
@@ -321,14 +321,6 @@ public class SaassServiceImpl implements SaassService {
         List<Users> users = usersrepository.findAll(userexample);
 
         if (users.size() == 0) {
-            String entityno;
-            try {
-                entityno = MqUtils.makeModEntityNo("Users");
-            }
-            catch(Exception e) {
-                throw new BadRequestException("生成用户编号失败");
-            }
-
             user.setAuthor(author);
             user.setId(ContentUtils.makeContentId("base_users"));
             user.setRegioncode(profile.getRegioncode());

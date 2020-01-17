@@ -41,7 +41,7 @@ public interface SaassService {
 
     SaassDTO update(Long id,Saass resources);
 
-    void initdata(String author,Long id);
+    void initdata(String author,Long id,String entityno);
 
     void delete(Long id);
 	

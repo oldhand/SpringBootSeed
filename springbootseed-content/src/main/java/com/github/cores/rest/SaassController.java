@@ -10,6 +10,7 @@ import com.github.exception.BadRequestException;
 import com.github.service.ContentIdsService;
 import com.github.utils.AuthorizationUtils;
 import com.github.utils.DateTimeUtils;
+import com.github.utils.MqUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +53,14 @@ public class SaassController {
             throw new BadRequestException("请先进行登录操作");
         }
         String author = AuthorizationUtils.getProfileid(request);
-        SaassService.initdata(author, id);
+        String entityno;
+        try {
+            entityno = MqUtils.makeModEntityNo("Users");
+        }
+        catch(Exception e) {
+            throw new BadRequestException("生成用户编号失败");
+        }
+        SaassService.initdata(author, id, entityno);
         return new ResponseEntity("ok",HttpStatus.OK);
     }
 

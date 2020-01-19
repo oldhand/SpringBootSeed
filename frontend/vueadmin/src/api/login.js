@@ -31,8 +31,39 @@ export async function getInfo() {
   }
 }
 
+function isMobileAvailable(input) {
+  const myreg = /^[1][3,4,5,7,8][0-9]{9}$/;
+  if (myreg.test(input)) {
+    return true;
+  }
+  return false;
+}
+
+function getRegMobile(input) {
+  const myreg = /^[+][8][6][1][3,4,5,7,8][0-9]{9}$/;
+  if (myreg.test(input)) {
+    return input.substring(3, input.length);
+  } else {
+    const nextreg = /^[8][6][1][3,4,5,7,8][0-9]{9}$/;
+    if (nextreg.test(input)) {
+      return input.substring(2, input.length);
+    }
+  }
+  return input;
+}
+
 export async function searchUser(username) {
-  const url = '/api/profile?type=admin&username=' + username;
+  let url;
+  if (isMobileAvailable(username)) {
+    url = '/api/profile?type=admin&regioncode=86&mobile=' + username;
+  } else {
+    const mobile = getRegMobile(username);
+    if (mobile !== username) {
+      url = '/api/profile?type=admin&regioncode=86&mobile=' + mobile;
+    } else {
+      url = '/api/profile?type=admin&username=' + username;
+    }
+  }
   try {
     const json = await request(url);
     if (json.content.length > 0) {

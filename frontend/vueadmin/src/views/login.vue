@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" label-position="left" label-width="0px" class="login-form">
       <h3 class="title">SpringBootSeed 后台管理系统</h3>
       <el-form-item prop="username">
-        <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号">
+        <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号/手机号码">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon"/>
         </el-input>
       </el-form-item>
@@ -54,14 +54,14 @@ export default {
       codeUrl: '',
       cookiePass: '',
       loginForm: {
-        username: 'oldhand',
+        username: 'admin',
         password: '123qwe',
         rememberMe: false,
         code: '',
         uuid: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', message: '用户名不能为空' }],
+        username: [{ required: true, trigger: 'blur', message: '账号/手机号码不能为空' }],
         password: [{ required: true, trigger: 'blur', message: '密码不能为空' }],
         code: [{ required: true, trigger: 'change', message: '验证码不能为空' }]
       },

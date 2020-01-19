@@ -67,7 +67,7 @@ export const constantRouterMap = [
     children: [
       {
         path: 'center',
-        component: () => import('@/views/system/user/center'),
+        component: () => import('@/views/settings/users/center'),
         name: '个人中心',
         meta: { title: '个人中心', icon: 'user' }
       }

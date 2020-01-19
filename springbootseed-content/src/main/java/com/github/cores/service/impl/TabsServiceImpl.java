@@ -176,28 +176,38 @@ public class TabsServiceImpl implements TabsService {
                 for (Parenttabs parenttab_item : parenttabs) {
                     String parenttabname = parenttab_item.getTabname();
                     Map<String,Object> parenttab_menu = new HashMap<>();
+
+
                     parenttab_menu.put("name",parenttabname);
-                    parenttab_menu.put("title",parenttab_item.getTablabel());
                     parenttab_menu.put("path","/" + parenttabname.toLowerCase());
                     parenttab_menu.put("hidden",false);
                     parenttab_menu.put("redirect","noredirect");
                     parenttab_menu.put("component","Layout");
                     parenttab_menu.put("alwaysShow",true);
-                    parenttab_menu.put("icon",parenttabname.toLowerCase());
-                    parenttab_menu.put("noCache",true);
+
+                    Map<String,Object> meta = new HashMap<>();
+                    meta.put("title",parenttab_item.getTablabel());
+                    meta.put("icon",parenttabname.toLowerCase());
+                    meta.put("noCache",true);
+                    parenttab_menu.put("meta",meta);
+
                     List<Object> childrenmenus = new ArrayList();
                     for (Tabs tab_item : tabs) {
                         if (showtabs.indexOf(tab_item.getTabid()) >= 0) {
                             String tabname = tab_item.getTabname();
                             Map<String,Object> tab_menu = new HashMap<>();
                             tab_menu.put("name",tabname);
-                            tab_menu.put("title",tab_item.getTablabel());
                             tab_menu.put("path",tabname.toLowerCase());
                             tab_menu.put("hidden",false);
                             tab_menu.put("redirect","noredirect");
                             tab_menu.put("component",parenttabname.toLowerCase()+"/"+tabname.toLowerCase()+"/index");
-                            tab_menu.put("icon",tabname.toLowerCase());
-                            tab_menu.put("noCache",true);
+
+                            Map<String,Object> childmeta = new HashMap<>();
+                            childmeta.put("title",tab_item.getTablabel());
+                            childmeta.put("icon",tabname.toLowerCase());
+                            childmeta.put("noCache",true);
+                            tab_menu.put("meta",childmeta);
+
                             childrenmenus.add(tab_menu);
                         }
                     }

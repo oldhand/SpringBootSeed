@@ -1,19 +1,21 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" label-position="left" label-width="0px" class="login-form">
-      <h3 class="title">SpringBootSeed 后台管理系统</h3>
+      <h3 class="title">SpringBootSeed <br>{{ $t('login.title') }}
+        <login-lang />
+      </h3>
       <el-form-item prop="username">
-        <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号/手机号码">
-          <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon"/>
+        <el-input v-model="loginForm.username" :placeholder="$t('login.username')" type="text" auto-complete="off">
+          <svg-icon slot="prefix" icon-class="users" class="el-input__icon input-icon"/>
         </el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input v-model="loginForm.password" type="password" auto-complete="off" placeholder="密码" @keyup.enter.native="handleLogin">
+        <el-input v-model="loginForm.password" :placeholder="$t('login.password')" type="password" auto-complete="off" @keyup.enter.native="handleLogin">
           <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon"/>
         </el-input>
       </el-form-item>
       <el-form-item v-if="needverifycode" prop="code" >
-        <el-input v-model="loginForm.code" auto-complete="off" placeholder="验证码" maxlength="4" style="width: 63%" @keyup.enter.native="handleLogin">
+        <el-input v-model="loginForm.code" :placeholder="$t('login.verifycode')" auto-complete="off" maxlength="4" style="width: 63%" @keyup.enter.native="handleLogin">
           <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon"/>
         </el-input>
         <div class="login-code">
@@ -21,7 +23,12 @@
         </div>
       </el-form-item>
 
-      <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住我</el-checkbox>
+      <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">{{ $t('login.rememberMe') }}</el-checkbox>
+
+      <el-row style="margin:0px 0px 25px 0px;" type="flex" justify="space-between">
+        <el-link type="primary">{{ $t('login.forgetPassword') }}</el-link>
+        <el-link type="primary" @click="doRegister()">{{ $t('login.register') }}</el-link>
+      </el-row>
 
       <div v-if="errorMsg != ''" class="error-msg">
         {{ errorMsg }}
@@ -29,10 +36,11 @@
 
       <el-form-item style="width:100%;">
         <el-button :loading="loading" size="medium" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
-          <span v-if="!loading">登 录</span>
-          <span v-else>登 录 中...</span>
+          <span v-if="!loading">{{ $t('login.login') }}</span>
+          <span v-else>{{ $t('login.logining') }}...</span>
         </el-button>
       </el-form-item>
+
     </el-form>
     <!--  底部  -->
     <div v-if="$store.state.settings.showFooter" id="el-login-footer">
@@ -45,10 +53,14 @@
 
 <script>
 import Config from '@/config'
+import loginLang from '@/components/lang/login-lang';
 import { getVerifyCode, searchUser } from '@/api/login'
 import Cookies from 'js-cookie'
 export default {
   name: 'Login',
+  components: {
+    loginLang
+  },
   data() {
     return {
       codeUrl: '',
@@ -61,9 +73,9 @@ export default {
         uuid: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', message: '账号/手机号码不能为空' }],
-        password: [{ required: true, trigger: 'blur', message: '密码不能为空' }],
-        code: [{ required: true, trigger: 'change', message: '验证码不能为空' }]
+        username: [{ required: true, trigger: 'blur', message: this.$t('login.usernameisrequired') }],
+        password: [{ required: true, trigger: 'blur', message: this.$t('login.passwordisrequired') }],
+        code: [{ required: true, trigger: 'change', message: this.$t('login.codeisrequired') }]
       },
       loading: false,
       needverifycode: false,
@@ -179,13 +191,16 @@ export default {
     margin: 0px auto 30px auto;
     text-align: center;
     color: #707070;
+    line-height: 25px;
   }
 
   .login-form {
     border-radius: 6px;
     background: #ffffff;
     width: 385px;
+    margin-bottom: 150px;
     padding: 25px 25px 5px 25px;
+    box-shadow: 4px 5px 10px rgba(0,0,0,.4);
     .el-input {
       height: 38px;
       input {

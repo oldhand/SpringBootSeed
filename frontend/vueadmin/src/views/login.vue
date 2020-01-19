@@ -2,7 +2,7 @@
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" label-position="left" label-width="0px" class="login-form">
       <h3 class="title">SpringBootSeed <br>{{ $t('login.title') }}
-        <login-lang />
+        <select-lang />
       </h3>
       <el-form-item prop="username">
         <el-input v-model="loginForm.username" :placeholder="$t('login.username')" type="text" auto-complete="off">
@@ -53,13 +53,13 @@
 
 <script>
 import Config from '@/config'
-import loginLang from '@/components/lang/login-lang';
+import selectLang from '@/components/lang/select-lang';
 import { getVerifyCode, searchUser } from '@/api/login'
 import Cookies from 'js-cookie'
 export default {
   name: 'Login',
   components: {
-    loginLang
+    selectLang
   },
   data() {
     return {
@@ -75,7 +75,7 @@ export default {
       loginRules: {
         username: [{ required: true, trigger: 'blur', message: this.$t('login.usernameisrequired') }],
         password: [{ required: true, trigger: 'blur', message: this.$t('login.passwordisrequired') }],
-        code: [{ required: true, trigger: 'change', message: this.$t('login.codeisrequired') }]
+        code: [{ required: true, trigger: 'change', message: this.$t('login.verifycodeisrequired') }]
       },
       loading: false,
       needverifycode: false,

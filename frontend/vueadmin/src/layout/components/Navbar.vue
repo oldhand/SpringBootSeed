@@ -4,8 +4,13 @@
     <breadcrumb class="breadcrumb-container"/>
 
     <div class="right-menu">
-      <template v-if="device!=='mobile'" class="screenfull-menu-item">
-        <el-tooltip content="全屏" effect="dark" placement="bottom">
+      <template v-if="device!=='mobile'">
+        <el-tooltip :content="lang" effect="dark" placement="bottom">
+          <navbar-lang />
+        </el-tooltip>
+      </template>
+      <template v-if="device!=='mobile'">
+        <el-tooltip :content="$t('navbar.fullScreen')" effect="dark" placement="bottom">
           <screenfull class="screenfull right-menu-item"/>
         </el-tooltip>
       </template>
@@ -17,17 +22,17 @@
         <el-dropdown-menu slot="dropdown">
           <span style="display:block;" @click="show = true">
             <el-dropdown-item>
-              布局设置
+              {{ $t('navbar.layoutSetting') }}
             </el-dropdown-item>
           </span>
           <router-link to="/user/center">
             <el-dropdown-item>
-              个人中心
+              {{ $t('navbar.userCenter') }}
             </el-dropdown-item>
           </router-link>
           <span style="display:block;" @click="open">
             <el-dropdown-item divided>
-              退出登录
+              {{ $t('navbar.logout') }}
             </el-dropdown-item>
           </span>
         </el-dropdown-menu>
@@ -38,19 +43,23 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { getLanguage } from '@/lang/index'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
+import navbarLang from '@/components/lang/navbar-lang';
 import Avatar from '@/assets/avatar/avatar.png'
 export default {
   components: {
     Breadcrumb,
     Hamburger,
+    navbarLang,
     Screenfull
   },
   data() {
     return {
       Avatar: Avatar,
+      lang: this.$t('language.'+getLanguage()),
       dialogVisible: false
     }
   },
@@ -75,13 +84,20 @@ export default {
   },
   methods: {
     open() {
-      this.$confirm('确定注销并退出系统吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('navbar.sureLogOut'), this.$t('tip'), {
+        confirmButtonText: this.$t('ok'),
+        cancelButtonText: this.$t('cancel'),
         type: 'warning'
       }).then(() => {
         this.logout()
       })
+      // this.$confirm(this.$t('navbar.') '确定注销并退出系统吗？', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'warning'
+      // }).then(() => {
+      //   this.logout()
+      // })
     },
     toggleSideBar() {
       this.$store.dispatch('ToggleSideBar')
@@ -119,9 +135,6 @@ export default {
       height: 100%;
       &:focus{
         outline: none;
-      }
-      .screenfull-menu-item {
-        margin-top: 5px;
       }
       .right-menu-item {
         display: inline-block;

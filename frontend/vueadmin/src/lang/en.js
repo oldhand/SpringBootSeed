@@ -1,5 +1,11 @@
 export default {
-  tip: '提示',
+  ok: 'OK',
+  cancel: 'Cancel',
+  tip: 'Tip',
+  language:{
+    en: 'English',
+    zh: '简体中文'
+  },
   login: {
     title: 'Backend Management System',
     username: 'Please input username/mobile',
@@ -15,21 +21,20 @@ export default {
     logining: 'Logining'
   },
   navbar: {
-    logOut: '退出登录',
-    userinfo: '个人信息',
-    dashboard: '首页',
-    lock: '锁屏',
-    bug: '没有错误日志',
-    bugs: '条错误日志',
-    screenfullF: '退出全屏',
-    screenfull: '全屏',
-    language: '中英文',
-    theme: '主题',
-    color: '换色'
+    logout: 'logOut',
+    fullScreen: 'Full Screen',
+    dashboard: 'Dash Board',
+    layoutSetting: 'Layout Setting',
+    userCenter: 'User Center',
+    sureLogOut: 'Are you sure you want to log out?',
+    language: 'Language',
+    theme: 'Theme',
+    color: 'Color'
   },
   tagsView: {
-    menu: '更多',
-    closeOthers: '关闭其它',
-    closeAll: '关闭所有'
+    refresh: 'Refresh',
+    close: 'Close',
+    closeOthersTags: 'Close Others',
+    closeAllTags: 'Close All'
   }
 }

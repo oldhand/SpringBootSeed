@@ -1,20 +1,22 @@
 <template>
   <el-dropdown trigger="click" @command="handleSetLanguage">
-    <svg-icon icon-class="language" />
+    <svg-icon icon-class="language" style="width:20px;height:20px;vertical-align: 5px;"/>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item :disabled="language==='zh'" command="zh">中文</el-dropdown-item>
-      <el-dropdown-item :disabled="language==='en'" command="en">English</el-dropdown-item>
+      <el-dropdown-item :disabled="language==='zh'" command="zh">{{ $t('language.zh') }}</el-dropdown-item>
+      <el-dropdown-item :disabled="language==='en'" command="en">{{ $t('language.en') }}</el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import { setLanguage } from '@/lang/index'
+import { setLanguage, getLanguage } from '@/lang/index'
 export default {
-  name: 'LoginLang',
+  name: 'NavbarLang',
   data() {
-    return {};
+    return {
+      language: getLanguage()
+    };
   },
   computed: {
     ...mapGetters(['language', 'tag'])
@@ -25,6 +27,7 @@ export default {
     handleSetLanguage(lang) {
       this.$i18n.locale = lang;
       setLanguage(lang);
+      this.language = lang;
       const tag = this.tag;
       const title = this.$router.$avueRouter.generateTitle(
         tag.label,

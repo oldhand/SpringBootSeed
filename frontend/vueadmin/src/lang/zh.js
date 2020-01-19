@@ -1,5 +1,11 @@
 export default {
+  ok: '确定',
+  cancel: '取消',
   tip: '提示',
+  language:{
+    en: 'English',
+    zh: '简体中文'
+  },
   login: {
     title: '后台管理系统',
     username: '请输入账号/手机号码',
@@ -15,21 +21,20 @@ export default {
     logining: '登 录 中'
   },
   navbar: {
-    logOut: '退出登录',
-    userinfo: '个人信息',
+    logout: '退出登录',
+    fullScreen: '全屏',
     dashboard: '首页',
-    lock: '锁屏',
-    bug: '没有错误日志',
-    bugs: '条错误日志',
-    screenfullF: '退出全屏',
-    screenfull: '全屏',
+    layoutSetting: '布局设置',
+    userCenter: '个人中心',
     language: '中英文',
+    sureLogOut: '确定注销并退出系统吗?',
     theme: '主题',
     color: '换色'
   },
   tagsView: {
-    menu: '更多',
-    closeOthers: '关闭其它',
-    closeAll: '关闭所有'
+    refresh: '刷新',
+    close: '关闭',
+    closeOthersTags: '关闭其它',
+    closeAllTags: '关闭所有'
   }
 }

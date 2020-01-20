@@ -2,7 +2,7 @@ export default {
   ok: 'OK',
   cancel: 'Cancel',
   tip: 'Tip',
-  language:{
+  language: {
     en: 'English',
     zh: '简体中文'
   },

@@ -1,9 +1,10 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" label-position="left" label-width="0px" class="login-form">
-      <h3 class="title">SpringBootSeed <br>{{ $t('login.title') }}
+      <div class="select-lang">
         <select-lang />
-      </h3>
+      </div>
+      <h3 class="title">SpringBootSeed <br>{{ $t('login.title') }}</h3>
       <el-form-item prop="username">
         <el-input v-model="loginForm.username" :placeholder="$t('login.username')" type="text" auto-complete="off">
           <svg-icon slot="prefix" icon-class="users" class="el-input__icon input-icon"/>
@@ -26,7 +27,7 @@
       <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">{{ $t('login.rememberMe') }}</el-checkbox>
 
       <el-row style="margin:0px 0px 25px 0px;" type="flex" justify="space-between">
-        <el-link type="primary">{{ $t('login.forgetPassword') }}</el-link>
+        <el-link type="primary" @click="doforgetPassword()">{{ $t('login.forgetPassword') }}</el-link>
         <el-link type="primary" @click="doRegister()">{{ $t('login.register') }}</el-link>
       </el-row>
 
@@ -174,6 +175,12 @@ export default {
           return false
         }
       })
+    },
+    doforgetPassword() {
+      this.$router.push({ path: '/forgetPassword' });
+    },
+    doRegister() {
+      this.$router.push({ path: '/register' });
     }
   }
 }
@@ -185,7 +192,7 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100%;
-    background-image:url(../assets/images/bg.jpg);
+    background-image:url(../../assets/images/bg.jpg);
   }
   .title {
     margin: 0px auto 30px auto;
@@ -230,5 +237,10 @@ export default {
     font-size: 13px;
     margin:0px 0px 25px 0px;
     color: red;
+  }
+  .select-lang {
+    position: absolute;
+    overflow: auto;
+    margin-left: 320px;
   }
 </style>

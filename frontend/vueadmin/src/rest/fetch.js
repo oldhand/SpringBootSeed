@@ -47,6 +47,7 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
             }
         } else if (type === 'POST') {
             let encryptdata
+            console.log('______POST___body____' + JSON.stringify(data) + '______');
             if (access_token === '') {
                 encryptdata = RestEncrypt(JSON.stringify(data), process.env.publickey);
             } else {

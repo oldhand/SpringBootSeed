@@ -59,7 +59,7 @@ export default {
   data() {
     return {
       Avatar: Avatar,
-      lang: this.$t('language.'+getLanguage()),
+      lang: this.$t('language.' + getLanguage()),
       dialogVisible: false
     }
   },

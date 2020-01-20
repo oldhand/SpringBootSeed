@@ -20,9 +20,22 @@ import Layout from '../layout/Layout'
 **/
 
 export const constantRouterMap = [
-  { path: '/login',
-    meta: { title: '登录', noCache: true },
-    component: () => import('@/views/login'),
+  {
+    path: '/login',
+    meta: { title: 'login', noCache: true },
+    component: () => import('@/views/profile/login'),
+    hidden: true
+  },
+	{
+    path: '/register',
+    meta: { title: 'register', noCache: true },
+    component: () => import('@/views/profile/register'),
+    hidden: true
+	},
+  {
+    path: '/forgetPassword',
+    meta: { title: 'forgetPassword', noCache: true },
+    component: () => import('@/views/profile/forgetPassword'),
     hidden: true
   },
   {
@@ -53,7 +66,7 @@ export const constantRouterMap = [
     children: [
       {
         path: 'dashboard',
-        component: () => import('@/views/home'),
+        component: () => import('@/views/home/index'),
         name: '首页',
         meta: { title: '首页', icon: 'index', noCache: true, affix: true }
       }

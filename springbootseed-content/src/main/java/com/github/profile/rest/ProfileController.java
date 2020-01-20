@@ -261,4 +261,25 @@ public class ProfileController {
         redisUtils.set(uuid,result);
         return new ImgResult(captcha.toBase64(),uuid);
     }
+
+    @Log("校验验证码")
+    @ApiOperation("校验验证码")
+    @PostMapping(value = "/verifycode")
+    public ResponseEntity verifyCode(@Validated @RequestBody VerifyCode code){
+        if (code.getUuid().isEmpty()) {
+            throw new BadRequestException("UUID不能为空");
+        }
+        if (code.getVerifycode().isEmpty()) {
+            throw new BadRequestException("验证码不能为空");
+        }
+        // 查询验证码
+        String verifycode = redisUtils.get(code.getUuid());
+        if (StringUtils.isBlank(verifycode)) {
+            throw new BadRequestException("验证码已过期");
+        }
+        if (StringUtils.isBlank(code.getVerifycode()) || !code.getVerifycode().equalsIgnoreCase(verifycode)) {
+            throw new BadRequestException("验证码错误");
+        }
+        return new ResponseEntity("ok",HttpStatus.OK);
+    }
 }

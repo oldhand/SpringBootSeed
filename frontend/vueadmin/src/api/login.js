@@ -13,6 +13,18 @@ export async function getVerifyCode() {
   }
 }
 
+export async function verifyCode(uuid, verifycode) {
+  const url = '/api/profile/verifycode';
+  try {
+    const json = await request(url, {}, { verifycode, uuid }, 'POST');
+    // console.log('______verifycode____' + JSON.stringify(json) + '______');
+    return json;
+  } catch (errorMsg) {
+    // console.log('______verifycode__errormsg__' + JSON.stringify(errorMsg) + '______');
+    throw errorMsg;
+  }
+}
+
 export async function login(id, password, verifycode, uuid) {
   const url = '/api/profile/login';
   try {

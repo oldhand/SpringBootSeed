@@ -1,9 +1,9 @@
 #!/bin/bash
 #这里可替换为你自己的执行程序，其他代码无需更改
-APP_NAME=springbootseed-core-0.1.jar
+APP_NAME=demo-1.0.jar
  
-if [ -f "$PWD/springbootseed-core/target/$APP_NAME" ];then
-   cp -f $PWD/springbootseed-core/target/$APP_NAME $PWD
+if [ -f "$PWD/backend/demo/target/$APP_NAME" ];then
+   cp -f $PWD/backend/demo/target/$APP_NAME $PWD
 fi 
 
 if [ ! -f "$PWD/$APP_NAME" ];then

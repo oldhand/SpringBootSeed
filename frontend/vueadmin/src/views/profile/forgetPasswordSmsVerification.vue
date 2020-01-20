@@ -51,10 +51,9 @@
 </template>
 
 <script>
-import Config from '@/config'
 import { getVerifyCode, searchUser, verifyCode } from '@/api/login'
 export default {
-  name: 'ForgetPassword',
+  name: 'ForgetPasswordSmsVerification',
   data() {
     return {
       codeUrl: '',
@@ -81,7 +80,6 @@ export default {
     }
   },
   created() {
-    document.title = this.$t('pages.forgetPassword') + ' - ' + Config.webName;
     this.getCode()
   },
   methods: {
@@ -109,7 +107,6 @@ export default {
             if (res === 'ok') {
               searchUser(username).then(res => {
                 console.log('______POST___body____' + JSON.stringify(res) + '______')
-                this.$router.push({ path: '/forgetPasswordSmsVerification' });
                 this.loading = false
               }).catch((errorMsg) => {
                 this.errorMsg = errorMsg;

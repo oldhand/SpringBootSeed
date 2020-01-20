@@ -22,20 +22,26 @@ import Layout from '../layout/Layout'
 export const constantRouterMap = [
   {
     path: '/login',
-    meta: { title: 'login', noCache: true },
+    meta: { title: 'Login', noCache: true },
     component: () => import('@/views/profile/login'),
     hidden: true
   },
 	{
     path: '/register',
-    meta: { title: 'register', noCache: true },
+    meta: { title: 'Register', noCache: true },
     component: () => import('@/views/profile/register'),
     hidden: true
 	},
   {
     path: '/forgetPassword',
-    meta: { title: 'forgetPassword', noCache: true },
+    meta: { title: 'ForgetPassword', noCache: true },
     component: () => import('@/views/profile/forgetPassword'),
+    hidden: true
+  },
+  {
+    path: '/forgetPasswordSmsVerification',
+    meta: { title: 'SmsVerification', noCache: true },
+    component: () => import('@/views/profile/forgetPasswordSmsVerification'),
     hidden: true
   },
   {
@@ -67,8 +73,8 @@ export const constantRouterMap = [
       {
         path: 'dashboard',
         component: () => import('@/views/home/index'),
-        name: '首页',
-        meta: { title: '首页', icon: 'index', noCache: true, affix: true }
+        name: 'home',
+        meta: { title: 'Home', icon: 'index', noCache: true, affix: true }
       }
     ]
   },
@@ -81,8 +87,8 @@ export const constantRouterMap = [
       {
         path: 'center',
         component: () => import('@/views/settings/users/center'),
-        name: '个人中心',
-        meta: { title: '个人中心', icon: 'user' }
+        name: 'usercenter',
+        meta: { title: 'UserCenter', icon: 'user' }
       }
     ]
   }

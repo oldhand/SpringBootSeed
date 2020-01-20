@@ -6,6 +6,17 @@ export default {
     en: 'English',
     zh: '简体中文'
   },
+  pages: {
+    login: '登录',
+    forgetPassword: '密码找回',
+    Home: '首页',
+    Settings: '系统设置',
+    Users: '用户管理',
+    Depts: '部门管理',
+    Permissions: '权限管理',
+    Roles: '角色管理',
+    Setting: '运营设置'
+  },
   login: {
     title: '后台管理系统',
     username: '请输入账号/手机号码',
@@ -30,7 +41,7 @@ export default {
     verifycodeisrequired: '验证码不能为空',
     rememberMe: '记住我',
     forgetPassword: '忘记密码',
-    retrievePassword: '输入账号',
+    inputUsername: '输入账号',
     smsVerification: '短信验证',
     setNewPassword: '设置新密码',
     resetCompleted: '重置完成',

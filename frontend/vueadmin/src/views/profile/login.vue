@@ -93,6 +93,7 @@ export default {
     }
   },
   created() {
+    document.title = this.$t('pages.login') + ' - ' + Config.webName;
     this.getCookie()
   },
   methods: {

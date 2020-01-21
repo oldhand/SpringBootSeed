@@ -20,40 +20,9 @@
     <dependencies>
         <dependency>
             <groupId>com.github</groupId>
-            <artifactId>springbootseed-generator</artifactId>
-            <version>0.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github</groupId>
-                    <artifactId>springbootseed-common</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github</groupId>
-            <artifactId>springbootseed-tools</artifactId>
-            <version>0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github</groupId>
-            <artifactId>springbootseed-content</artifactId>
-            <version>0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github</groupId>
-            <artifactId>springbootseed-common</artifactId>
-            <version>0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github</groupId>
             <artifactId>springbootseed-core</artifactId>
             <version>0.1</version>
         </dependency>
-
     </dependencies>
 
     <build>

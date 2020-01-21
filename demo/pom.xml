@@ -10,7 +10,7 @@
     <groupId>com.github</groupId>
     <artifactId>demo</artifactId>
     <version>1.0</version>
-    <name>SpringBootSeedDemo</name>
+    <name>demo</name>
     <description>Demo project for Spring Boot Seed</description>
 
     <properties>

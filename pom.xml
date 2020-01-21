@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github</groupId>
-    <artifactId>springbootseed</artifactId>
-    <name>springbootseed</name>
+    <artifactId>SpringBootSeed</artifactId>
+    <name>SpringBootSeed</name>
     <version>0.1</version>
     <modules>
-        <module>backend/demo</module>
-        <module>backend/springbootseed</module>
+        <module>demo</module>
+        <module>springbootseed</module>
     </modules>
 </project>

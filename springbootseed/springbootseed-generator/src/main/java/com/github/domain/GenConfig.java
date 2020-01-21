@@ -1,5 +1,7 @@
 package com.github.domain;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import javax.persistence.*;
@@ -43,4 +45,8 @@ public class GenConfig {
     // 是否覆盖
     @ApiModelProperty("是否覆盖")
     private Boolean cover;
+
+    public void copy(GenConfig source){
+        BeanUtil.copyProperties(source,this, CopyOptions.create().setIgnoreNullValue(true));
+    }
 }

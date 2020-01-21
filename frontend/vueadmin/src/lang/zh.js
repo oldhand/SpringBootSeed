@@ -8,7 +8,7 @@ export default {
   },
   pages: {
     login: '登录',
-    forgetPassword: '密码找回',
+    forgetPassword: '忘记密码',
     Home: '首页',
     Settings: '系统设置',
     Users: '用户管理',
@@ -47,7 +47,9 @@ export default {
     resetCompleted: '重置完成',
     back: '返回',
     next: '下一步',
-    committing: '提交中'
+    committing: '提交中',
+    smsVerifycode: '请输入短信验证码',
+    sendSmsVerifyCode: '发送验证码'
   },
   navbar: {
     logout: '退出登录',

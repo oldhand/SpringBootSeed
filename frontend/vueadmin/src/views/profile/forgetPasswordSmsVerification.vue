@@ -2,24 +2,26 @@
   <div class="forgetPassword">
     <el-form ref="forgetPasswordForm" :model="forgetPasswordForm" :rules="forgetPasswordRules" label-position="left" label-width="0px" class="forgetPassword-form">
       <h3 class="title">{{ $t('forgetPassword.title') }}</h3>
-      <el-steps :active="1" :align-center="true" direction="horizontal" >
+      <el-steps :active="2" :align-center="true" direction="horizontal" >
         <el-step :title="$t('forgetPassword.inputUsername')" />
         <el-step :title="$t('forgetPassword.smsVerification')" />
         <el-step :title="$t('forgetPassword.setNewPassword')" />
         <el-step :title="$t('forgetPassword.resetCompleted')" />
       </el-steps>
       <div style="width:60%; margin: 0 auto; margin-top: 30px;">
-        <el-form-item prop="username">
-          <el-input v-model="forgetPasswordForm.username" :placeholder="$t('login.username')" type="text" auto-complete="off">
-            <svg-icon slot="prefix" icon-class="users" class="el-input__icon input-icon"/>
+        <el-form-item prop="mobile">
+          <el-input v-model="forgetPasswordForm.mobile" type="text" readonly auto-complete="off">
+            <svg-icon slot="prefix" icon-class="mobile" class="el-input__icon input-icon"/>
           </el-input>
         </el-form-item>
-        <el-form-item prop="code" >
-          <el-input v-model="forgetPasswordForm.code" :placeholder="$t('login.verifycode')" auto-complete="off" maxlength="4" style="width: 63%" @keyup.enter.native="handleLogin">
+        <el-form-item prop="smsverifycode" >
+          <el-input v-model="forgetPasswordForm.smsverifycode" :placeholder="$t('forgetPassword.smsVerifycode')" auto-complete="off" maxlength="4" style="width: 60%" @keyup.enter.native="handleLogin">
             <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon"/>
           </el-input>
-          <div class="login-code">
-            <img :src="codeUrl" @click="getCode">
+          <div class="forgetPassword-code">
+            <el-button :disabled="isDisabled" style="width:100%" size="medium" type="primary" @click.native.prevent="handleSendSmsVerifyCode">
+              <span>{{ buttonName }}</span>
+            </el-button>
           </div>
         </el-form-item>
 
@@ -32,7 +34,7 @@
             <el-button size="medium" icon="el-icon-back" @click.native.prevent="handleBack">
               <span>{{ $t('forgetPassword.back') }}</span>
             </el-button>
-            <el-button :loading="loading" size="medium" type="primary" icon="el-icon-right" @click.native.prevent="handleLogin">
+            <el-button :loading="loading" size="medium" type="primary" icon="el-icon-right" @click.native.prevent="handleNext">
               <span v-if="!loading">{{ $t('forgetPassword.next') }}</span>
               <span v-else>{{ $t('forgetPassword.committing') }}...</span>
             </el-button>
@@ -51,20 +53,24 @@
 </template>
 
 <script>
-import { getVerifyCode, searchUser, verifyCode } from '@/api/login'
+import Config from '@/config'
+import { searchUser, verifyCode } from '@/api/login'
 export default {
   name: 'ForgetPasswordSmsVerification',
   data() {
     return {
       codeUrl: '',
+      profileid: '',
+      buttonName: this.$t('forgetPassword.sendSmsVerifyCode'),
+      isDisabled: false,
+      time: 120,
       forgetPasswordForm: {
-        username: 'admin',
-        code: '',
+        mobile: '',
+        smsverifycode: '',
         uuid: ''
       },
       forgetPasswordRules: {
-        username: [{ required: true, trigger: 'blur', message: this.$t('forgetPassword.usernameisrequired') }],
-        code: [{ required: true, trigger: 'change', message: this.$t('forgetPassword.verifycodeisrequired') }]
+        smsverifycode: [{ required: true, trigger: 'change', message: this.$t('forgetPassword.verifycodeisrequired') }]
       },
       loading: false,
       redirect: undefined,
@@ -80,21 +86,35 @@ export default {
     }
   },
   created() {
-    this.getCode()
+    document.title = this.$t('pages.forgetPassword') + ' - ' + Config.webName;
+    if (this.$route.query.profileid) {
+      this.profileid = this.$route.query.profileid;
+    }
+    if (this.$route.query.mobile) {
+      this.forgetPasswordForm.mobile = this.$route.query.mobile;
+    }
   },
   methods: {
-    getCode() {
-      getVerifyCode().then(res => {
-        this.codeUrl = res.img
-        this.forgetPasswordForm.uuid = res.uuid
-      }).catch((errorMsg) => {
-        this.errorMsg = errorMsg;
-      });
-    },
     handleBack() {
       this.$router.back(-1);
     },
-    handleLogin() {
+    handleSendSmsVerifyCode() {
+      const me = this;
+      me.buttonName = me.time + '秒';
+      --me.time;
+      me.isDisabled = true;
+      const interval = window.setInterval(function() {
+        me.buttonName = me.time + '秒';
+        --me.time;
+        if (me.time < 0) {
+          me.buttonName = '重新发送';
+          me.time = 120;
+          me.isDisabled = false;
+          window.clearInterval(interval);
+        }
+      }, 1000);
+    },
+    handleNext() {
       this.errorMsg = '';
       this.$refs.forgetPasswordForm.validate(valid => {
         if (valid) {
@@ -162,8 +182,9 @@ export default {
     text-align: center;
     color: #bfbfbf;
   }
-  .login-code {
-    width: 33%;
+  .forgetPassword-code {
+    width: 35%;
+    margin-right: 0px;
     display: inline-block;
     height: 38px;
     float: right;

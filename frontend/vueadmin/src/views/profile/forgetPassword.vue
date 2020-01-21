@@ -10,12 +10,12 @@
       </el-steps>
       <div style="width:60%; margin: 0 auto; margin-top: 30px;">
         <el-form-item prop="username">
-          <el-input v-model="forgetPasswordForm.username" :placeholder="$t('login.username')" type="text" auto-complete="off">
+          <el-input v-model="forgetPasswordForm.username" :placeholder="$t('forgetPassword.username')" type="text" auto-complete="off">
             <svg-icon slot="prefix" icon-class="users" class="el-input__icon input-icon"/>
           </el-input>
         </el-form-item>
         <el-form-item prop="code" >
-          <el-input v-model="forgetPasswordForm.code" :placeholder="$t('login.verifycode')" auto-complete="off" maxlength="4" style="width: 63%" @keyup.enter.native="handleLogin">
+          <el-input v-model="forgetPasswordForm.code" :placeholder="$t('forgetPassword.verifycode')" auto-complete="off" maxlength="4" style="width: 63%" @keyup.enter.native="handleLogin">
             <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon"/>
           </el-input>
           <div class="login-code">
@@ -32,7 +32,7 @@
             <el-button size="medium" icon="el-icon-back" @click.native.prevent="handleBack">
               <span>{{ $t('forgetPassword.back') }}</span>
             </el-button>
-            <el-button :loading="loading" size="medium" type="primary" icon="el-icon-right" @click.native.prevent="handleLogin">
+            <el-button :loading="loading" size="medium" type="primary" icon="el-icon-right" @click.native.prevent="handleNext">
               <span v-if="!loading">{{ $t('forgetPassword.next') }}</span>
               <span v-else>{{ $t('forgetPassword.committing') }}...</span>
             </el-button>
@@ -96,7 +96,7 @@ export default {
     handleBack() {
       this.$router.back(-1);
     },
-    handleLogin() {
+    handleNext() {
       this.errorMsg = '';
       this.$refs.forgetPasswordForm.validate(valid => {
         if (valid) {
@@ -109,7 +109,8 @@ export default {
             if (res === 'ok') {
               searchUser(username).then(res => {
                 console.log('______POST___body____' + JSON.stringify(res) + '______')
-                this.$router.push({ path: '/forgetPasswordSmsVerification' });
+                const mobile = res.regioncode + res.mobile;
+                this.$router.push({ path: '/forgetPasswordSmsVerification?profileid=' + res.id + '&mobile=' + mobile });
                 this.loading = false
               }).catch((errorMsg) => {
                 this.errorMsg = errorMsg;

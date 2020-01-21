@@ -2,11 +2,7 @@
 #这里可替换为你自己的执行程序，其他代码无需更改
 APP_NAME=demo-1.0.jar
  
-if [ -f "$PWD/backend/demo/target/$APP_NAME" ];then
-   cp -f $PWD/backend/demo/target/$APP_NAME $PWD
-fi 
-
-if [ ! -f "$PWD/$APP_NAME" ];then
+if [ ! -f "$PWD/target/$APP_NAME" ];then
     echo "${APP_NAME} file does not exist!"
 	exit
 fi 
@@ -34,7 +30,7 @@ start(){
   if [ $? -eq "0" ]; then
     echo "${APP_NAME} is already running. pid=${pid} ."
   else
-    nohup java -jar $APP_NAME > /dev/null 2>&1 &
+    nohup java -jar $PWD/target/$APP_NAME > /dev/null 2>&1 &
   fi
 }
 
@@ -43,7 +39,7 @@ live(){
   if [ $? -eq "0" ]; then
     echo "${APP_NAME} is already running. pid=${pid} ."
   else
-     java -jar $APP_NAME
+     java -jar $PWD/target/$APP_NAME
   fi
 }
  

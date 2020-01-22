@@ -144,6 +144,7 @@ public class SmslogController {
         if (StringUtils.isBlank(code.getVerifycode()) || !code.getVerifycode().equalsIgnoreCase(verifycode)) {
             throw new BadRequestException("短信验证码错误");
         }
+        redisUtils.delete(code.getUuid());
         return new ResponseEntity("ok",HttpStatus.OK);
     }
 

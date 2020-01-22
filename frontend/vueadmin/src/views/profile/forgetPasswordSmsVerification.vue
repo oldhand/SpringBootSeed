@@ -54,8 +54,7 @@
 
 <script>
 import Config from '@/config'
-import { search, send } from '@/api/sms'
-import { searchUser, verifyCode } from '@/api/login'
+import { search, send, verify } from '@/api/sms'
 export default {
   name: 'ForgetPasswordSmsVerification',
   data() {
@@ -108,6 +107,7 @@ export default {
         console.log('______search____' + JSON.stringify(res) + '______');
         if (res.remain > 0) {
           me.time = res.remain;
+          me.uuid = res.uuid;
           me.buttonName = me.time + '秒';
           me.isDisabled = true;
           me.startCountDowner();
@@ -153,20 +153,15 @@ export default {
       this.errorMsg = '';
       this.$refs.forgetPasswordForm.validate(valid => {
         if (valid) {
-          const username = this.forgetPasswordForm.username;
-          const code = this.forgetPasswordForm.code;
+          const profileid = this.profileid;
+          const verifycode = this.forgetPasswordForm.smsverifycode;
           const uuid = this.forgetPasswordForm.uuid;
           this.loading = true
-          verifyCode(uuid, code).then(res => {
+          verify(uuid, verifycode).then(res => {
             console.log('______POST___body____' + JSON.stringify(res) + '______');
             if (res === 'ok') {
-              searchUser(username).then(res => {
-                console.log('______POST___body____' + JSON.stringify(res) + '______')
-                this.loading = false
-              }).catch((errorMsg) => {
-                this.errorMsg = errorMsg;
-                this.loading = false
-              });
+              this.loading = false
+              this.$router.push({ path: '/forgetPasswordSetNewPassword?profileid=' + res.id + '&mobile=' + res.mobile + '&regioncode=' + res.regioncode });
             }
           }).catch((errorMsg) => {
             this.errorMsg = errorMsg;

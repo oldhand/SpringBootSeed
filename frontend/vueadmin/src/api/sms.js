@@ -19,3 +19,13 @@ export async function send(regioncode, mobile, template) {
   }
 }
 
+export async function verify(uuid, verifycode) {
+  const url = '/api/smslog/verify';
+  try {
+    return await request(url, {}, { uuid, verifycode }, 'POST');
+  } catch (errorMsg) {
+    throw errorMsg;
+  }
+}
+
+

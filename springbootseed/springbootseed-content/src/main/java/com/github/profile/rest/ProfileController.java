@@ -280,6 +280,7 @@ public class ProfileController {
         if (StringUtils.isBlank(code.getVerifycode()) || !code.getVerifycode().equalsIgnoreCase(verifycode)) {
             throw new BadRequestException("验证码错误");
         }
+        redisUtils.delete(code.getUuid());
         return new ResponseEntity("ok",HttpStatus.OK);
     }
 }

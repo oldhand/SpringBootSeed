@@ -53,6 +53,14 @@ public class redisUtils {
     /**
      * 保存缓存
      */
+    public static void set(String key, Object val, int expire) {
+        redisTemplate.opsForValue().set(key,val);
+        redisTemplate.expire(key, expire, TimeUnit.MINUTES);
+    }
+
+    /**
+     * 保存缓存
+     */
     public static void set(String key,String tag, Object val) {
         redisTemplate.opsForValue().set(tag + "::" + key,val);
         redisTemplate.expire(key,expiration, TimeUnit.MINUTES);
@@ -71,7 +79,7 @@ public class redisUtils {
 //        return redisVos;
 //    }
     /**
-     * 保存指定的缓存
+     * 删除指定的缓存
      */
     public static void delete(String key) {
         redisTemplate.delete(key);

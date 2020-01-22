@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 * @author oldhand
 * @date 2020-01-15
 */
-@Api(tags = "实例：编号管理")
+@Api(tags = "后台：编号管理")
 @RestController
 @RequestMapping("/api/modentitynos")
 public class ModentitynosController {

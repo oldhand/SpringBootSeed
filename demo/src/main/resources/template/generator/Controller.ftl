@@ -6,6 +6,7 @@ import ${package}.service.${className}Service;
 import ${package}.service.dto.${className}QueryCriteria;
 import com.github.exception.BadRequestException;
 import com.github.utils.AuthorizationUtils;
+import com.github.utils.ContentUtils;
 import com.github.utils.DateTimeUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;

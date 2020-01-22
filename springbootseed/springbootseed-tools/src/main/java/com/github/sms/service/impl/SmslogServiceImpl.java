@@ -90,7 +90,7 @@ public class SmslogServiceImpl implements SmslogService {
     }
 
     @Override
-    @Cacheable(key = "T(String).valueOf('search::').concat(#p0).concat('::').concat(#p1)")
+    @Cacheable(key = "T(String).valueOf('search::').concat(#p1).concat(#p0)")
     public long search(String mobile, String regioncode) {
         Smslog smslog = new Smslog();
         smslog.setMobile(mobile);

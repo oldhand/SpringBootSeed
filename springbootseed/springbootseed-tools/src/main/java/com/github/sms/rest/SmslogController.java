@@ -92,6 +92,17 @@ public class SmslogController {
         if (resources.getTemplate().isEmpty()) {
             throw new BadRequestException("模板不能为空");
         }
+
+        long remain = smslogService.search(resources.getMobile(),resources.getRegioncode());
+
+        if (remain > 0) {
+            Timestamp currenttime = new Timestamp(System.currentTimeMillis());
+            long count = (currenttime.getTime() - remain) / 1000;
+            if (count <= 120) {
+                throw new BadRequestException("剩余" + (120 - count) + "秒");
+            }
+        }
+
         String uuid = codeKey + "::" + IdUtil.simpleUUID();
         String verifycode = SmsUtil.make();
         resources.setUuid(uuid);

@@ -55,6 +55,8 @@
 <script>
 import Config from '@/config'
 import { search, send, verify } from '@/api/sms'
+import { getProfile } from '@/api/profile'
+
 export default {
   name: 'ForgetPasswordSmsVerification',
   data() {
@@ -92,26 +94,33 @@ export default {
     if (this.$route.query.profileid) {
       this.profileid = this.$route.query.profileid;
     }
-    if (this.$route.query.mobile) {
-      this.forgetPasswordForm.mobile = this.$route.query.mobile;
-    }
-    if (this.$route.query.regioncode) {
-      this.forgetPasswordForm.regioncode = this.$route.query.regioncode;
-    }
+    // if (this.$route.query.mobile) {
+    //   this.forgetPasswordForm.mobile = this.$route.query.mobile;
+    // }
+    // if (this.$route.query.regioncode) {
+    //   this.forgetPasswordForm.regioncode = this.$route.query.regioncode;
+    // }
     this.handlesearch();
   },
   methods: {
     handlesearch() {
       const me = this;
-      search(this.forgetPasswordForm.regioncode, this.forgetPasswordForm.mobile).then(res => {
-        console.log('______search____' + JSON.stringify(res) + '______');
-        if (res.remain > 0) {
-          me.time = res.remain;
-          me.uuid = res.uuid;
-          me.buttonName = me.time + '秒';
-          me.isDisabled = true;
-          me.startCountDowner();
-        }
+      getProfile(this.profileid).then(res => {
+        console.log('______getProfile____' + JSON.stringify(res) + '______');
+          me.forgetPasswordForm.mobile = res.mobile;
+          me.forgetPasswordForm.regioncode = res.regioncode;
+          search(this.forgetPasswordForm.regioncode, this.forgetPasswordForm.mobile).then(res => {
+            console.log('______search____' + JSON.stringify(res) + '______');
+            if (res.remain > 0) {
+              me.time = res.remain;
+              me.uuid = res.uuid;
+              me.buttonName = me.time + '秒';
+              me.isDisabled = true;
+              me.startCountDowner();
+            }
+          }).catch((errorMsg) => {
+            this.errorMsg = errorMsg;
+          });
       }).catch((errorMsg) => {
         this.errorMsg = errorMsg;
       });
@@ -137,6 +146,7 @@ export default {
     },
     handleSendSmsVerifyCode() {
       const me = this;
+      me.isDisabled = true;
       send(this.forgetPasswordForm.regioncode, this.forgetPasswordForm.mobile, 'forgetpassword').then(res => {
         console.log('______send___' + JSON.stringify(res) + '______');
         if (res.status === 1) {
@@ -153,7 +163,6 @@ export default {
       this.errorMsg = '';
       this.$refs.forgetPasswordForm.validate(valid => {
         if (valid) {
-          const profileid = this.profileid;
           const verifycode = this.forgetPasswordForm.smsverifycode;
           const uuid = this.forgetPasswordForm.uuid;
           this.loading = true
@@ -161,7 +170,7 @@ export default {
             console.log('______POST___body____' + JSON.stringify(res) + '______');
             if (res === 'ok') {
               this.loading = false
-              this.$router.push({ path: '/forgetPasswordSetNewPassword?profileid=' + res.id + '&mobile=' + res.mobile + '&regioncode=' + res.regioncode });
+              this.$router.push({ path: '/forgetPasswordSetNewPassword?profileid=' + this.profileid });
             }
           }).catch((errorMsg) => {
             this.errorMsg = errorMsg;

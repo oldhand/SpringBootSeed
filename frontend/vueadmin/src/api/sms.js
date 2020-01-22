@@ -27,5 +27,3 @@ export async function verify(uuid, verifycode) {
     throw errorMsg;
   }
 }
-
-

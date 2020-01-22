@@ -110,8 +110,7 @@ export default {
               searchUser(username).then(res => {
                 console.log('______POST___body____' + JSON.stringify(res) + '______')
                 this.loading = false
-                this.$router.push({ path: '/forgetPasswordSmsVerification?profileid=' + res.id + '&mobile=' + res.mobile + '&regioncode=' + res.regioncode });
-
+                this.$router.push({ path: '/forgetPasswordSmsVerification?profileid=' + res.id });
               }).catch((errorMsg) => {
                 this.errorMsg = errorMsg;
                 this.loading = false

@@ -44,7 +44,7 @@ public interface SmslogService {
 
     void update(Long id, int status,String result);
 
-    long search(String mobile, String regioncode);
+    Map<String, Object> search(String mobile, String regioncode);
 
     void download(List<SmslogDTO> all, HttpServletResponse response) throws IOException;
 }

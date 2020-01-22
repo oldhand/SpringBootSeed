@@ -242,6 +242,6 @@ export default {
   .select-lang {
     position: absolute;
     overflow: auto;
-    margin-left: 320px;
+    margin-left: 300px;
   }
 </style>

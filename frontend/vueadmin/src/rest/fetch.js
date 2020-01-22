@@ -47,7 +47,7 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
             }
         } else if (type === 'POST') {
             let encryptdata
-            console.log('______POST___body____' + JSON.stringify(data) + '______');
+             console.log('______POST___body____' + JSON.stringify(data) + '______');
             if (access_token === '') {
                 encryptdata = RestEncrypt(JSON.stringify(data), process.env.publickey);
             } else {
@@ -63,7 +63,7 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
               }
               throw errorMsg;
             });
-            if (result.status === 200) {
+            if (result.status === 200 || result.status === 201) {
                 const cipher = result.data;
                 if (cipher && cipher !== '' && base64.isbase64(cipher)) {
                     if (access_token === '') {
@@ -92,7 +92,7 @@ export const execute = async(url, access_token = '', headers = {}, data = {}, ty
               }
               throw errorMsg;
             });
-            if (result.status === 200) {
+            if (result.status === 200 || result.status === 201) {
                 const cipher = result.data;
                 if (cipher && cipher !== '' && base64.isbase64(cipher)) {
                     if (access_token === '') {

@@ -6,6 +6,17 @@ export default {
     en: 'English',
     zh: '简体中文'
   },
+  pages: {
+    login: 'Login',
+    forgetPassword: '忘记密码',
+    Home: '首页',
+    Settings: '系统设置',
+    Users: '用户管理',
+    Depts: '部门管理',
+    Permissions: '权限管理',
+    Roles: '角色管理',
+    Setting: '运营设置'
+  },
   login: {
     title: 'Backend Management System',
     username: 'Please input username/mobile',

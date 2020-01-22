@@ -10,7 +10,7 @@
       </el-steps>
       <div style="width:60%; margin: 0 auto; margin-top: 30px;">
         <el-form-item prop="mobile">
-          <el-input v-model="forgetPasswordForm.mobile" type="text" readonly auto-complete="off">
+          <el-input :value="'+' + forgetPasswordForm.regioncode + forgetPasswordForm.mobile" type="text" readonly auto-complete="off" >
             <svg-icon slot="prefix" icon-class="mobile" class="el-input__icon input-icon"/>
           </el-input>
         </el-form-item>
@@ -54,6 +54,7 @@
 
 <script>
 import Config from '@/config'
+import { search, send } from '@/api/sms'
 import { searchUser, verifyCode } from '@/api/login'
 export default {
   name: 'ForgetPasswordSmsVerification',
@@ -61,11 +62,13 @@ export default {
     return {
       codeUrl: '',
       profileid: '',
+      uuid: '',
       buttonName: this.$t('forgetPassword.sendSmsVerifyCode'),
       isDisabled: false,
       time: 120,
       forgetPasswordForm: {
         mobile: '',
+        regioncode: '',
         smsverifycode: '',
         uuid: ''
       },
@@ -93,12 +96,30 @@ export default {
     if (this.$route.query.mobile) {
       this.forgetPasswordForm.mobile = this.$route.query.mobile;
     }
+    if (this.$route.query.regioncode) {
+      this.forgetPasswordForm.regioncode = this.$route.query.regioncode;
+    }
+    this.handlesearch();
   },
   methods: {
+    handlesearch() {
+      const me = this;
+      search(this.forgetPasswordForm.regioncode, this.forgetPasswordForm.mobile).then(res => {
+        console.log('______search____' + JSON.stringify(res) + '______');
+        if (res.remain > 0) {
+          me.time = res.remain;
+          me.buttonName = me.time + '秒';
+          me.isDisabled = true;
+          me.startCountDowner();
+        }
+      }).catch((errorMsg) => {
+        this.errorMsg = errorMsg;
+      });
+    },
     handleBack() {
       this.$router.back(-1);
     },
-    handleSendSmsVerifyCode() {
+    startCountDowner() {
       const me = this;
       me.buttonName = me.time + '秒';
       --me.time;
@@ -113,6 +134,20 @@ export default {
           window.clearInterval(interval);
         }
       }, 1000);
+    },
+    handleSendSmsVerifyCode() {
+      const me = this;
+      send(this.forgetPasswordForm.regioncode, this.forgetPasswordForm.mobile, 'forgetpassword').then(res => {
+        console.log('______send___' + JSON.stringify(res) + '______');
+        if (res.status === 1) {
+          me.uuid = res.uuid;
+          me.startCountDowner();
+        } else {
+          this.errorMsg = '短信发送失败';
+        }
+      }).catch((errorMsg) => {
+        this.errorMsg = errorMsg;
+      });
     },
     handleNext() {
       this.errorMsg = '';

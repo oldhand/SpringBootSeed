@@ -1,6 +1,6 @@
 <template>
   <el-dropdown trigger="click" @command="handleSetLanguage">
-    <svg-icon icon-class="language" style="width:20px;height:20px;vertical-align: 5px;"/>
+    <span class="el-dropdown-link" ><svg-icon icon-class="language" style="width:20px;height:20px;vertical-align: 5px;" /></span>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item :disabled="language==='zh'" command="zh">{{ $t('language.zh') }}</el-dropdown-item>
       <el-dropdown-item :disabled="language==='en'" command="en">{{ $t('language.en') }}</el-dropdown-item>
@@ -9,35 +9,23 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import { setLanguage, getLanguage } from '@/lang/index'
-export default {
-  name: 'NavbarLang',
-  data() {
-    return {
-      language: getLanguage()
-    };
-  },
-  computed: {
-    ...mapGetters(['language', 'tag'])
-  },
-  created() {},
-  mounted() {},
-  methods: {
-    handleSetLanguage(lang) {
-      this.$i18n.locale = lang;
-      setLanguage(lang);
-      this.language = lang;
-      const tag = this.tag;
-      const title = this.$router.$avueRouter.generateTitle(
-        tag.label,
-        (tag.meta || {}).i18n
-      );
-      // 根据当前的标签也获取label的值动态设置浏览器标题
-      this.$router.$avueRouter.setTitle(title);
+  import { setLanguage, getLanguage } from '@/lang/index'
+  export default {
+    name: 'NavbarLang',
+    data() {
+      return {
+        language: getLanguage()
+      };
+    },
+
+    methods: {
+      handleSetLanguage(lang) {
+        this.$i18n.locale = lang;
+        setLanguage(lang);
+        this.language = lang;
+      }
     }
-  }
-};
+  };
 </script>
 
 <style lang="scss" scoped>

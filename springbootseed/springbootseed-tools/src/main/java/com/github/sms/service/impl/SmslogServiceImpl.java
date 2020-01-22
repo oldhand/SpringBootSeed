@@ -91,7 +91,8 @@ public class SmslogServiceImpl implements SmslogService {
 
     @Override
     @Cacheable(key = "T(String).valueOf('search::').concat(#p1).concat(#p0)")
-    public long search(String mobile, String regioncode) {
+    public Map<String, Object> search(String mobile, String regioncode) {
+        Map<String,Object> result = new HashMap<>();
         Smslog smslog = new Smslog();
         smslog.setMobile(mobile);
         smslog.setRegioncode(regioncode);
@@ -102,9 +103,14 @@ public class SmslogServiceImpl implements SmslogService {
         if (smslogs.getTotalElements() > 0) {
             Smslog sms = smslogs.getContent().get(0);
             Timestamp published = sms.getPublished();
-            return published.getTime();
+            result.put("remain",published.getTime());
+            result.put("uuid",sms.getUuid());
         }
-        return 0L;
+        else {
+            result.put("remain",0);
+            result.put("uuid","");
+        }
+        return result;
     }
 
 

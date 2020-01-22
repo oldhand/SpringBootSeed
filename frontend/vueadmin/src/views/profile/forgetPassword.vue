@@ -109,8 +109,7 @@ export default {
             if (res === 'ok') {
               searchUser(username).then(res => {
                 console.log('______POST___body____' + JSON.stringify(res) + '______')
-                const mobile = res.regioncode + res.mobile;
-                this.$router.push({ path: '/forgetPasswordSmsVerification?profileid=' + res.id + '&mobile=' + mobile });
+                this.$router.push({ path: '/forgetPasswordSmsVerification?profileid=' + res.id + '&mobile=' + res.mobile + '&regioncode=' + res.regioncode });
                 this.loading = false
               }).catch((errorMsg) => {
                 this.errorMsg = errorMsg;

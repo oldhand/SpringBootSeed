@@ -93,7 +93,8 @@ public class SmslogController {
             throw new BadRequestException("模板不能为空");
         }
 
-        long remain = smslogService.search(resources.getMobile(),resources.getRegioncode());
+        Map<String,Object> info = smslogService.search(resources.getMobile(),resources.getRegioncode());
+        long remain = Long.parseLong(info.get("remain").toString());
 
         if (remain > 0) {
             Timestamp currenttime = new Timestamp(System.currentTimeMillis());
@@ -116,6 +117,7 @@ public class SmslogController {
             smslogService.update(smslogdto.getId(),1,result);
             smslogdto.setStatus(1);
             smslogdto.setResult(result);
+            smslogdto.setVerifycode("******");
             return new ResponseEntity<>(smslogdto,HttpStatus.CREATED);
         }
         catch(Exception e) {
@@ -155,21 +157,26 @@ public class SmslogController {
         if (resources.getRegioncode().isEmpty()) {
             throw new BadRequestException("手机国际区号不能为空");
         }
-        long remain = smslogService.search(resources.getMobile(),resources.getRegioncode());
+        Map<String,Object> info = smslogService.search(resources.getMobile(),resources.getRegioncode());
         Map<String,Object> result = new HashMap<>();
+        long remain = Long.parseLong(info.get("remain").toString());
+        String uuid = info.get("uuid").toString();
         result.put("mobile",resources.getMobile());
         result.put("regioncode",resources.getRegioncode());
         if (remain == 0) {
             result.put("remain",0);
+            result.put("uuid","");
         }
         else {
             Timestamp currenttime = new Timestamp(System.currentTimeMillis());
             long count = (currenttime.getTime() - remain) / 1000;
             if (count >= 120) {
                 result.put("remain",0);
+                result.put("uuid","");
             }
             else {
                 result.put("remain",120 - count);
+                result.put("uuid",uuid);
             }
         }
         return new ResponseEntity(result,HttpStatus.OK);

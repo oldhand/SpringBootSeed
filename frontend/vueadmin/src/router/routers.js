@@ -45,6 +45,18 @@ export const constantRouterMap = [
     hidden: true
   },
   {
+    path: '/forgetPasswordSetNewPassword',
+    meta: { title: 'SetNewPassword', noCache: true },
+    component: () => import('@/views/profile/forgetPasswordSetNewPassword'),
+    hidden: true
+  },
+  {
+    path: '/forgetPasswordResetCompleted',
+    meta: { title: 'SetNewPassword', noCache: true, allowBack: true },
+    component: () => import('@/views/profile/forgetPasswordResetCompleted'),
+    hidden: true
+  },
+  {
     path: '/404',
     component: () => import('@/views/features/404'),
     hidden: true

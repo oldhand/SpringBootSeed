@@ -21,8 +21,12 @@ public class SmsVerifyCode {
 	@ApiModelProperty("UUID")
 	private String uuid;
 
+	// 传递参数
+	@ApiModelProperty("传递参数")
+	private String parameter;
+
     @Override
     public String toString() {
-        return "{verifycode=" + verifycode  + ", uuid=" + uuid  + "}";
+        return "{verifycode=" + verifycode  + ", uuid=" + uuid  + ", parameter=" + parameter  + "}";
     }
 }

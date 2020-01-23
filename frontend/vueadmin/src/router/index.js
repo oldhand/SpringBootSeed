@@ -9,11 +9,18 @@ import { filterAsyncRouter } from '@/store/modules/permission'
 
 NProgress.configure({ showSpinner: false })// NProgress Configuration
 
-const whiteList = ['/login', '/register', '/forgetPassword', '/forgetPasswordSmsVerification']// no redirect whitelist
+const whiteList = ['/login', '/register', '/forgetPassword', '/forgetPasswordSmsVerification', '/forgetPasswordSetNewPassword', '/forgetPasswordResetCompleted']// no redirect whitelist
 
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = to.meta.title + ' - ' + Config.webName
+  }
+  let allowBack = true
+  if (to.meta.allowBack !== undefined) {
+    allowBack = to.meta.allowBack
+  }
+  if (!allowBack) {
+    history.pushState(null, null, location.href)
   }
   NProgress.start() // start progress bar
   console.log('______getToken____' + JSON.stringify(getToken()) + '______');

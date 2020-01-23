@@ -136,6 +136,9 @@ public class SmslogController {
         if (code.getVerifycode().isEmpty()) {
             throw new BadRequestException("短信验证码不能为空");
         }
+        if (code.getParameter().isEmpty()) {
+            throw new BadRequestException("传递参数不能为空");
+        }
         // 查询验证码
         String verifycode = redisUtils.get(code.getUuid());
         if (StringUtils.isBlank(verifycode)) {
@@ -145,7 +148,14 @@ public class SmslogController {
             throw new BadRequestException("短信验证码错误");
         }
         redisUtils.delete(code.getUuid());
-        return new ResponseEntity("ok",HttpStatus.OK);
+
+        String uuid = IdUtil.simpleUUID();
+        redisUtils.set(codeKey + "::" + uuid, code.getParameter());
+
+        Map<String,Object> result = new HashMap<>();
+        result.put("token",uuid);
+        result.put("status","ok");
+        return new ResponseEntity(result,HttpStatus.OK);
     }
 
     @PostMapping(value = "/search")
@@ -180,6 +190,23 @@ public class SmslogController {
                 result.put("uuid",uuid);
             }
         }
+        return new ResponseEntity(result,HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{token}")
+    @Log("获取令牌")
+    @ApiOperation("获取令牌")
+    public ResponseEntity getToken(@PathVariable String token){
+        // 查询令牌
+        String key = codeKey + "::" + token;
+        String info = redisUtils.get(key);
+        if (StringUtils.isBlank(info)) {
+            throw new BadRequestException("令牌已过期");
+        }
+        redisUtils.delete(key);
+        Map<String,Object> result = new HashMap<>();
+        result.put("token",token);
+        result.put("parameter",info);
         return new ResponseEntity(result,HttpStatus.OK);
     }
 }

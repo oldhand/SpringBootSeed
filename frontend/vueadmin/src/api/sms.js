@@ -19,11 +19,21 @@ export async function send(regioncode, mobile, template) {
   }
 }
 
-export async function verify(uuid, verifycode) {
+export async function verify(uuid, verifycode, parameter) {
   const url = '/api/smslog/verify';
   try {
-    return await request(url, {}, { uuid, verifycode }, 'POST');
+    return await request(url, {}, { uuid, verifycode, parameter }, 'POST');
   } catch (errorMsg) {
     throw errorMsg;
   }
 }
+
+export async function getToken(token) {
+  const url = '/api/smslog/' + token;
+  try {
+    return await request(url);
+  } catch (errorMsg) {
+    throw errorMsg;
+  }
+}
+

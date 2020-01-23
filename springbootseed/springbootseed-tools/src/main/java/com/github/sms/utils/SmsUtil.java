@@ -51,16 +51,17 @@ public class SmsUtil {
     public  static String sendSms(String mobile,String regioncode,String verifycode) throws Exception {
         try {
             System.out.println("--------sendSms------+" + regioncode + mobile + "------"+verifycode+"-----------");
-            String msg = String.format("【PaiChat】欢迎使用派聊，您的验证码是：%s", verifycode);
-            String message = String.format("3010005000610069004300680061007430116B228FCE4F7F75286D3E804AFF0C60A876849A8C8BC17801662FFF1A%s", bin2hex(verifycode));
-            String username = "baozi007";
-            String password = "1qazxsw2";
-            String smsurl = String.format("http://m.isms360.com:8085/mt/MT3.ashx?src=%s&pwd=%s&ServiceID=SEND&dest=%s%s&sender=106577777&msg=%s&codec=8",username,password,regioncode,mobile,message);
-            URL url = new URL(smsurl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-            return in.readLine();
+//            String msg = String.format("【PaiChat】欢迎使用派聊，您的验证码是：%s", verifycode);
+//            String message = String.format("3010005000610069004300680061007430116B228FCE4F7F75286D3E804AFF0C60A876849A8C8BC17801662FFF1A%s", bin2hex(verifycode));
+//            String username = "baozi007";
+//            String password = "1qazxsw2";
+//            String smsurl = String.format("http://m.isms360.com:8085/mt/MT3.ashx?src=%s&pwd=%s&ServiceID=SEND&dest=%s%s&sender=106577777&msg=%s&codec=8",username,password,regioncode,mobile,message);
+//            URL url = new URL(smsurl);
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setRequestMethod("POST");
+//            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+//            return in.readLine();
+            return "ok";
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

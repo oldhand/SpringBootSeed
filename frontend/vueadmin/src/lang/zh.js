@@ -9,6 +9,9 @@ export default {
   pages: {
     login: '登录',
     forgetPassword: '忘记密码',
+    smsVerification: '短信验证',
+    setNewPassword: '设置新密码',
+    ResetCompleted: '重置完成',
     Home: '首页',
     Settings: '系统设置',
     Users: '用户管理',
@@ -39,6 +42,10 @@ export default {
     passwordisrequired: '密码不能为空',
     verifycode: '验证码',
     verifycodeisrequired: '验证码不能为空',
+    newpassword: '请输入新密码',
+    newpasswordisrequired: '新密码不能为空',
+    confirmpassword: '请输入确认密码',
+    confirmpasswordisrequired: '确认密码不能为空',
     rememberMe: '记住我',
     forgetPassword: '忘记密码',
     inputUsername: '输入账号',
@@ -48,6 +55,7 @@ export default {
     back: '返回',
     next: '下一步',
     committing: '提交中',
+    backLogin: '返回登录',
     smsVerifycode: '请输入短信验证码',
     sendSmsVerifyCode: '发送验证码'
   },

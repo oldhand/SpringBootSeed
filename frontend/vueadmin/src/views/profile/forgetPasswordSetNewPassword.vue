@@ -2,27 +2,23 @@
   <div class="forgetPassword">
     <el-form ref="forgetPasswordForm" :model="forgetPasswordForm" :rules="forgetPasswordRules" label-position="left" label-width="0px" class="forgetPassword-form">
       <h3 class="title">{{ $t('forgetPassword.title') }}</h3>
-      <el-steps :active="2" :align-center="true" direction="horizontal" >
+      <el-steps :active="3" :align-center="true" direction="horizontal" >
         <el-step :title="$t('forgetPassword.inputUsername')" />
         <el-step :title="$t('forgetPassword.smsVerification')" />
         <el-step :title="$t('forgetPassword.setNewPassword')" />
         <el-step :title="$t('forgetPassword.resetCompleted')" />
       </el-steps>
       <div style="width:60%; margin: 0 auto; margin-top: 30px;">
-        <el-form-item prop="mobile">
-          <el-input :value="'+' + forgetPasswordForm.regioncode + forgetPasswordForm.mobile" type="text" readonly auto-complete="off" >
-            <svg-icon slot="prefix" icon-class="mobile" class="el-input__icon input-icon"/>
+        <el-form-item prop="password" >
+          <el-input v-model="forgetPasswordForm.newpassword" :placeholder="$t('forgetPassword.newpassword')" type="password" auto-complete="off" maxlength="20" >
+            <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon"/>
           </el-input>
         </el-form-item>
-        <el-form-item prop="smsverifycode" >
-          <el-input v-model="forgetPasswordForm.smsverifycode" :placeholder="$t('forgetPassword.smsVerifycode')" auto-complete="off" maxlength="6" style="width: 60%" @keyup.enter.native="handleLogin">
-            <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon"/>
+
+        <el-form-item prop="confirmpassword" >
+          <el-input v-model="forgetPasswordForm.confirmpassword" :placeholder="$t('forgetPassword.confirmpassword')" type="password" auto-complete="off" maxlength="20" >
+            <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon"/>
           </el-input>
-          <div class="forgetPassword-code">
-            <el-button :disabled="isDisabled" style="width:100%" size="medium" type="primary" @click.native.prevent="handleSendSmsVerifyCode">
-              <span>{{ buttonName }}</span>
-            </el-button>
-          </div>
         </el-form-item>
 
         <div v-if="errorMsg != ''" class="error-msg">
@@ -54,27 +50,25 @@
 
 <script>
 import Config from '@/config'
-import { search, send, verify } from '@/api/sms'
 import { getProfile } from '@/api/profile'
-
+import { getToken } from '@/api/sms'
 export default {
-  name: 'ForgetPasswordSmsVerification',
+  name: 'ForgetPasswordSetNewPassword',
   data() {
     return {
       codeUrl: '',
       profileid: '',
-      uuid: '',
+      token: '',
       buttonName: this.$t('forgetPassword.sendSmsVerifyCode'),
       isDisabled: false,
       time: 120,
       forgetPasswordForm: {
-        mobile: '',
-        regioncode: '',
-        smsverifycode: '',
-        uuid: ''
+        newpassword: '',
+        confirmpassword: ''
       },
       forgetPasswordRules: {
-        smsverifycode: [{ required: true, trigger: 'change', message: this.$t('forgetPassword.verifycodeisrequired') }]
+        newpassword: [{ required: true, trigger: 'change', message: this.$t('forgetPassword.newpasswordisrequired') }],
+        confirmpassword: [{ required: true, trigger: 'change', message: this.$t('forgetPassword.confirmpasswordisrequired') }]
       },
       loading: false,
       redirect: undefined,
@@ -90,89 +84,51 @@ export default {
     }
   },
   created() {
-    document.title = this.$t('pages.smsVerification') + ' - ' + Config.webName;
-    if (this.$route.query.profileid) {
-      this.profileid = this.$route.query.profileid;
+    document.title = this.$t('pages.setNewPassword') + ' - ' + Config.webName;
+    if (this.$route.query.token) {
+      this.token = this.$route.query.token;
     }
     this.handlesearch();
   },
   methods: {
     handlesearch() {
       const me = this;
-      getProfile(this.profileid).then(res => {
-        console.log('______getProfile____' + JSON.stringify(res) + '______');
-          me.forgetPasswordForm.mobile = res.mobile;
-          me.forgetPasswordForm.regioncode = res.regioncode;
-          search(this.forgetPasswordForm.regioncode, this.forgetPasswordForm.mobile).then(res => {
-            console.log('______search____' + JSON.stringify(res) + '______');
-            if (res.remain > 0) {
-              me.time = res.remain;
-              me.forgetPasswordForm.uuid = res.uuid;
-              me.buttonName = me.time + '秒';
-              me.isDisabled = true;
-              me.startCountDowner();
-            }
-          }).catch((errorMsg) => {
-            this.errorMsg = errorMsg;
-          });
+      getToken(this.token).then(res => {
+        console.log('______getToken___' + JSON.stringify(res) + '______');
+        me.profileid = res.parameter;
       }).catch((errorMsg) => {
-        this.errorMsg = errorMsg;
+        this.$alert(errorMsg + '，请重新操作忘记密码!', this.$t('tip'), {
+          confirmButtonText: '确定',
+          type: 'error',
+          callback: action => {
+            this.$router.push({ path: '/forgetPassword' });
+          }
+        });
       });
     },
     handleBack() {
       this.$router.back(-1);
     },
-    startCountDowner() {
-      const me = this;
-      me.buttonName = me.time + '秒';
-      --me.time;
-      me.isDisabled = true;
-      const interval = window.setInterval(function() {
-        me.buttonName = me.time + '秒';
-        --me.time;
-        if (me.time < 0) {
-          me.buttonName = '重新发送';
-          me.time = 120;
-          me.isDisabled = false;
-          window.clearInterval(interval);
-        }
-      }, 1000);
-    },
-    handleSendSmsVerifyCode() {
-      const me = this;
-      me.isDisabled = true;
-      send(this.forgetPasswordForm.regioncode, this.forgetPasswordForm.mobile, 'forgetpassword').then(res => {
-        console.log('______send___' + JSON.stringify(res) + '______');
-        if (res.status === 1) {
-          me.forgetPasswordForm.uuid = res.uuid;
-          me.startCountDowner();
-        } else {
-          this.errorMsg = '短信发送失败';
-        }
-      }).catch((errorMsg) => {
-        this.errorMsg = errorMsg;
-      });
-    },
     handleNext() {
       this.errorMsg = '';
       this.$refs.forgetPasswordForm.validate(valid => {
         if (valid) {
-          const verifycode = this.forgetPasswordForm.smsverifycode;
-          const uuid = this.forgetPasswordForm.uuid;
-          this.loading = true
-
-          verify(uuid, verifycode, this.profileid).then(res => {
-            console.log('______POST___body____' + JSON.stringify(res) + '______');
-            if (res.status === 'ok') {
-              this.loading = false
-              this.$router.push({ path: '/forgetPasswordSetNewPassword?token=' + res.token });
-            }
+          const newpassword = this.forgetPasswordForm.newpassword;
+          const confirmpassword = this.forgetPasswordForm.confirmpassword;
+          if (newpassword !== confirmpassword) {
+            const errorMsg = '两次输入密码不一致';
+            this.$message(errorMsg);
+            this.errorMsg = errorMsg;
+          }
+          console.log('______POST___body____' + JSON.stringify(newpassword) + '____' + JSON.stringify(confirmpassword) + '____');
+          getProfile(this.profileid).then(res => {
+            console.log('______getProfile___' + JSON.stringify(res) + '______');
+            this.$router.push({ path: '/forgetPasswordResetCompleted' });
           }).catch((errorMsg) => {
             this.errorMsg = errorMsg;
-            this.loading = false
           });
         }
-      });
+      })
     }
   }
 }

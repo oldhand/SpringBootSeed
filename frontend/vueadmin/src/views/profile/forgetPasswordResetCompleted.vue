@@ -10,7 +10,7 @@
       </el-steps>
       <div style="width:60%; margin: 0 auto; margin-top: 30px;">
         <div class="resetcompleted-msg">
-          {{ $t('forgetPassword.resetCompleted') }}
+          <i class="el-icon-info" />{{ $t('forgetPassword.resetCompletedInfo') }}
         </div>
 
         <el-form-item style="width:100%;">
@@ -89,8 +89,7 @@ export default {
     color: #bfbfbf;
   }
   .resetcompleted-msg {
-    font-size: 13px;
-    margin:0px 0px 25px 0px;
-    color: red;
+    font-size: 16px;
+    margin:20px 0px 50px 0px;
   }
 </style>

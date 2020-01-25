@@ -186,21 +186,21 @@ public class ProfileController {
         ProfileDTO profile = profileService.findByUsername(resources.getUsername());
         return new ResponseEntity(profile,HttpStatus.OK);
     }
-    @PutMapping(value = "/password")
+    @PutMapping(value = "/modifypassword")
     @Log("修改密码")
     @ApiOperation("修改密码")
-    public ResponseEntity changePassword(@Validated @RequestBody ChangePassword profile){
+    public ResponseEntity modifypassword(@Validated @RequestBody ChangePassword profile){
 
-        if (profile.getId().isEmpty()) {
+        if (profile.getProfileid().isEmpty()) {
             throw new BadRequestException("用户ID不能为空");
         }
         try {
-            PasswordUtils.match(profile.getNewpassword());
+            PasswordUtils.match(profile.getPassword());
         }catch(Exception e) {
             throw new BadRequestException("新密码: " + e.getMessage());
         }
 
-        String profileid = profile.getId();
+        String profileid = profile.getProfileid();
 
         // 查询上一次登录出错时间戳
 
@@ -225,10 +225,7 @@ public class ProfileController {
             throw new AccountExpiredException("用户已经被禁用");
         }
 
-        if(!profiledto.getPassword().equals(PasswordUtils.encryptPassword(profile.getOldpassword()))){
-            throw new AccountExpiredException("密码错误");
-        }
-        profileService.changePassword(profileid,profile.getNewpassword());
+        profileService.changePassword(profileid,profile.getPassword());
         return new ResponseEntity("ok",HttpStatus.OK);
     }
 

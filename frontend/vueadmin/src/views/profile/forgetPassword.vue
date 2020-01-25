@@ -68,16 +68,7 @@ export default {
         code: [{ required: true, trigger: 'change', message: this.$t('forgetPassword.verifycodeisrequired') }]
       },
       loading: false,
-      redirect: undefined,
       errorMsg: ''
-    }
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
     }
   },
   created() {
@@ -105,10 +96,8 @@ export default {
           const uuid = this.forgetPasswordForm.uuid;
           this.loading = true
           verifyCode(uuid, code).then(res => {
-            console.log('______POST___body____' + JSON.stringify(res) + '______');
             if (res === 'ok') {
               searchUser(username).then(res => {
-                console.log('______POST___body____' + JSON.stringify(res) + '______')
                 this.loading = false
                 this.$router.push({ path: '/forgetPasswordSmsVerification?profileid=' + res.id });
               }).catch((errorMsg) => {

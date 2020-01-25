@@ -21,6 +21,15 @@
           </el-input>
         </el-form-item>
 
+        <el-form-item prop="verifycode" >
+          <el-input v-model="forgetPasswordForm.verifycode" :placeholder="$t('forgetPassword.verifycode')" auto-complete="off" maxlength="4" style="width: 63%" @keyup.enter.native="handleLogin">
+            <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon"/>
+          </el-input>
+          <div class="forgetPassword-code">
+            <img :src="codeUrl" @click="getCode">
+          </div>
+        </el-form-item>
+
         <div v-if="errorMsg != ''" class="error-msg">
           {{ errorMsg }}
         </div>
@@ -50,8 +59,9 @@
 
 <script>
 import Config from '@/config'
-import { getProfile } from '@/api/profile'
+import { getProfile, modifypassword } from '@/api/profile'
 import { getToken } from '@/api/sms'
+import { getVerifyCode } from '@/api/login'
 export default {
   name: 'ForgetPasswordSetNewPassword',
   data() {
@@ -64,23 +74,17 @@ export default {
       time: 120,
       forgetPasswordForm: {
         newpassword: '',
-        confirmpassword: ''
+        confirmpassword: '',
+        code: '',
+        uuid: ''
       },
       forgetPasswordRules: {
         newpassword: [{ required: true, trigger: 'change', message: this.$t('forgetPassword.newpasswordisrequired') }],
-        confirmpassword: [{ required: true, trigger: 'change', message: this.$t('forgetPassword.confirmpasswordisrequired') }]
+        confirmpassword: [{ required: true, trigger: 'change', message: this.$t('forgetPassword.confirmpasswordisrequired') }],
+        verifycode: [{ required: true, trigger: 'change', message: this.$t('forgetPassword.verifycodeisrequired') }]
       },
       loading: false,
-      redirect: undefined,
       errorMsg: ''
-    }
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
     }
   },
   created() {
@@ -91,14 +95,22 @@ export default {
     this.handlesearch();
   },
   methods: {
+    getCode() {
+      getVerifyCode().then(res => {
+        this.codeUrl = res.img
+        this.forgetPasswordForm.uuid = res.uuid
+      }).catch((errorMsg) => {
+        this.errorMsg = errorMsg;
+      });
+    },
     handlesearch() {
       const me = this;
       getToken(this.token).then(res => {
-        console.log('______getToken___' + JSON.stringify(res) + '______');
         me.profileid = res.parameter;
+        this.getCode()
       }).catch((errorMsg) => {
-        this.$alert(errorMsg + '，请重新操作忘记密码!', this.$t('tip'), {
-          confirmButtonText: '确定',
+        this.$alert(errorMsg + '，' + this.$t('forgetPassword.pleasereoperateforgetpassword'), this.$t('tip'), {
+          confirmButtonText: this.$t('forgetPassword.OK'),
           type: 'error',
           callback: action => {
             this.$router.push({ path: '/forgetPassword' });
@@ -113,20 +125,30 @@ export default {
       this.errorMsg = '';
       this.$refs.forgetPasswordForm.validate(valid => {
         if (valid) {
+          this.loading = true
           const newpassword = this.forgetPasswordForm.newpassword;
           const confirmpassword = this.forgetPasswordForm.confirmpassword;
-          if (newpassword !== confirmpassword) {
-            const errorMsg = '两次输入密码不一致';
+          if (newpassword === confirmpassword) {
+            getProfile(this.profileid).then(res => {
+              modifypassword(this.profileid, newpassword, this.forgetPasswordForm.uuid, this.forgetPasswordForm.verifycode).then(res => {
+                this.loading = false
+                if (res === 'ok') {
+                  this.$router.push({ path: '/forgetPasswordResetCompleted' });
+                }
+              }).catch((errorMsg) => {
+                this.loading = false
+                this.errorMsg = errorMsg;
+              });
+            }).catch((errorMsg) => {
+              this.loading = false
+              this.errorMsg = errorMsg;
+            });
+          } else {
+            const errorMsg = this.$t('forgetPassword.thetwopasswordsareinconsistent');
+            this.loading = false
             this.$message(errorMsg);
             this.errorMsg = errorMsg;
           }
-          console.log('______POST___body____' + JSON.stringify(newpassword) + '____' + JSON.stringify(confirmpassword) + '____');
-          getProfile(this.profileid).then(res => {
-            console.log('______getProfile___' + JSON.stringify(res) + '______');
-            this.$router.push({ path: '/forgetPasswordResetCompleted' });
-          }).catch((errorMsg) => {
-            this.errorMsg = errorMsg;
-          });
         }
       })
     }

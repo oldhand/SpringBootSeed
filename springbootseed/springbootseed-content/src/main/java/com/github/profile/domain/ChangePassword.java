@@ -18,15 +18,11 @@ public class ChangePassword {
 
 	// 用户ID
 	@ApiModelProperty("用户ID")
-	private String id;
-
-    // 密码
-	@ApiModelProperty("原密码")
-	private String oldpassword;
+	private String profileid;
 
 	// 密码
 	@ApiModelProperty("新密码")
-	private String newpassword;
+	private String password;
 
 	// 验证码
 	@ApiModelProperty("验证码")
@@ -38,6 +34,6 @@ public class ChangePassword {
 
     @Override
     public String toString() {
-        return "{profileid=" + id  + ", password= ******}";
+        return "{profileid=" + profileid  + ", password=******, uuid=" + uuid  + ", verifycode=" + verifycode  + "}";
     }
 }

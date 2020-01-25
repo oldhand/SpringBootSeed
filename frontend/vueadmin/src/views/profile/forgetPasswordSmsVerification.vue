@@ -61,9 +61,7 @@ export default {
   name: 'ForgetPasswordSmsVerification',
   data() {
     return {
-      codeUrl: '',
       profileid: '',
-      uuid: '',
       buttonName: this.$t('forgetPassword.sendSmsVerifyCode'),
       isDisabled: false,
       time: 120,
@@ -77,16 +75,7 @@ export default {
         smsverifycode: [{ required: true, trigger: 'change', message: this.$t('forgetPassword.verifycodeisrequired') }]
       },
       loading: false,
-      redirect: undefined,
       errorMsg: ''
-    }
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
     }
   },
   created() {
@@ -100,15 +89,13 @@ export default {
     handlesearch() {
       const me = this;
       getProfile(this.profileid).then(res => {
-        console.log('______getProfile____' + JSON.stringify(res) + '______');
           me.forgetPasswordForm.mobile = res.mobile;
           me.forgetPasswordForm.regioncode = res.regioncode;
           search(this.forgetPasswordForm.regioncode, this.forgetPasswordForm.mobile).then(res => {
-            console.log('______search____' + JSON.stringify(res) + '______');
             if (res.remain > 0) {
               me.time = res.remain;
               me.forgetPasswordForm.uuid = res.uuid;
-              me.buttonName = me.time + '秒';
+              me.buttonName = me.time + me.$t('forgetPassword.second');
               me.isDisabled = true;
               me.startCountDowner();
             }
@@ -124,14 +111,14 @@ export default {
     },
     startCountDowner() {
       const me = this;
-      me.buttonName = me.time + '秒';
+      me.buttonName = me.time + me.$t('forgetPassword.second');
       --me.time;
       me.isDisabled = true;
       const interval = window.setInterval(function() {
-        me.buttonName = me.time + '秒';
+        me.buttonName = me.time + me.$t('forgetPassword.second');
         --me.time;
         if (me.time < 0) {
-          me.buttonName = '重新发送';
+          me.buttonName = me.$t('forgetPassword.resend');
           me.time = 120;
           me.isDisabled = false;
           window.clearInterval(interval);
@@ -142,12 +129,11 @@ export default {
       const me = this;
       me.isDisabled = true;
       send(this.forgetPasswordForm.regioncode, this.forgetPasswordForm.mobile, 'forgetpassword').then(res => {
-        console.log('______send___' + JSON.stringify(res) + '______');
         if (res.status === 1) {
           me.forgetPasswordForm.uuid = res.uuid;
           me.startCountDowner();
         } else {
-          this.errorMsg = '短信发送失败';
+          this.errorMsg = this.$t('forgetPassword.smssendingfailed');
         }
       }).catch((errorMsg) => {
         this.errorMsg = errorMsg;
@@ -160,9 +146,7 @@ export default {
           const verifycode = this.forgetPasswordForm.smsverifycode;
           const uuid = this.forgetPasswordForm.uuid;
           this.loading = true
-
           verify(uuid, verifycode, this.profileid).then(res => {
-            console.log('______POST___body____' + JSON.stringify(res) + '______');
             if (res.status === 'ok') {
               this.loading = false
               this.$router.push({ path: '/forgetPasswordSetNewPassword?token=' + res.token });

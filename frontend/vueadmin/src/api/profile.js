@@ -12,3 +12,13 @@ export async function getProfile(profileid) {
     throw errorMsg;
   }
 }
+
+export async function modifypassword(profileid, password, uuid, verifycode) {
+  const url = '/api/profile/modifypassword';
+  try {
+    return await request(url, {}, { profileid, password, uuid, verifycode }, 'PUT');
+  } catch (errorMsg) {
+    throw errorMsg;
+  }
+}
+

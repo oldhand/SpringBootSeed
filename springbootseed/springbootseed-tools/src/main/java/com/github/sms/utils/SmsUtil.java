@@ -1,6 +1,7 @@
 package com.github.sms.utils;
 
 
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
@@ -61,7 +62,15 @@ public class SmsUtil {
 //            connection.setRequestMethod("POST");
 //            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 //            return in.readLine();
-            return "ok";
+            SendSmsResponse response = AliyunSms.send(mobile,regioncode,verifycode);
+            System.out.println("--------response------" + response.getCode() + "-----------");
+            System.out.println("--------response------" + response.getBizId() + "-----------");
+            System.out.println("--------response------" + response.getRequestId() + "-----------");
+            System.out.println("--------response------" + response.getMessage() + "-----------");
+            if (response.getCode().compareTo("OK") == 0) {
+                return "ok";
+            }
+            throw new Exception(response.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

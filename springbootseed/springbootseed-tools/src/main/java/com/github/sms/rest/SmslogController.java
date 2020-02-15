@@ -89,9 +89,6 @@ public class SmslogController {
         if (resources.getRegioncode().isEmpty()) {
             throw new BadRequestException("手机国际区号不能为空");
         }
-        if (resources.getTemplate().isEmpty()) {
-            throw new BadRequestException("模板不能为空");
-        }
 
         Map<String,Object> info = smslogService.search(resources.getMobile(),resources.getRegioncode());
         long remain = Long.parseLong(info.get("remain").toString());

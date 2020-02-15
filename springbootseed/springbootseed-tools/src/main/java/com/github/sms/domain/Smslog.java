@@ -25,6 +25,7 @@ public class Smslog implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id",insertable=false, updatable=false)
     @ApiModelProperty("记录ID")
+    @JsonIgnore
     private Long id;
 
     // 创建日期
@@ -46,11 +47,6 @@ public class Smslog implements Serializable {
     @JsonIgnore
 	private Long saasid;
 
-
-    // 模板
-    @Column(name = "template",updatable=false,nullable = false)
-    @ApiModelProperty("模板")
-    private String template;
 
     // 手机号码
     @Column(name = "mobile",updatable=false,nullable = false)

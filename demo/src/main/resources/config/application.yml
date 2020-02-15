@@ -88,3 +88,10 @@ task:
 #登录图形验证码有效时间/分钟
 loginCode:
   expiration: 2
+
+aliyun-sms:
+  access-key-id : LTAI4FbkpNMRv5H5E5jZqhBY
+  access-key-secret : fHEso4j5YMznyREChRm0T8657hp9fR
+  signname : 医友
+  codename : code
+  templatecode : SMS_182684230

@@ -89,6 +89,17 @@ public class SaassServiceImpl implements SaassService {
     }
 
     @Override
+    @Cacheable
+    public boolean isExistName(String name) {
+        try {
+            Saass Saass = SaassRepository.findByName(name);
+            ValidationUtil.isNull(Saass.getName(),"Saass","name",name);
+            return true;
+        }catch(Exception e) {}
+        return false;
+    }
+
+    @Override
     @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public SaassDTO create(Saass resources) {

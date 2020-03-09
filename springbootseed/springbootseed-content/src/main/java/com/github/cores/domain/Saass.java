@@ -24,6 +24,7 @@ public class Saass extends BaseEntity implements Serializable {
 	
     // 名称
     @Column(name = "name",unique = true,nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@ApiModelProperty("名称")
 	private String name;
 	

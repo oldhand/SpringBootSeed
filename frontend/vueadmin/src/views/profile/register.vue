@@ -1,45 +1,71 @@
 <template>
-  <div class="login">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" label-position="left" label-width="0px" class="login-form">
-      <h3 class="title">SpringBootSeed <br>{{ $t('login.title') }}
-        <select-lang />
-      </h3>
-      <el-form-item prop="username">
-        <el-input v-model="loginForm.username" :placeholder="$t('login.username')" type="text" auto-complete="off">
-          <svg-icon slot="prefix" icon-class="users" class="el-input__icon input-icon"/>
-        </el-input>
-      </el-form-item>
-      <el-form-item prop="password">
-        <el-input v-model="loginForm.password" :placeholder="$t('login.password')" type="password" auto-complete="off" @keyup.enter.native="handleLogin">
-          <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon"/>
-        </el-input>
-      </el-form-item>
-      <el-form-item v-if="needverifycode" prop="code" >
-        <el-input v-model="loginForm.code" :placeholder="$t('login.verifycode')" auto-complete="off" maxlength="4" style="width: 63%" @keyup.enter.native="handleLogin">
-          <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon"/>
-        </el-input>
-        <div class="login-code">
-          <img :src="codeUrl" @click="getCode">
+  <div class="register">
+    <el-form ref="registerForm" :model="registerForm" :rules="registerRules" label-position="right" label-width="0px" class="register-form">
+      <h3 class="title">{{ $t('register.title') }}</h3>
+      <el-steps :active="1" :align-center="true" direction="horizontal" >
+        <el-step :title="$t('register.fillAccountInformation')" />
+        <el-step :title="$t('register.smsVerification')" />
+        <el-step :title="$t('register.fillServiceInformation')" />
+        <el-step :title="$t('register.UploadQualificationInformation')" />
+        <el-step :title="$t('register.registerCompleted')" />
+      </el-steps>
+      <div style="width:70%; margin: 0 auto; margin-top: 30px;">
+        <el-form-item :label="$t('register.name')+':'" prop="name" label-width="100px" required="true">
+          <el-input v-model="registerForm.name" :placeholder="$t('register.placeholder_name')" type="text" auto-complete="off">
+            <svg-icon slot="prefix" icon-class="saas" class="el-input__icon input-icon"/>
+          </el-input>
+        </el-form-item>
+        <el-form-item :label="$t('register.username')+':'" prop="username" label-width="100px" required="true">
+          <el-input v-model="registerForm.username" :placeholder="$t('register.placeholder_username')" type="text" auto-complete="off">
+            <svg-icon slot="prefix" icon-class="users" class="el-input__icon input-icon"/>
+          </el-input>
+        </el-form-item>
+        <el-form-item :label="$t('register.contact')+':'" prop="contact" label-width="100px" required="true">
+          <el-input v-model="registerForm.contact" :placeholder="$t('register.placeholder_contact')" type="text" auto-complete="off">
+            <svg-icon slot="prefix" icon-class="users" class="el-input__icon input-icon"/>
+          </el-input>
+        </el-form-item>
+        <el-form-item :label="$t('register.mobile')+':'" prop="mobile" label-width="100px" required="true">
+          <el-input v-model="registerForm.mobile" :placeholder="$t('register.placeholder_mobile')" type="text" auto-complete="off" >
+            <svg-icon slot="prefix" icon-class="mobile" class="el-input__icon input-icon"/>
+          </el-input>
+        </el-form-item>
+        <el-form-item :label="$t('register.password')+':'" prop="password" label-width="100px" required="true">
+          <el-input v-model="registerForm.password" :placeholder="$t('register.placeholder_password')" type="password" auto-complete="off" maxlength="20" >
+            <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon"/>
+          </el-input>
+        </el-form-item>
+
+        <el-form-item :label="$t('register.confirmpassword')+':'" prop="confirmpassword" label-width="100px" required="true">
+          <el-input v-model="registerForm.confirmpassword" :placeholder="$t('register.placeholder_confirmpassword')" type="password" auto-complete="off" maxlength="20" >
+            <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon"/>
+          </el-input>
+        </el-form-item>
+        <el-form-item :label="$t('register.verifycode')+':'" prop="verifycode" label-width="100px" required="true">
+          <el-input v-model="registerForm.verifycode" :placeholder="$t('register.placeholder_verifycode')" auto-complete="off" maxlength="4" style="width: 63%" @keyup.enter.native="handleLogin">
+            <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon"/>
+          </el-input>
+          <div class="login-code">
+            <img :src="codeUrl" @click="getCode">
+          </div>
+        </el-form-item>
+
+        <div v-if="errorMsg != ''" class="error-msg">
+          {{ errorMsg }}
         </div>
-      </el-form-item>
 
-      <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">{{ $t('login.rememberMe') }}</el-checkbox>
-
-      <el-row style="margin:0px 0px 25px 0px;" type="flex" justify="space-between">
-        <el-link type="primary">{{ $t('login.forgetPassword') }}</el-link>
-        <el-link type="primary" @click="doRegister()">{{ $t('login.register') }}</el-link>
-      </el-row>
-
-      <div v-if="errorMsg != ''" class="error-msg">
-        {{ errorMsg }}
+        <el-form-item style="width:100%;">
+          <el-row style="margin:0px 0px 25px 0px;" type="flex" justify="center">
+            <el-button size="medium" icon="el-icon-back" @click.native.prevent="handleBack">
+              <span>{{ $t('register.back') }}</span>
+            </el-button>
+            <el-button :loading="loading" size="medium" type="primary" icon="el-icon-right" @click.native.prevent="handleNext">
+              <span v-if="!loading">{{ $t('register.next') }}</span>
+              <span v-else>{{ $t('register.committing') }}...</span>
+            </el-button>
+          </el-row>
+        </el-form-item>
       </div>
-
-      <el-form-item style="width:100%;">
-        <el-button :loading="loading" size="medium" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
-          <span v-if="!loading">{{ $t('login.login') }}</span>
-          <span v-else>{{ $t('login.logining') }}...</span>
-        </el-button>
-      </el-form-item>
 
     </el-form>
     <!--  底部  -->
@@ -52,135 +78,98 @@
 </template>
 
 <script>
-import Config from '@/config'
-import selectLang from '@/components/lang/select-lang';
-import { getVerifyCode, searchUser } from '@/api/login'
-import Cookies from 'js-cookie'
-export default {
-  name: 'Login',
-  components: {
-    selectLang
-  },
-  data() {
-    return {
-      codeUrl: '',
-      cookiePass: '',
-      loginForm: {
-        username: 'admin',
-        password: '123qwe',
-        rememberMe: false,
-        code: '',
-        uuid: ''
-      },
-      loginRules: {
-        username: [{ required: true, trigger: 'blur', message: this.$t('login.usernameisrequired') }],
-        password: [{ required: true, trigger: 'blur', message: this.$t('login.passwordisrequired') }],
-        code: [{ required: true, trigger: 'change', message: this.$t('login.verifycodeisrequired') }]
-      },
-      loading: false,
-      needverifycode: false,
-      redirect: undefined,
-      errorMsg: ''
-    }
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
-    }
-  },
-  created() {
-    this.getCookie()
-  },
-  methods: {
-    getCode() {
-      getVerifyCode().then(res => {
-        this.codeUrl = res.img
-        this.loginForm.uuid = res.uuid
-      }).catch((errorMsg) => {
-        this.errorMsg = errorMsg;
-      });
-    },
-    getCookie() {
-      const username = Cookies.get('username')
-      let password = Cookies.get('password')
-      const rememberMe = Cookies.get('rememberMe')
-      this.needverifycode = Cookies.get('needverifycode')
-      if (this.needverifycode) {
-        this.getCode()
-      }
-      // 保存cookie里面的加密后的密码
-      this.cookiePass = password === undefined ? '' : password
-      password = password === undefined ? this.loginForm.password : password
-      this.loginForm = {
-        username: username === undefined ? this.loginForm.username : username,
-        password: password,
-        rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
-        code: ''
+  import Config from '@/config'
+  import { getVerifyCode, verifyCode } from '@/api/login'
+  import { createVerify } from '@/api/saas'
+  export default {
+    name: 'Register',
+    data() {
+      return {
+        codeUrl: '',
+        registerForm: {
+          name: 'demo',
+          username: 'admin',
+          contact: '管理员',
+          mobile: '15111122026',
+          password: '123qwe',
+          confirmpassword: '123qwe',
+          verifycode: '',
+          uuid: ''
+        },
+        registerRules: {
+          name: [{ required: true, trigger: 'blur', message: this.$t('register.nameisrequired') }],
+          username: [{ required: true, trigger: 'blur', message: this.$t('register.usernameisrequired') }],
+          contact: [{ required: true, trigger: 'blur', message: this.$t('register.contactisrequired') }],
+          mobile: [{ required: true, trigger: 'blur', message: this.$t('register.mobileisrequired') },
+                   { required: true, pattern: /^[1][3,4,5,7,8][0-9]{9}$/, message: this.$t('register.mobileverifyrule'), trigger: 'blur' }],
+          password: [{ required: true, trigger: 'blur', message: this.$t('register.passwordisrequired') }],
+          confirmpassword: [{ required: true, trigger: 'blur', message: this.$t('register.confirmpasswordisrequired') }],
+          verifycode: [{ required: true, trigger: 'blur', message: this.$t('register.verifycodeisrequired') }]
+        },
+        loading: false,
+        errorMsg: ''
       }
     },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        let user
-        if (this.needverifycode) {
-          user = {
-            id: this.loginForm.username,
-            password: this.loginForm.password,
-            rememberMe: this.loginForm.rememberMe,
-            verifycode: this.loginForm.code,
-            uuid: this.loginForm.uuid
-          }
-        } else {
-          user = {
-            id: this.loginForm.username,
-            password: this.loginForm.password,
-            rememberMe: this.loginForm.rememberMe,
-            verifycode: '',
-            uuid: ''
-          }
-        }
-        if (valid) {
-          this.loading = true
-          searchUser(user.id).then(res => {
-            user.id = res.id;
-            if (user.rememberMe) {
-              Cookies.set('username', this.loginForm.username, { expires: Config.passCookieExpires })
-              Cookies.set('password', user.password, { expires: Config.passCookieExpires })
-              Cookies.set('rememberMe', user.rememberMe, { expires: Config.passCookieExpires })
+    created() {
+      document.title = this.$t('pages.register') + ' - ' + Config.webName;
+      this.getCode()
+    },
+    methods: {
+      getCode() {
+        getVerifyCode().then(res => {
+          this.codeUrl = res.img
+          this.registerForm.uuid = res.uuid
+        }).catch((errorMsg) => {
+          this.errorMsg = errorMsg;
+        });
+      },
+      handleBack() {
+        this.$router.back(-1);
+      },
+      handleNext() {
+        this.errorMsg = '';
+        this.$refs.registerForm.validate(valid => {
+          if (valid) {
+            const name = this.registerForm.name;
+            const username = this.registerForm.username;
+            const contact = this.registerForm.contact;
+            const mobile = this.registerForm.mobile;
+            const verifycode = this.registerForm.verifycode;
+            const password = this.registerForm.password;
+            const confirmpassword = this.registerForm.confirmpassword;
+            const uuid = this.registerForm.uuid;
+            this.loading = true
+            if (password === confirmpassword) {
+              verifyCode(uuid, verifycode).then(res => {
+                if (res === 'ok') {
+                  createVerify(name, username, contact, mobile, password).then(res => {
+                    this.loading = false
+                    // this.$router.push({ path: '/registerSmsVerification?profileid=' + res.id });
+                  }).catch((errorMsg) => {
+                    this.errorMsg = errorMsg;
+                    this.loading = false
+                  });
+                }
+              }).catch((errorMsg) => {
+                this.errorMsg = errorMsg;
+                this.loading = false
+                this.getCode()
+              })
             } else {
-              Cookies.remove('username')
-              Cookies.remove('password')
-              Cookies.remove('rememberMe')
-            }
-            this.$store.dispatch('Login', user).then((res) => {
+              const errorMsg = this.$t('register.thetwopasswordsareinconsistent');
               this.loading = false
-              Cookies.remove('needverifycode')
-              this.$router.push({ path: this.redirect || '/' })
-            }).catch((errorMsg) => {
+              this.$message(errorMsg);
               this.errorMsg = errorMsg;
-              this.loading = false
-              Cookies.set('needverifycode', true, { expires: Config.passCookieExpires })
-              this.needverifycode = true;
-              this.getCode()
-            })
-          }).catch((errorMsg) => {
-            this.errorMsg = errorMsg;
-            this.loading = false
-          });
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+            }
+          }
+        })
+      }
     }
   }
-}
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
-  .login {
+  .register {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -194,11 +183,11 @@ export default {
     line-height: 25px;
   }
 
-  .login-form {
+  .register-form {
     border-radius: 6px;
     background: #ffffff;
-    width: 385px;
-    margin-bottom: 150px;
+    width: 585px;
+    margin-bottom: 100px;
     padding: 25px 25px 5px 25px;
     box-shadow: 4px 5px 10px rgba(0,0,0,.4);
     .el-input {

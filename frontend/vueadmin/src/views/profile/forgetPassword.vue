@@ -14,7 +14,7 @@
             <svg-icon slot="prefix" icon-class="users" class="el-input__icon input-icon"/>
           </el-input>
         </el-form-item>
-        <el-form-item prop="code" >
+        <el-form-item prop="code">
           <el-input v-model="forgetPasswordForm.code" :placeholder="$t('forgetPassword.verifycode')" auto-complete="off" maxlength="4" style="width: 63%" @keyup.enter.native="handleLogin">
             <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon"/>
           </el-input>
@@ -59,7 +59,7 @@ export default {
     return {
       codeUrl: '',
       forgetPasswordForm: {
-        username: 'admin',
+        username: '',
         code: '',
         uuid: ''
       },

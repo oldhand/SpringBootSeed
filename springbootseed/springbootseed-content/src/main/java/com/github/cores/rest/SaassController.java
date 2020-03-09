@@ -1,16 +1,14 @@
 package com.github.cores.rest;
 
-import com.github.utils.ContentUtils;
+import com.github.utils.*;
 import com.github.aop.log.Log;
 import com.github.cores.domain.Saass;
+import com.github.cores.domain.CreateSaass;
 import com.github.cores.service.SaassService;
 import com.github.cores.service.dto.SaassDTO;
 import com.github.cores.service.dto.SaassQueryCriteria;
 import com.github.exception.BadRequestException;
 import com.github.service.ContentIdsService;
-import com.github.utils.AuthorizationUtils;
-import com.github.utils.DateTimeUtils;
-import com.github.utils.MqUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -96,6 +94,46 @@ public class SaassController {
 	 	resources.setAuthor(profileid);
 	 	resources.setId(ContentUtils.makeContentId("base_saass"));
         return new ResponseEntity<>(SaassService.create(resources),HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/createVerify")
+    @Log("校验新增云服务")
+    @ApiOperation("校验新增云服务")
+    public ResponseEntity createVerify(@Validated @RequestBody CreateSaass resources, HttpServletRequest request){
+        if (resources.getName().isEmpty()) {
+            throw new BadRequestException("名称不能为空");
+        }
+        if (resources.getUsername().isEmpty()) {
+            throw new BadRequestException("账户不能为空");
+        }
+        if (resources.getContact().isEmpty()) {
+            throw new BadRequestException("联系人不能为空");
+        }
+        if (resources.getMobile().isEmpty()) {
+            throw new BadRequestException("手机不能为空");
+        }
+        try {
+            PasswordUtils.match(resources.getPassword());
+        }catch(Exception e) {
+            throw new BadRequestException("密码: " + e.getMessage());
+        }
+        if (SaassService.isExistName(resources.getName())) { 
+            throw new BadRequestException("名称已经存在");
+        }
+
+
+
+//        if (!AuthorizationUtils.isLogin(request)) {
+//            throw new BadRequestException("请先进行登录操作");
+//        }
+//        String profileid = AuthorizationUtils.getProfileid(request);
+//        resources.setAuthor(profileid);
+//        resources.setId(ContentUtils.makeContentId("base_saass"));
+        //return new ResponseEntity<>(SaassService.create(resources),HttpStatus.CREATED);
+
+        //SaassService.
+
+        return new ResponseEntity("ok",HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}")

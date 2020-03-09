@@ -48,4 +48,6 @@ public interface SaassService {
 	void makedelete(Long id);
 
     void download(List<SaassDTO> all, HttpServletResponse response) throws IOException;
+
+    boolean isExistName(String name);
 }
